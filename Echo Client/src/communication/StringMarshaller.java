@@ -3,7 +3,7 @@ package communication;
 public class StringMarshaller implements Marshaller {
 
 	public byte[] marshal(String message) {
-		//[TODO]
+		//[TODO] should marshal
 		return null;
 	};
 	
