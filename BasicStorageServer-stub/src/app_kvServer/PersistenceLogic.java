@@ -35,7 +35,7 @@ public class PersistenceLogic {
 	
 	public synchronized KVMessage put(String key, String value) {
 		if (cache.contains(key)) { 
-			if (value.equals("null")) {
+			if (value.trim().equals("null")) {
 				logger.debug(Thread.currentThread() + "Delete value from cache with key: "+key);
 				cache.deleteValueFor(key);
 				return new KVMessageItem(StatusType.DELETE_SUCCESS);

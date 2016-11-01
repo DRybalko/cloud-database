@@ -1,1 +1,230 @@
 2016-11-01 14:12:53,734 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 14:49:50,829 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 14:49:50,888 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 14:50:23,504 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 56918
+2016-11-01 14:50:30,403 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 14:50:30,468 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:56918>: 'PUT'
+2016-11-01 14:50:30,468 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 14:50:30,484 INFO  [Thread-1] root: SEND 	<131.159.206.198:56918>: 'key: null, value: null'
+2016-11-01 14:51:06,738 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 110, 117, 108, 108, 32, 13]
+2016-11-01 14:51:06,758 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:56918>: 'PUT'
+2016-11-01 14:52:03,644 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 14:52:03,700 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 14:52:19,414 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 56919
+2016-11-01 14:52:25,757 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 14:52:25,819 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:56919>: 'PUT'
+2016-11-01 14:52:25,819 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 14:52:25,833 INFO  [Thread-1] root: SEND 	<131.159.206.198:56919>: 'key: null, value: null'
+2016-11-01 14:52:32,245 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 110, 117, 108, 108, 32, 13]
+2016-11-01 14:52:32,245 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:56919>: 'PUT'
+2016-11-01 14:52:32,245 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Delete value from cache with key: 10
+2016-11-01 14:52:32,246 INFO  [Thread-1] root: SEND 	<131.159.206.198:56919>: 'key: null, value: null'
+2016-11-01 14:52:41,820 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 14:52:41,820 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:56919>: 'GET'
+2016-11-01 14:52:41,820 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Look for key 10 on disk
+2016-11-01 14:52:41,820 INFO  [Thread-1] root: SEND 	<131.159.206.198:56919>: 'key: null, value: null'
+2016-11-01 15:10:37,729 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 15:10:37,781 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 15:11:06,482 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 64566
+2016-11-01 15:11:17,167 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 15:11:17,226 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64566>: 'PUT'
+2016-11-01 15:11:17,226 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 15:11:17,241 INFO  [Thread-1] root: SEND 	<131.159.206.198:64566>: 'key: null, value: null'
+2016-11-01 15:11:23,751 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 15:11:23,751 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64566>: 'PUT'
+2016-11-01 15:11:23,751 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 15:11:23,751 INFO  [Thread-1] root: SEND 	<131.159.206.198:64566>: 'key: null, value: null'
+2016-11-01 15:11:28,478 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 15:11:28,478 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64566>: 'PUT'
+2016-11-01 15:11:28,478 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 15:11:28,478 INFO  [Thread-1] root: SEND 	<131.159.206.198:64566>: 'key: null, value: null'
+2016-11-01 15:11:33,819 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 15:11:33,819 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64566>: 'GET'
+2016-11-01 15:12:36,582 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 15:12:36,619 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 15:12:56,944 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 64568
+2016-11-01 15:13:01,970 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 15:13:02,065 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64568>: 'PUT'
+2016-11-01 15:13:05,798 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 15:13:05,858 INFO  [Thread-1] root: SEND 	<131.159.206.198:64568>: 'key: null, value: null'
+2016-11-01 15:13:11,596 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 15:13:11,596 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64568>: 'PUT'
+2016-11-01 15:13:15,614 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 15:13:15,614 INFO  [Thread-1] root: SEND 	<131.159.206.198:64568>: 'key: null, value: null'
+2016-11-01 15:13:20,504 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 15:13:20,504 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64568>: 'PUT'
+2016-11-01 15:13:29,156 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 15:13:59,506 INFO  [Thread-1] root: SEND 	<131.159.206.198:64568>: 'key: null, value: null'
+2016-11-01 15:14:06,334 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 15:14:06,334 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64568>: 'GET'
+2016-11-01 15:14:11,831 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 10
+2016-11-01 15:18:05,298 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 15:18:05,347 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 15:18:30,762 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 64581
+2016-11-01 15:18:38,521 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 15:18:38,595 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'PUT'
+2016-11-01 15:18:40,371 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 15:18:40,432 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: null'
+2016-11-01 15:18:44,647 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 15:18:44,706 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'PUT'
+2016-11-01 15:18:45,562 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 15:18:45,562 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: null'
+2016-11-01 15:18:49,773 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 15:18:49,774 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'PUT'
+2016-11-01 15:18:51,056 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 15:18:51,057 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: null'
+2016-11-01 15:18:55,567 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 15:18:55,595 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'GET'
+2016-11-01 15:18:59,747 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 10
+2016-11-01 15:19:33,603 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: 10 '
+2016-11-01 15:19:37,682 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:19:37,682 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'GET'
+2016-11-01 15:19:42,193 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:19:42,193 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: 11 '
+2016-11-01 15:19:45,897 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:19:45,897 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'GET'
+2016-11-01 15:19:49,148 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:20:07,933 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: 11 '
+2016-11-01 15:20:11,423 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:20:11,423 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'GET'
+2016-11-01 15:20:14,909 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:20:32,823 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: 11 '
+2016-11-01 15:21:00,598 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 51, 31, 49, 51, 32, 13]
+2016-11-01 15:21:00,598 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64581>: 'PUT'
+2016-11-01 15:21:03,203 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache size equals maximum cache size.
+2016-11-01 15:21:03,203 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Delete element from cache with key: 10, value: 10 
+2016-11-01 15:21:03,205 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add line to storage with key: 10, value: 10 
+2016-11-01 15:21:03,205 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 13, value: 13 
+2016-11-01 15:21:03,205 INFO  [Thread-1] root: SEND 	<131.159.206.198:64581>: 'key: null, value: null'
+2016-11-01 15:28:52,601 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 15:28:52,650 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 15:29:05,564 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 64999
+2016-11-01 15:29:22,503 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 15:29:22,553 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64999>: 'PUT'
+2016-11-01 15:29:22,553 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 15:29:22,578 INFO  [Thread-1] root: SEND 	<131.159.206.198:64999>: 'key: null, value: null'
+2016-11-01 15:29:27,212 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 15:29:27,213 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64999>: 'PUT'
+2016-11-01 15:29:27,213 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 15:29:27,213 INFO  [Thread-1] root: SEND 	<131.159.206.198:64999>: 'key: null, value: null'
+2016-11-01 15:29:32,209 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 15:29:32,210 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64999>: 'PUT'
+2016-11-01 15:29:32,210 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 15:29:32,210 INFO  [Thread-1] root: SEND 	<131.159.206.198:64999>: 'key: null, value: null'
+2016-11-01 15:29:37,468 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 15:29:37,468 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64999>: 'GET'
+2016-11-01 15:29:37,469 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 10
+2016-11-01 15:29:37,469 INFO  [Thread-1] root: SEND 	<131.159.206.198:64999>: 'key: null, value: 10 '
+2016-11-01 15:29:41,026 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:29:41,026 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64999>: 'GET'
+2016-11-01 15:29:41,027 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:29:41,027 INFO  [Thread-1] root: SEND 	<131.159.206.198:64999>: 'key: null, value: 11 '
+2016-11-01 15:29:45,474 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:29:45,475 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64999>: 'GET'
+2016-11-01 15:29:45,475 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:29:45,475 INFO  [Thread-1] root: SEND 	<131.159.206.198:64999>: 'key: null, value: 11 '
+2016-11-01 15:30:04,035 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 51, 31, 49, 51, 32, 13]
+2016-11-01 15:30:04,035 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:64999>: 'PUT'
+2016-11-01 15:30:04,035 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache size equals maximum cache size.
+2016-11-01 15:30:04,035 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Delete element from cache with key: 11, value: 11 
+2016-11-01 15:30:04,036 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add line to storage with key: 11, value: 11 
+2016-11-01 15:30:04,036 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 13, value: 13 
+2016-11-01 15:30:04,036 INFO  [Thread-1] root: SEND 	<131.159.206.198:64999>: 'key: null, value: null'
+2016-11-01 15:30:55,690 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 15:30:55,731 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 15:31:22,249 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 65025
+2016-11-01 15:31:27,091 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 15:31:27,149 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65025>: 'PUT'
+2016-11-01 15:31:27,150 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 15:31:27,175 INFO  [Thread-1] root: SEND 	<131.159.206.198:65025>: 'key: null, value: null'
+2016-11-01 15:31:31,048 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 15:31:31,049 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65025>: 'PUT'
+2016-11-01 15:31:31,049 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 15:31:31,049 INFO  [Thread-1] root: SEND 	<131.159.206.198:65025>: 'key: null, value: null'
+2016-11-01 15:31:35,683 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 15:31:35,684 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65025>: 'PUT'
+2016-11-01 15:31:35,684 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 15:31:35,684 INFO  [Thread-1] root: SEND 	<131.159.206.198:65025>: 'key: null, value: null'
+2016-11-01 15:31:39,372 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 15:31:39,372 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65025>: 'GET'
+2016-11-01 15:31:42,657 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 10
+2016-11-01 15:33:05,998 INFO  [Thread-1] root: SEND 	<131.159.206.198:65025>: 'key: null, value: 10 '
+2016-11-01 15:33:09,887 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:33:09,887 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65025>: 'GET'
+2016-11-01 15:33:12,838 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:33:12,839 INFO  [Thread-1] root: SEND 	<131.159.206.198:65025>: 'key: null, value: 11 '
+2016-11-01 15:33:16,779 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:33:16,780 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65025>: 'GET'
+2016-11-01 15:33:20,819 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:34:59,532 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 15:34:59,571 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 15:35:15,885 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 65028
+2016-11-01 15:35:21,082 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 15:35:21,140 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65028>: 'PUT'
+2016-11-01 15:35:21,140 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 15:35:21,166 INFO  [Thread-1] root: SEND 	<131.159.206.198:65028>: 'key: null, value: null'
+2016-11-01 15:35:26,320 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 15:35:26,321 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65028>: 'PUT'
+2016-11-01 15:35:26,321 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 15:35:26,321 INFO  [Thread-1] root: SEND 	<131.159.206.198:65028>: 'key: null, value: null'
+2016-11-01 15:35:31,689 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 15:35:31,690 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65028>: 'PUT'
+2016-11-01 15:35:31,690 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 15:35:31,690 INFO  [Thread-1] root: SEND 	<131.159.206.198:65028>: 'key: null, value: null'
+2016-11-01 15:35:35,029 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 15:35:35,029 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65028>: 'GET'
+2016-11-01 15:35:35,029 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 10
+2016-11-01 15:35:35,030 INFO  [Thread-1] root: SEND 	<131.159.206.198:65028>: 'key: null, value: 10 '
+2016-11-01 15:35:38,857 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:35:38,857 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65028>: 'GET'
+2016-11-01 15:35:38,858 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:35:38,858 INFO  [Thread-1] root: SEND 	<131.159.206.198:65028>: 'key: null, value: 11 '
+2016-11-01 15:35:42,215 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 15:35:42,215 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65028>: 'GET'
+2016-11-01 15:35:42,215 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 11
+2016-11-01 15:35:42,215 INFO  [Thread-1] root: SEND 	<131.159.206.198:65028>: 'key: null, value: 11 '
+2016-11-01 15:35:47,919 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 51, 31, 49, 51, 32, 13]
+2016-11-01 15:35:47,919 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65028>: 'PUT'
+2016-11-01 15:35:47,920 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache size equals maximum cache size.
+2016-11-01 15:35:47,920 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Delete element from cache with key: 12, value: 12 
+2016-11-01 15:35:47,920 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add line to storage with key: 12, value: 12 
+2016-11-01 15:35:47,920 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 13, value: 13 
+2016-11-01 15:35:47,920 INFO  [Thread-1] root: SEND 	<131.159.206.198:65028>: 'key: null, value: null'
+2016-11-01 15:36:54,370 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 15:36:54,398 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 15:37:00,146 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 65030
+2016-11-01 15:37:05,413 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 15:37:05,468 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'PUT'
+2016-11-01 15:37:05,469 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 15:37:05,493 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: null'
+2016-11-01 15:37:10,377 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 15:37:10,377 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'PUT'
+2016-11-01 15:37:10,377 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 15:37:10,377 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: null'
+2016-11-01 15:37:16,219 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 15:37:16,222 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'PUT'
+2016-11-01 15:37:16,223 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 15:37:16,224 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: null'
+2016-11-01 15:37:21,735 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 50, 31, 13]
+2016-11-01 15:37:21,735 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'GET'
+2016-11-01 15:37:21,735 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 12
+2016-11-01 15:37:21,736 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: 12 '
+2016-11-01 15:37:28,351 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 50, 31, 13]
+2016-11-01 15:37:28,351 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'GET'
+2016-11-01 15:37:28,351 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 12
+2016-11-01 15:37:28,351 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: 12 '
+2016-11-01 15:37:31,889 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 50, 31, 13]
+2016-11-01 15:37:31,889 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'GET'
+2016-11-01 15:37:31,889 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 12
+2016-11-01 15:37:31,890 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: 12 '
+2016-11-01 15:37:36,547 DEBUG [Thread-1] root: Recieved message in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 15:37:36,547 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'GET'
+2016-11-01 15:37:36,547 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache contains key 10
+2016-11-01 15:37:36,548 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: 10 '
+2016-11-01 15:37:45,705 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 51, 31, 49, 51, 32, 13]
+2016-11-01 15:37:45,705 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65030>: 'PUT'
+2016-11-01 15:37:45,705 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache size equals maximum cache size.
+2016-11-01 15:37:45,706 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Delete element from cache with key: 11, value: 11 
+2016-11-01 15:37:45,706 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add line to storage with key: 11, value: 11 
+2016-11-01 15:37:45,706 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 13, value: 13 
+2016-11-01 15:37:45,706 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: null'
