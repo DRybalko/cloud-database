@@ -59,7 +59,7 @@ public class PersistenceLogic {
 			logger.debug(Thread.currentThread() + "Cache size equals maximum cache size.");
 			KVTuple tuple = cache.deleteElement();
 			logger.debug(Thread.currentThread() + "Delete element from cache with key: "+tuple.getKey()+", value: "+tuple.getValue());
-			storageCommunicator.write(tuple.getKey(), tuple.getValue());
+			storageCommunicator.put(tuple.getKey(), tuple.getValue());
 			logger.debug(Thread.currentThread() + "Add line to storage with key: "+tuple.getKey()+", value: "+tuple.getValue());
 		}
 		logger.debug(Thread.currentThread() + "Add element to cache with with key: " + key + ", value: " + value);
