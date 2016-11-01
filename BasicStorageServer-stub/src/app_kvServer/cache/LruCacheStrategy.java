@@ -16,7 +16,7 @@ public class LruCacheStrategy implements CacheStrategy {
 	}
 	public void addElement(String key, String value) {
 		kvPairs.put(key, value);
-		queue.add(new KVTuple(key, value));
+		queue.addFirst(new KVTuple(key, value));
 	}
 
 	public String getValueFor(String key) {

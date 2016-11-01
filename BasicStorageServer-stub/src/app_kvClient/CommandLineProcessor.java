@@ -122,6 +122,7 @@ public class CommandLineProcessor {
 				StringBuilder stringBuilder = new StringBuilder();
 				for (int i = 2; i < input.length; i++) {
 					stringBuilder.append(input[i]);
+					stringBuilder.append(" ");
 				}
 				KVMessage message = kvStore.put(input[1], stringBuilder.toString());
 				System.out.println(message.toString());
