@@ -47,6 +47,9 @@ public class StorageCommunicator {
 		}
 	}
 	
+	//TODO deleteFromStorage();
+	
+	
 	public String readValueFor(String key) {
 		//create new file reader to start reading from the first lin
 		try {

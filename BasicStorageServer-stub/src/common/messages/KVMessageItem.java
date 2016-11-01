@@ -39,6 +39,8 @@ public class KVMessageItem implements KVMessage{
 			message = "Value was deleted successfuly.";
 		} else if (this.status.equals(StatusType.DELETE_ERROR)) {
 			message = "Delete operation failed";
+		} else {
+			message = "Undefined status";
 		}
 		return message;	
 	}

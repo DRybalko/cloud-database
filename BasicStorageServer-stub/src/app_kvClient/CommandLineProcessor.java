@@ -119,7 +119,11 @@ public class CommandLineProcessor {
 	private static void put() {
 		if (input.length >= 3) {
 			try {
-				KVMessage message = kvStore.put(input[1], input[2]);
+				StringBuilder stringBuilder = new StringBuilder();
+				for (int i = 2; i < input.length; i++) {
+					stringBuilder.append(input[i]);
+				}
+				KVMessage message = kvStore.put(input[1], stringBuilder.toString());
 				System.out.println(message.toString());
 			} catch (Exception e) {
 				logger.info("Put failed. "+e.getMessage());
