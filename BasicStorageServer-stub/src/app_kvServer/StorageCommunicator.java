@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 public class StorageCommunicator {
 
 	private static final String FILE_PATH = "storage/storage.txt";
+	private final String SEPARATOR = ":";
+	
 	private BufferedReader bufferedReader;
 	private BufferedWriter bufferedWriter;
 	private Logger logger;
@@ -41,12 +43,12 @@ public class StorageCommunicator {
 			bufferedWriter.newLine();
 			bufferedWriter.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	
-	public String read(String key) {
+	public String readValueFor(String key) {
+		//create new file reader to start reading from the first lin
 		try {
 			FileReader fileReader = new FileReader(FILE_PATH);
 			bufferedReader = new BufferedReader(fileReader);
@@ -57,8 +59,7 @@ public class StorageCommunicator {
 		try {
 			return findLine(key);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return lineTokens[1];
 	}
@@ -67,29 +68,13 @@ public class StorageCommunicator {
 		while (true) {
 			String lineFromFile = bufferedReader.readLine();
 			if (!(lineFromFile == null || lineFromFile.equals(""))) {
-				//TODO make separator global attribute
-				String[] tokens = lineFromFile.split(":");
+				String[] tokens = lineFromFile.split(SEPARATOR);
 				String keyFromFile = tokens[0];
 				if (keyFromFile.equals(key)) return tokens[1];
 			} else {
-				return "";
+				return null;
 			}
 		}	
 	}
-	
-	
-	//TODO only for testing, delete before deployment
-	public static void main(String[] args) {
-		StorageCommunicator storage = new StorageCommunicator();
-		storage.write("123", "Hello");
-		storage.write("132", "sfsd");
-		storage.write("hey", "why not");
-		System.out.println(storage.read("hey"));
-		storage.write("music", "w3");
-		System.out.println(storage.read("123"));
-		System.out.println(storage.read("123"));
-		System.out.println(storage.read("123"));
-		System.out.println("Stop program");
-	}
-	
+
 }

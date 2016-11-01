@@ -39,9 +39,11 @@ public class Marshaller {
 			message.setValue(messageTokens[1]);
 		} else if (type.equals(StatusType.GET)) {
 			message.setKey(messageTokens[1]);
-		} else if(type.equals(KVMessage.StatusType.PUT)){
+		} else if(type.equals(StatusType.PUT)) {
 			message.setKey(messageTokens[1]);
 			message.setValue(messageTokens[2]);
+		} else if (type.equals(StatusType.PUT_UPDATE)) {
+			message.setValue(messageTokens[1]);
 		}
 		return message;
 	}

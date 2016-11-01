@@ -1,6 +1,5 @@
 package testing;
 
-import java.util.Arrays;
 
 import org.junit.Test;
 

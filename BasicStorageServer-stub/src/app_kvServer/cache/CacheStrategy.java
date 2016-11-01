@@ -16,4 +16,6 @@ public interface CacheStrategy {
 	
 	public int size();
 	
+	public void deleteValueFor(String key);
+	
 }

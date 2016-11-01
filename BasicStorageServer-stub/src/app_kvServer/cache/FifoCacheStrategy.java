@@ -42,4 +42,9 @@ public class FifoCacheStrategy implements CacheStrategy {
 		return kvPairs.size();
 	}
 	
+	public void deleteValueFor(String key) {
+		String value = kvPairs.remove(key);
+		queue.remove(new KVTuple(key, value));
+	}
+	
 }

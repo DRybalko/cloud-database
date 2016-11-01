@@ -14,6 +14,8 @@ public class KVServer extends Thread {
 	private static Logger logger = Logger.getRootLogger();
 	private int port;
 	private boolean running;
+	private String cacheStrategy;
+	private int cacheSize;
 	
 	/**
 	 * Start KV Server at given port
@@ -26,8 +28,10 @@ public class KVServer extends Thread {
 	 *           and "LFU".
 	 * @throws IOException 
 	 */
-	public KVServer(int port, int cacheSize, String strategy) {
+	public KVServer(int port, int cacheSize, String cacheStrategy) {
 		this.port = port;
+		this.cacheSize = cacheSize;
+		this.cacheStrategy = cacheStrategy;
 	}
 
 	/**
@@ -51,7 +55,7 @@ public class KVServer extends Thread {
 	
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();                
-		ClientConnection connection = new ClientConnection(client);
+		ClientConnection connection = new ClientConnection(client, cacheSize, cacheStrategy);
 		new Thread(connection).start();
 
 		logger.info("Connected to " 
@@ -108,6 +112,7 @@ public class KVServer extends Thread {
 			System.out.println("Usage: Server <port>!");
 			System.exit(1);
 		}
+		setupLogger();
 	}
 	
 	private static void processArgs(String[] args) throws IOException {
@@ -118,7 +123,15 @@ public class KVServer extends Thread {
 		} else {
 			int port = Integer.parseInt(args[0]);
 			//TODO set right parameters
-			new KVServer(port, 1, "FIFO").start();
+			new KVServer(port, 10, "lfu").start();
+		}
+	}
+	
+	private static void setupLogger() {
+		try {
+			new LogSetup("logs/server/server.log", Level.ERROR);
+		} catch (IOException e) {
+			System.out.println("Logger could not be initialized");
 		}
 	}
 }

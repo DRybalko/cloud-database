@@ -3,6 +3,9 @@ package client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
+import logger.LogSetup;
+
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import common.messages.*;
@@ -43,25 +46,47 @@ public class KVStore implements KVCommInterface {
 		}
 	}
 
-	public KVMessage put(String key, String value) {
+	public KVMessage put(String key, String value) throws Exception {
+		if (communicationModule.isClosed()) throw new Exception("No connection!");
 		KVMessage kvMessage = new KVMessageItem(StatusType.PUT, key, value);
-		return sendMessage(kvMessage, StatusType.PUT_ERROR);
+		return sendMessageWithErrorType(kvMessage, StatusType.PUT_ERROR);
 	}
 
 	public KVMessage get(String key) {
 		KVMessage kvMessage = new KVMessageItem(StatusType.GET, key);
-		return sendMessage(kvMessage, StatusType.GET_ERROR);
+		return sendMessageWithErrorType(kvMessage, StatusType.GET_ERROR);
 	}
 
-	private KVMessage sendMessage(KVMessage kvMessage, StatusType errorType) {
-		Marshaller marshaller = new Marshaller();
+	private KVMessage sendMessageWithErrorType(KVMessage kvMessage, StatusType errorType) {
 		try {
-			communicationModule.send(marshaller.marshal(kvMessage));
+			communicationModule.send(Marshaller.marshal(kvMessage));
 			byte[] recievedMessage = communicationModule.receive();
-			return marshaller.unmarshal(recievedMessage);
+			return Marshaller.unmarshal(recievedMessage);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
 		return new KVMessageItem(errorType);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		try {
+			LogSetup logSetup = new LogSetup("logs/client/client.log", Level.ERROR);
+		} catch (IOException e) {
+			System.out.println("Logger could not be initialized");
+		}
+		KVStore store = new KVStore("localhost", 50000);
+		store.connect();
+		System.out.println(store.put("1000", "Hi").getStatus().toString());
+		System.out.println(store.put("1001", "Hello").getStatus().toString());
+		System.out.println(store.put("1002", "Welcome").getStatus().toString());
+		System.out.println(store.get("1000").getStatus().toString() + ":" + store.get("1000").getValue());
+		System.out.println(store.get("1001").getStatus().toString() + ":" + store.get("1001").getValue());
+		System.out.println(store.put("1000", "Dima").getStatus().toString());
+		System.out.println(store.get("1000").getStatus().toString() + ":" + store.get("1000").getValue());
+		System.out.println(store.put("1005", "Sevastopol").getStatus().toString());
+		System.out.println(store.put("1006", "Munich").getStatus().toString());
+		System.out.println(store.put("1009", "Watermelon").getStatus().toString());
+		System.out.println(store.get("1005").getStatus().toString() + ":" + store.get("1005").getValue());
+		System.out.println(store.get("1000").getStatus().toString() + ":" + store.get("1000").getValue());
 	}
 }

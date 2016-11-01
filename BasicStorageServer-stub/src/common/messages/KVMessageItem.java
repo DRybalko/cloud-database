@@ -22,6 +22,27 @@ public class KVMessageItem implements KVMessage{
 		}				
 	}
 
+	@Override
+	public String toString() {
+		String message = "";
+		if (this.status.equals(StatusType.GET_ERROR)) {
+			message = "Get operation failed.";
+		} else if (this.status.equals(StatusType.GET_SUCCESS)) {
+			message = "Returned value is: " + this.getValue();
+		} else if (this.status.equals(StatusType.PUT_SUCCESS)) {
+			message = "Put operation was successful.";
+		} else if (this.status.equals(StatusType.PUT_UPDATE)) {
+			message = "New value for key was set.";
+		} else if (this.status.equals(StatusType.PUT_ERROR)) {
+			message = "Put operation failed.";
+		} else if (this.status.equals(StatusType.DELETE_SUCCESS)) {
+			message = "Value " + this.getValue() + "was deleted successfuly.";
+		} else if (this.status.equals(StatusType.DELETE_ERROR)) {
+			message = "Delete operation failed";
+		}
+		return message;	
+	}
+	
 	public KVMessageItem(StatusType type){
 		this.status = type;
 	}

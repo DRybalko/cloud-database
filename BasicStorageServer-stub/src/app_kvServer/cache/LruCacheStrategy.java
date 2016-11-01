@@ -10,9 +10,13 @@ public class LruCacheStrategy implements CacheStrategy {
 	private LinkedList<KVTuple> queue;
 	private HashMap<String, String> kvPairs;
 	
-	public void addElement(String key, String value) {
+	public LruCacheStrategy() {
 		queue = new LinkedList<>();
 		kvPairs = new HashMap<>();
+	}
+	public void addElement(String key, String value) {
+		kvPairs.put(key, value);
+		queue.add(new KVTuple(key, value));
 	}
 
 	public String getValueFor(String key) {
@@ -43,4 +47,8 @@ public class LruCacheStrategy implements CacheStrategy {
 		return kvPairs.size();
 	}
 
+	public void deleteValueFor(String key) {
+		String value = kvPairs.remove(key);
+		queue.remove(new KVTuple(key, value));
+	}
 }

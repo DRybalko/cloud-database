@@ -72,4 +72,7 @@ public class CommunicationModule {
 		logger.info("Connection to server was closed");
 	}
 	
+	public boolean isClosed() {
+		return echoSocket.isClosed();
+	}
 }

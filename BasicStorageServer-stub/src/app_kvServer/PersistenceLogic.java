@@ -4,27 +4,57 @@ import common.messages.KVMessage;
 import common.messages.KVMessage.StatusType;
 import common.messages.KVMessageItem;
 import app_kvServer.cache.CacheStrategy;
+import app_kvServer.cache.FifoCacheStrategy;
 import app_kvServer.cache.LfuCacheStrategy;
+import app_kvServer.cache.LruCacheStrategy;
 
 public class PersistenceLogic {
 
-	private static CacheStrategy cache;
-	private static StorageCommunicator storageCommunicator  = new StorageCommunicator();
-	private static final int MAX_CACHE_SIZE = 1000;
+	private CacheStrategy cache;
+	private int cacheSize;
+	private StorageCommunicator storageCommunicator;
 	
-	public static StatusType put(String key, String value) {
-		cache = new LfuCacheStrategy();
-		if (cache.contains(key)) {
+	public PersistenceLogic(int cacheSize, String cacheStrategy) {
+		this.cacheSize = cacheSize;
+		this.cache = defineCacheStrategy(cacheStrategy);
+		this.storageCommunicator  = new StorageCommunicator();
+	}
+	
+	private CacheStrategy defineCacheStrategy(String cacheStrategy) {
+		if (cacheStrategy.toLowerCase().equals("fifo")) {
+			return new FifoCacheStrategy();
+		} else if (cacheStrategy.toLowerCase().equals("lfu")) {
+			return new LfuCacheStrategy();
+		} else if (cacheStrategy.toLowerCase().equals("lru")) {
+			return new LruCacheStrategy();
+		} else return null;
+	}
+	
+	public KVMessage put(String key, String value) {
+		if (cache.contains(key)) { 
+			if (value.equals("null")) {
+				cache.deleteValueFor(key);
+				return new KVMessageItem(StatusType.DELETE_SUCCESS);
+			}
 			cache.updateElement(key, value); 
-			return StatusType.PUT_UPDATE;
+			return new KVMessageItem(StatusType.PUT_UPDATE, value);
 		}
 		else {
+			if (value == null) return new KVMessageItem(StatusType.DELETE_ERROR);
 			putElementToCache(key, value);
-			return StatusType.PUT_SUCCESS;
+			return new KVMessageItem(StatusType.PUT_SUCCESS);
 		}
 	}
 	
-	public static KVMessage get(String key) {
+	private void putElementToCache(String key, String value) {
+		if (cache.size() == cacheSize) {
+			KVTuple tuple = cache.deleteElement();
+			storageCommunicator.write(tuple.getKey(), tuple.getValue());
+		}
+		cache.addElement(key, value);
+	}
+	
+	public KVMessage get(String key) {
 		if (cache.contains(key)) {
 			return new KVMessageItem(StatusType.GET_SUCCESS, cache.getValueFor(key));
 		} else {
@@ -35,24 +65,12 @@ public class PersistenceLogic {
 			} else {
 				return new KVMessageItem(StatusType.GET_ERROR);
 			}
-
 		} 
 	}
 	
-	private static KVTuple lookUpElementOnDisk(String key) {
-		String value = storageCommunicator.read(key);
+	private KVTuple lookUpElementOnDisk(String key) {
+		String value = storageCommunicator.readValueFor(key);
 		return new KVTuple(key, value);
 	}
 	
-	private static void putElementToCache(String key, String value) {
-		if (cache.size() == MAX_CACHE_SIZE) {
-			KVTuple tuple = cache.deleteElement();
-			putElementToDisk(tuple);
-			cache.addElement(key, value);
-		}
-	}
-	
-	private static void putElementToDisk(KVTuple tuple) {
-		storageCommunicator.write(tuple.getKey(), tuple.getValue());
-	}
 }

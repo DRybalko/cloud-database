@@ -23,7 +23,6 @@ public class InteractionTest extends TestCase {
 		kvClient.disconnect();
 	}
 	
-	
 	@Test
 	public void testPut() {
 		String key = "foobar";
@@ -36,7 +35,7 @@ public class InteractionTest extends TestCase {
 		} catch (Exception e) {
 			ex = e;
 		}
-
+		
 		assertTrue(ex == null && response.getStatus() == StatusType.PUT_SUCCESS);
 	}
 	

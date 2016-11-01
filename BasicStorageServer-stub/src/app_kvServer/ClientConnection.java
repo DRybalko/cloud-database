@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.log4j.*;
 
@@ -23,29 +26,36 @@ import common.messages.Marshaller;
 public class ClientConnection implements Runnable {
 
 	private static Logger logger = Logger.getRootLogger();
-	
+
 	private boolean isOpen;
 	private static final int BUFFER_SIZE = 1024;
 	private static final int DROP_SIZE = 128 * BUFFER_SIZE;
-	
+
 	private Socket clientSocket;
 	private InputStream input;
 	private OutputStream output;
+	private PersistenceLogic persistenceLogic;
 	
+	private int cacheSize;
+	private String cacheStrategy;
+
 	/**
 	 * Constructs a new CientConnection object for a given TCP socket.
 	 * @param clientSocket the Socket object for the client connection.
 	 */
-	public ClientConnection(Socket clientSocket) {
+	public ClientConnection(Socket clientSocket, int cacheSize, String cacheStrategy) {
 		this.clientSocket = clientSocket;
 		this.isOpen = true;
+		this.cacheSize = cacheSize;
+		this.cacheStrategy = cacheStrategy;
 	}
-	
+
 	/**
 	 * Initializes and starts the client connection. 
 	 * Loops until the connection is closed or aborted by the client.
 	 */
 	public void run() {
+		persistenceLogic = new PersistenceLogic(cacheSize, cacheStrategy);
 		try {
 			receiveAndProcessMessage();
 		} catch (IOException ioe) {
@@ -58,35 +68,36 @@ public class ClientConnection implements Runnable {
 			}
 		}
 	}
-	
+
 	private void receiveAndProcessMessage() throws IOException {
 		output = clientSocket.getOutputStream();
 		input = clientSocket.getInputStream();	
 		while(isOpen) {
 			try {
-				KVMessage receivedMessage = receiveMessage();
-				KVMessage returnMessage = processMessage(receivedMessage);
-				sendMessage(returnMessage);
+				if (input.available() > 0) {
+					KVMessage receivedMessage = receiveMessage();
+					KVMessage returnMessage = processMessage(receivedMessage);
+					sendMessage(returnMessage);
+				}
 			} catch (IOException ioe) {
 				logger.error("Error! Connection lost!");
 				isOpen = false;
 			}				
 		}
 	}
-	
+
 	private KVMessage processMessage(KVMessage message) {
 		if (message.getStatus().equals(StatusType.GET)) {
-			KVMessage getResult = PersistenceLogic.get(message.getKey());
+			KVMessage getResult = persistenceLogic.get(message.getKey());
 			return getResult;
 		} else if (message.getStatus().equals(StatusType.PUT)) {
-			StatusType status = PersistenceLogic.put(message.getKey(), message.getValue());
-			return new KVMessageItem(status);
+			return persistenceLogic.put(message.getKey(), message.getValue());
 		} else {
 			logger.error("Unnown message status, can not be proceeded.");
 			return null;
 		}
 	}
-	
+
 	private void closeConnection() throws IOException {
 		if (clientSocket != null) {
 			input.close();
@@ -94,7 +105,7 @@ public class ClientConnection implements Runnable {
 			clientSocket.close();
 		}
 	}
-	
+
 	/**
 	 * Method sends a TextMessage using this socket.
 	 * @param msg the message that is to be sent.
@@ -109,64 +120,32 @@ public class ClientConnection implements Runnable {
 				+ clientSocket.getPort() + ">: '" 
 				+ "key: " + message.getKey() 
 				+ ", value: " + message.getValue() + "'");
-    }
-	
-	private KVMessage receiveMessage() throws IOException {
-		int index = 0;
-		byte[] msgBytes = null, tmp = null;
-		byte[] bufferBytes = new byte[BUFFER_SIZE];
-		
-		/* read first char from stream */
-		byte read = (byte) input.read();	
-		boolean reading = true;
-		
-		while(read != 13 && reading) {
-			if(index == BUFFER_SIZE) {
-				if(msgBytes == null){
-					tmp = new byte[BUFFER_SIZE];
-					System.arraycopy(bufferBytes, 0, tmp, 0, BUFFER_SIZE);
-				} else {
-					tmp = new byte[msgBytes.length + BUFFER_SIZE];
-					System.arraycopy(msgBytes, 0, tmp, 0, msgBytes.length);
-					System.arraycopy(bufferBytes, 0, tmp, msgBytes.length,
-							BUFFER_SIZE);
-				}
+	}
 
-				msgBytes = tmp;
-				bufferBytes = new byte[BUFFER_SIZE];
-				index = 0;
-			} 
-			
-			/* only read valid characters, i.e. letters and constants */
-			bufferBytes[index] = read;
-			index++;
-			
-			/* stop reading is DROP_SIZE is reached */
-			if(msgBytes != null && msgBytes.length + index >= DROP_SIZE) {
-				reading = false;
-			}
-			
-			/* read next char from stream */
-			read = (byte) input.read();
+	private KVMessage receiveMessage() throws IOException {
+		List<Byte> readMessage = new ArrayList<>();
+		int readByte = input.read();
+		readMessage.add((byte)readByte);
+		while (input.available() > 0) {
+			readMessage.add((byte) input.read());
 		}
-		
-		if(msgBytes == null){
-			tmp = new byte[index];
-			System.arraycopy(bufferBytes, 0, tmp, 0, index);
-		} else {
-			tmp = new byte[msgBytes.length + index];
-			System.arraycopy(msgBytes, 0, tmp, 0, msgBytes.length);
-			System.arraycopy(bufferBytes, 0, tmp, msgBytes.length, index);
-		}
-		
-		msgBytes = tmp;
-		
-		/* build final String */
-		KVMessage msg = Marshaller.unmarshal(msgBytes);
+		logger.debug("Recieved message in byte: " + readMessage);
+		byte[] receivedMessage = convertToByteArray(readMessage);
+
+		KVMessage msg = Marshaller.unmarshal(receivedMessage);
 		logger.info("RECEIVE \t<" 
 				+ clientSocket.getInetAddress().getHostAddress() + ":" 
 				+ clientSocket.getPort() + ">: '" 
 				+ msg.getStatus().toString() + "'");
 		return msg;
-    }	
+	}	
+
+	private byte[] convertToByteArray(List<Byte> list) {
+		byte[] convertedArray = new byte[list.size()];
+		Iterator<Byte> iterator = list.iterator();
+		for (int i = 0; i < list.size(); i++) {
+			convertedArray[i] = iterator.next();
+		}
+		return convertedArray;
+	}
 }

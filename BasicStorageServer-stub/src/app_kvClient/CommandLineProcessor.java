@@ -8,6 +8,8 @@ import logger.LogSetup;
 
 import org.apache.log4j.*;
 
+import common.messages.KVMessage;
+
 import client.KVCommInterface;
 
 /** 
@@ -26,7 +28,7 @@ public class CommandLineProcessor {
 
 	private static String[] input;
 	private static KVCommInterface kvStore;
-	private static Logger logger;
+	private static Logger logger = Logger.getRootLogger();
 	private static boolean quit;
 
 	private static final String LINE_START = "EchoClient> ";
@@ -41,17 +43,12 @@ public class CommandLineProcessor {
 			+ "to the server and exits the program execution\n";
 
 	public static void readAndProcessInput() {
-		initializeLogger();
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		while (!quit) {
 			readInputLine(br);
 		}
 	}
-
-	private static void initializeLogger() {
-		logger = Logger.getRootLogger();
-	}
-
+	
 	private static void readInputLine(BufferedReader br) {
 		System.out.print(LINE_START);
 		try {
@@ -66,23 +63,21 @@ public class CommandLineProcessor {
 	private static void parseInput() {
 		String command = input[0];
 		switch (command) {
-		case "connect":
-			connectToServer();
-			break;
-		case "disconnect":
-			disconnect();
-			break;
-		case "logLevel":
-			logLevel();
-			break;
-		case "help":
-			help();
-			break;
-		case "quit":
-			quit();
-			break;
-		default:
-			errorMessage();
+		case "connect": connectToServer();
+						break;
+		case "disconnect": disconnect();
+						break;
+		case "put": put();
+						break;
+		case "get": get();
+						break;
+		case "logLevel": logLevel();
+						break;
+		case "help": help();
+						break;
+		case "quit": quit();
+						break;
+		default: errorMessage();
 		}
 	}
 
@@ -111,6 +106,32 @@ public class CommandLineProcessor {
 			errorMessage();
 		}
 	};
+
+	private static void put() {
+		if (input.length >= 3) {
+			try {
+				KVMessage message = kvStore.put(input[1], input[2]);
+				System.out.println(message.toString());
+			} catch (Exception e) {
+				logger.info("Put failed. "+e.getMessage());
+			}
+		} else {
+			errorMessage();
+		}
+	}
+	
+	private static void get() {
+		if (input.length >= 2) {
+			try {
+				KVMessage message = kvStore.get(input[1]);
+				System.out.println(message.toString());
+			} catch (Exception e) {
+				logger.info("Get failed. " + e.getMessage());
+			}
+		} else {
+			errorMessage();
+		}
+	}
 
 	private static void help() {
 		System.out.println(LINE_START + HELP_MESSAGE);

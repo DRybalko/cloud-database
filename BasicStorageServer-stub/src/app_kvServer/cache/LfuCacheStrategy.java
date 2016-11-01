@@ -23,11 +23,8 @@ public class LfuCacheStrategy implements CacheStrategy {
 	}
 	
 	private void addNewElementToFrequencies(KVTuple tuple) {
-		if (frequencies.get(0) == null) {
-			frequencies.set(0, new LinkedList<KVTuple>());
-		} else {
-			frequencies.get(0).add(tuple);
-		}
+		if (frequencies.size() == 0) frequencies.add(0, new LinkedList<KVTuple>());
+		frequencies.get(0).add(tuple);
 	}
 	
 	public String getValueFor(String key) {
@@ -35,10 +32,12 @@ public class LfuCacheStrategy implements CacheStrategy {
 		LinkedList<KVTuple> frequencyList = frequencies.get(node.getFreqeuncy());
 		for (KVTuple tuple: frequencyList) {
 			if (tuple.getKey().equals(key)) {
-				if (frequencies.get(node.getFreqeuncy() + 1) == null) {
+				if (frequencies.size() <= node.getFreqeuncy() + 1) {
 					frequencies.add(node.getFreqeuncy() + 1, new LinkedList<KVTuple>());
 				}
+				frequencyList.remove(tuple);
 				frequencies.get(node.getFreqeuncy() + 1).add(tuple);
+				node.setFreqeuncy(node.getFreqeuncy() + 1);
 				return tuple.getValue();
 			}
 		}
@@ -65,7 +64,10 @@ public class LfuCacheStrategy implements CacheStrategy {
 	public KVTuple deleteElement() {
 		KVTuple tuple = new KVTuple("", "");
 		for (LinkedList<KVTuple> listWithTuples: frequencies) {
-			if (listWithTuples.size() > 0)  tuple = listWithTuples.removeLast();
+			if (listWithTuples.size() > 0)  {
+				tuple = listWithTuples.removeFirst();
+				break;
+			}
 		}
 		LfuQueueNode node = kvPairs.remove(tuple.getKey());
 		return node.getTuple();
@@ -74,5 +76,14 @@ public class LfuCacheStrategy implements CacheStrategy {
 	public int size() {
 		return kvPairs.size();
 	}
-
+	
+	public void deleteValueFor(String key) {
+		LfuQueueNode node = kvPairs.remove(key);
+		LinkedList<KVTuple> frequencyList = frequencies.get(node.getFreqeuncy());
+		for (KVTuple tuple: frequencyList) {
+			if (tuple.getKey().equals(key)) {
+				frequencyList.remove(tuple);
+			}
+		}
+	}
 }
