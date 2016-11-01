@@ -11,6 +11,18 @@ import org.apache.log4j.Logger;
 import common.messages.*;
 import common.messages.KVMessage.StatusType;
 
+/**
+ * This class is responsible for the communication with the server.
+ * It provides methods for establishing connection to the KV Server,
+ * disconnecting the client from the currently connected server, 
+ * inserting a key-value pair into the KVServer and retrieving 
+ * the value for a given key from the server.
+ * 
+ * @see KVCommInterface
+ * @see CommunicationModule
+ *
+ */
+
 public class KVStore implements KVCommInterface {
 
 	private String address;

@@ -5,6 +5,16 @@ import java.util.LinkedList;
 
 import app_kvServer.KVTuple;
 
+/**
+ * That is the implementation of the LRU cache strategy.
+ * The class provides methods for insertion/deletion
+ * of a <key>,<value> tuple, finding/deletion a value of a key,
+ * and other, that work on the least recently used principle.
+ *
+ * @see CacheStrategy
+ */
+
+
 public class LruCacheStrategy implements CacheStrategy {
 
 	private LinkedList<KVTuple> queue;

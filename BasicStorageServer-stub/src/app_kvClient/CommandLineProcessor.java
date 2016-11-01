@@ -21,7 +21,7 @@ import client.KVStore;
  * It also provides the commands: connect, disconnect, send, logLevel, help and quit
  * from which the user can chose. 
  * 
- * @see Communicator
+ * @see KVCommInterface
  */
 
 public class CommandLineProcessor {
