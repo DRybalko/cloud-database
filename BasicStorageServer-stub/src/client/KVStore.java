@@ -68,7 +68,7 @@ public class KVStore implements KVCommInterface {
 		return new KVMessageItem(errorType);
 	}
 	
-	public static void main(String[] args) throws Exception {
+/*	public static void main(String[] args) throws Exception {
 		try {
 			LogSetup logSetup = new LogSetup("logs/client/client.log", Level.ERROR);
 		} catch (IOException e) {
@@ -89,4 +89,5 @@ public class KVStore implements KVCommInterface {
 		System.out.println(store.get("1005").getStatus().toString() + ":" + store.get("1005").getValue());
 		System.out.println(store.get("1000").getStatus().toString() + ":" + store.get("1000").getValue());
 	}
+	*/
 }
