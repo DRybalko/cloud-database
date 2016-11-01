@@ -5,6 +5,7 @@ package common.messages;
  * for the type KVMessageImpl. The different constructors are required 
  * for the different status types.
  *
+ * @see KVMessage
  */
 
 public class KVMessageItem implements KVMessage{

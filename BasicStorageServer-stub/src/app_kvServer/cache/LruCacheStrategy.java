@@ -11,6 +11,7 @@ import app_kvServer.KVTuple;
  * of a <key>,<value> tuple, finding/deletion a value of a key,
  * and other, that work on the least recently used principle.
  *
+ * @see CacheStrategy
  */
 
 
