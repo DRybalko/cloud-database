@@ -1,3 +1,9 @@
-#Tue Nov 01 15:58:12 CET 2016
-13=test
-10=update
+#Tue Nov 01 16:18:57 CET 2016
+15=15 
+13=new 
+12=12 
+11=11 
+foobar=bar
+updateTestValue=updated
+17=17 
+16=16 
