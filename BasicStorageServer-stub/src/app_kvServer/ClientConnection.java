@@ -12,7 +12,6 @@ import org.apache.log4j.*;
 
 import common.messages.KVMessage;
 import common.messages.KVMessage.StatusType;
-import common.messages.KVMessageItem;
 import common.messages.Marshaller;
 
 
@@ -28,8 +27,7 @@ public class ClientConnection implements Runnable {
 	private static Logger logger = Logger.getRootLogger();
 
 	private boolean isOpen;
-	private static final int BUFFER_SIZE = 1024;
-	private static final int DROP_SIZE = 128 * BUFFER_SIZE;
+	private int MAX_MESSAGE_SIZE = 128000;
 
 	private Socket clientSocket;
 	private InputStream input;
@@ -121,7 +119,7 @@ public class ClientConnection implements Runnable {
 		List<Byte> readMessage = new ArrayList<>();
 		int readByte = input.read();
 		readMessage.add((byte)readByte);
-		while (input.available() > 0) {
+		while (input.available() > 0 && readMessage.size() <= MAX_MESSAGE_SIZE) {
 			readMessage.add((byte) input.read());
 		}
 		logger.debug("Recieved message in byte: " + readMessage);

@@ -3,9 +3,6 @@ package client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import logger.LogSetup;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import common.messages.*;

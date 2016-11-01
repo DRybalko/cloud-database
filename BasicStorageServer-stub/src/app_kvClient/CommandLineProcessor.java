@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import logger.LogSetup;
-
 import org.apache.log4j.*;
 
 import common.messages.KVMessage;
@@ -108,7 +106,7 @@ public class CommandLineProcessor {
 	private static void logLevel() {
 		if (input.length >= 2) {
 			String logLevel = input[1];
-			logger.getRootLogger().setLevel(Level.toLevel(logLevel));
+			Logger.getRootLogger().setLevel(Level.toLevel(logLevel));
 			System.out.println(LINE_START + "Current logging level: "
 					+ logger.getLevel());
 		} else {
