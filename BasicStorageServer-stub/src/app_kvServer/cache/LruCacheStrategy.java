@@ -8,22 +8,23 @@ import app_kvServer.KVTuple;
 public class LruCacheStrategy implements CacheStrategy {
 
 	private LinkedList<KVTuple> queue;
-	private HashMap<String, String> kvPairs;
+	private HashMap<String, KVTuple> kvPairs;
 	
 	public LruCacheStrategy() {
 		queue = new LinkedList<>();
 		kvPairs = new HashMap<>();
 	}
 	public void addElement(String key, String value) {
-		kvPairs.put(key, value);
-		queue.addFirst(new KVTuple(key, value));
+		KVTuple tupleToSave = new KVTuple(key, value);
+		kvPairs.put(key, tupleToSave);
+		queue.addFirst(tupleToSave);
 	}
 
 	public String getValueFor(String key) {
-		KVTuple tuple = new KVTuple(key, kvPairs.get(key));
-		queue.remove(tuple);	
-		queue.addFirst(tuple);
-		return tuple.getValue();
+		KVTuple foundKvTuple = kvPairs.get(key);
+		queue.remove(foundKvTuple);	
+		queue.addFirst(foundKvTuple);
+		return foundKvTuple.getValue();
 	}
 
 	public boolean contains(String key) {
@@ -31,10 +32,10 @@ public class LruCacheStrategy implements CacheStrategy {
 	}
 
 	public void updateElement(String key, String value) {
-		KVTuple oldTuple = new KVTuple(key, kvPairs.get(key));
-		kvPairs.replace(key, value);
-		queue.remove(oldTuple);
-		queue.addFirst(new KVTuple(key, value));
+		KVTuple tuple = kvPairs.get(key);
+		tuple.setValue(value);
+		queue.remove(tuple);
+		queue.addFirst(tuple);
 	}
 
 	public KVTuple deleteElement() {
@@ -48,7 +49,7 @@ public class LruCacheStrategy implements CacheStrategy {
 	}
 
 	public void deleteValueFor(String key) {
-		String value = kvPairs.remove(key);
-		queue.remove(new KVTuple(key, value));
+		KVTuple tupleToDelete = kvPairs.get(key);
+		queue.remove(tupleToDelete);
 	}
 }

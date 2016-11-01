@@ -33,9 +33,9 @@ public class PersistenceLogic {
 		} else return null;
 	}
 	
-	public KVMessage put(String key, String value) {
+	public synchronized KVMessage put(String key, String value) {
 		if (cache.contains(key)) { 
-			if (value.equals("null")) {
+			if (value.trim().equals("null")) {
 				logger.debug(Thread.currentThread() + "Delete value from cache with key: "+key);
 				cache.deleteValueFor(key);
 				return new KVMessageItem(StatusType.DELETE_SUCCESS);
@@ -62,10 +62,11 @@ public class PersistenceLogic {
 			storageCommunicator.put(tuple.getKey(), tuple.getValue());
 			logger.debug(Thread.currentThread() + "Add line to storage with key: "+tuple.getKey()+", value: "+tuple.getValue());
 		}
+		logger.debug(Thread.currentThread() + "Add element to cache with with key: " + key + ", value: " + value);
 		cache.addElement(key, value);
 	}
 	
-	public KVMessage get(String key) {
+	public synchronized KVMessage get(String key) {
 		if (cache.contains(key)) {
 			logger.debug(Thread.currentThread() + "Cache contains key "+key);
 			return new KVMessageItem(StatusType.GET_SUCCESS, cache.getValueFor(key));
