@@ -1,5 +1,12 @@
 package common.messages;
 
+/**
+ * The class KVMessageItem provides three different constructors 
+ * for the type KVMessageImpl. The different constructors are required 
+ * for the different status types.
+ *
+ */
+
 public class KVMessageItem implements KVMessage{
 
 	private String key;

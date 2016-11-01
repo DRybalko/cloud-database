@@ -6,6 +6,10 @@ import org.apache.log4j.Level;
 
 import logger.LogSetup;
 
+/**
+ * Main class for the client. 
+ */
+
 public class KVClient {
 
 	private static final String LOG_DIRECTORY = "logs/client/client.log";

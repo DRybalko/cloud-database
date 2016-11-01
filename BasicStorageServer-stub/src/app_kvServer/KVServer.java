@@ -8,6 +8,16 @@ import logger.LogSetup;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+
+/**
+ * Main class for the KVServer. Holds the variables needed for
+ * the connection with the server (like the port number, the 
+ * cache size and the cache strategy). It initializes and starts
+ * the KVServer at given port and listens for clients until it is stopped.
+ * 
+ */
+
+
 public class KVServer extends Thread {
 	
 	private static final int MAX_CACHE_SIZE = 3;

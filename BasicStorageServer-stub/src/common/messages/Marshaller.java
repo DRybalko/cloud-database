@@ -4,6 +4,12 @@ import java.nio.charset.Charset;
 
 import common.messages.KVMessage.StatusType;
 
+/**
+ * The class Marshaller provides the functions needed to convert from
+ * byte Array to KVMessage and vice versa. 
+ */
+
+
 public class Marshaller {
 
 	private static final char UNIT_SEPARATOR = (char) 31;	

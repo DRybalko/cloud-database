@@ -5,6 +5,14 @@ import java.util.PriorityQueue;
 
 import app_kvServer.KVTuple;
 
+/**
+ * That is the implementation of the LFU cache strategy.
+ * The class provides methods for insertion/deletion
+ * of a <key>,<value> tuple, finding/deletion a value of a key,
+ * and other, that work on the least frequently used principle.
+ *
+ */
+
 public class LfuCacheStrategy implements CacheStrategy {
 
 	private PriorityQueue<LfuQueueNode> queue;

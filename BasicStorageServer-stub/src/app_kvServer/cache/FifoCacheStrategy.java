@@ -5,6 +5,14 @@ import java.util.LinkedList;
 
 import app_kvServer.KVTuple;
 
+/**
+ * That is the implementation of the FIFO cache strategy.
+ * The class provides methods for insertion/deletion
+ * of a <key>,<value> tuple, finding/deletion a value of a key,
+ * and other, that work on the first in first out principle.
+ *
+ */
+
 public class FifoCacheStrategy implements CacheStrategy {
 
 	private LinkedList<KVTuple> queue;

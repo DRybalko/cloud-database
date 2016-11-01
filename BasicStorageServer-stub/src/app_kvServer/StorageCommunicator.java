@@ -10,6 +10,17 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * This class provides the storage logic that persists data
+ * to disk (e.g., a file). It provides the functions to delete,
+ * store, update, find etc. a tuple from/to the disk.
+ * 
+ *  @see Properties
+ *
+ */
+
+
 public class StorageCommunicator {
 	
 	private final String FILE_PATH = "storage/storage.txt";
