@@ -38,16 +38,26 @@ public class PersistenceLogic {
 			if (value.trim().equals("null")) {
 				logger.debug(Thread.currentThread() + "Delete value from cache with key: "+key);
 				cache.deleteValueFor(key);
+				storageCommunicator.deleteFromStorage(key);
 				return new KVMessageItem(StatusType.DELETE_SUCCESS);
 			}
 			logger.debug(Thread.currentThread() + "Update key "+key+" with value "+value);
 			cache.updateElement(key, value); 
+			storageCommunicator.put(key, value);
 			return new KVMessageItem(StatusType.PUT_UPDATE, value);
 		}
 		else {
 			if (value == null) {
 				logger.debug(Thread.currentThread() + " Value is null, can not be updated.");
 				return new KVMessageItem(StatusType.DELETE_ERROR);
+			}
+			if (value.trim().equals("null")) {
+				storageCommunicator.deleteFromStorage(key);
+				return new KVMessageItem(StatusType.DELETE_SUCCESS);
+			}
+			if (storageCommunicator.readValueFor(key) != null) {
+				putElementToCache(key, value);
+				return new KVMessageItem(StatusType.PUT_UPDATE);
 			}
 			putElementToCache(key, value);
 			return new KVMessageItem(StatusType.PUT_SUCCESS);

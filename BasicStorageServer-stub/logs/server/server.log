@@ -228,3 +228,175 @@
 2016-11-01 15:37:45,706 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add line to storage with key: 11, value: 11 
 2016-11-01 15:37:45,706 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 13, value: 13 
 2016-11-01 15:37:45,706 INFO  [Thread-1] root: SEND 	<131.159.206.198:65030>: 'key: null, value: null'
+2016-11-01 16:05:43,580 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 16:05:43,676 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 16:06:03,088 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 65096
+2016-11-01 16:06:17,607 INFO  [Thread-0] root: Connected to 24.195.eduroam.dynamic.rbg.tum.de on port 58494
+2016-11-01 16:06:21,844 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 16:06:21,910 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65096>: 'PUT'
+2016-11-01 16:06:21,911 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 16:06:21,936 INFO  [Thread-1] root: SEND 	<131.159.206.198:65096>: 'key: null, value: null'
+2016-11-01 16:06:28,447 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 16:06:28,447 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65096>: 'PUT'
+2016-11-01 16:06:28,447 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 16:06:28,447 INFO  [Thread-1] root: SEND 	<131.159.206.198:65096>: 'key: null, value: null'
+2016-11-01 16:06:31,601 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 16:06:31,602 INFO  [Thread-2] root: RECEIVE 	<131.159.195.24:58494>: 'PUT'
+2016-11-01 16:06:31,602 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 16:06:31,602 INFO  [Thread-2] root: SEND 	<131.159.195.24:58494>: 'key: null, value: null'
+2016-11-01 16:06:45,985 DEBUG [Thread-2] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 16:06:45,985 INFO  [Thread-2] root: RECEIVE 	<131.159.195.24:58494>: 'GET'
+2016-11-01 16:06:45,985 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache contains key 11
+2016-11-01 16:06:45,986 INFO  [Thread-2] root: SEND 	<131.159.195.24:58494>: 'key: null, value: 11 '
+2016-11-01 16:06:53,961 DEBUG [Thread-2] root: Recieved message in byte: [71, 69, 84, 31, 49, 50, 31, 13]
+2016-11-01 16:06:53,990 INFO  [Thread-2] root: RECEIVE 	<131.159.195.24:58494>: 'GET'
+2016-11-01 16:06:53,990 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache contains key 12
+2016-11-01 16:06:53,990 INFO  [Thread-2] root: SEND 	<131.159.195.24:58494>: 'key: null, value: 12 '
+2016-11-01 16:06:58,262 DEBUG [Thread-2] root: Recieved message in byte: [71, 69, 84, 31, 49, 50, 31, 13]
+2016-11-01 16:06:58,262 INFO  [Thread-2] root: RECEIVE 	<131.159.195.24:58494>: 'GET'
+2016-11-01 16:06:58,262 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache contains key 12
+2016-11-01 16:06:58,262 INFO  [Thread-2] root: SEND 	<131.159.195.24:58494>: 'key: null, value: 12 '
+2016-11-01 16:07:05,184 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 51, 31, 49, 51, 32, 13]
+2016-11-01 16:07:05,184 INFO  [Thread-2] root: RECEIVE 	<131.159.195.24:58494>: 'PUT'
+2016-11-01 16:07:05,184 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache size equals maximum cache size.
+2016-11-01 16:07:05,185 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete element from cache with key: 10, value: 10 
+2016-11-01 16:07:05,261 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add line to storage with key: 10, value: 10 
+2016-11-01 16:07:05,261 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 13, value: 13 
+2016-11-01 16:07:05,262 INFO  [Thread-2] root: SEND 	<131.159.195.24:58494>: 'key: null, value: null'
+2016-11-01 16:07:32,560 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 110, 117, 108, 108, 32, 13]
+2016-11-01 16:07:32,560 INFO  [Thread-1] root: RECEIVE 	<131.159.206.198:65096>: 'PUT'
+2016-11-01 16:07:32,560 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Cache size equals maximum cache size.
+2016-11-01 16:07:32,560 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Delete element from cache with key: 13, value: 13 
+2016-11-01 16:07:32,561 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add line to storage with key: 13, value: 13 
+2016-11-01 16:07:32,561 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: 10, value: null 
+2016-11-01 16:07:32,561 INFO  [Thread-1] root: SEND 	<131.159.206.198:65096>: 'key: null, value: null'
+2016-11-01 16:10:24,428 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 16:10:24,459 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 16:10:29,728 INFO  [Thread-0] root: Connected to 24.195.eduroam.dynamic.rbg.tum.de on port 58504
+2016-11-01 16:10:31,666 INFO  [Thread-0] root: Connected to 198.206.eduroam.dynamic.rbg.tum.de on port 65100
+2016-11-01 16:10:50,030 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 49, 48, 32, 13]
+2016-11-01 16:10:50,058 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:10:50,058 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 10, value: 10 
+2016-11-01 16:10:50,076 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:10:53,543 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 49, 31, 49, 49, 32, 13]
+2016-11-01 16:10:53,543 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:10:53,545 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 11, value: 11 
+2016-11-01 16:10:53,545 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:10:57,235 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 50, 31, 49, 50, 32, 13]
+2016-11-01 16:10:57,235 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:10:57,235 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 12, value: 12 
+2016-11-01 16:10:57,236 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:11:05,664 DEBUG [Thread-2] root: Recieved message in byte: [71, 69, 84, 31, 49, 50, 31, 13]
+2016-11-01 16:11:05,664 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'GET'
+2016-11-01 16:11:05,664 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache contains key 12
+2016-11-01 16:11:05,664 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: 12 '
+2016-11-01 16:11:09,773 DEBUG [Thread-2] root: Recieved message in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 16:11:09,773 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'GET'
+2016-11-01 16:11:09,773 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache contains key 11
+2016-11-01 16:11:09,773 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: 11 '
+2016-11-01 16:11:15,814 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 51, 31, 49, 51, 32, 13]
+2016-11-01 16:11:15,814 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:11:15,815 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache size equals maximum cache size.
+2016-11-01 16:11:15,815 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete element from cache with key: 10, value: 10 
+2016-11-01 16:11:15,820 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add line to storage with key: 10, value: 10 
+2016-11-01 16:11:15,820 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 13, value: 13 
+2016-11-01 16:11:15,820 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:11:34,066 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 110, 117, 108, 108, 32, 13]
+2016-11-01 16:11:34,067 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:11:34,069 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache size equals maximum cache size.
+2016-11-01 16:11:34,069 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete element from cache with key: 13, value: 13 
+2016-11-01 16:11:34,069 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add line to storage with key: 13, value: 13 
+2016-11-01 16:11:34,069 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 10, value: null 
+2016-11-01 16:11:34,069 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:12:57,484 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 48, 31, 110, 117, 108, 108, 32, 13]
+2016-11-01 16:12:57,484 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:12:57,484 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete value from cache with key: 10
+2016-11-01 16:12:57,537 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:13:12,605 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 52, 31, 49, 52, 32, 13]
+2016-11-01 16:13:12,606 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:13:12,606 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 14, value: 14 
+2016-11-01 16:13:12,606 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:13:24,520 DEBUG [Thread-2] root: Recieved message in byte: [71, 69, 84, 31, 49, 52, 31, 13]
+2016-11-01 16:13:24,520 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'GET'
+2016-11-01 16:13:24,520 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache contains key 14
+2016-11-01 16:13:24,521 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: 14 '
+2016-11-01 16:13:29,147 DEBUG [Thread-2] root: Recieved message in byte: [71, 69, 84, 31, 49, 52, 31, 13]
+2016-11-01 16:13:29,147 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'GET'
+2016-11-01 16:13:29,147 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache contains key 14
+2016-11-01 16:13:29,148 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: 14 '
+2016-11-01 16:13:38,152 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 53, 31, 49, 53, 32, 13]
+2016-11-01 16:13:38,153 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:13:38,153 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache size equals maximum cache size.
+2016-11-01 16:13:38,153 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete element from cache with key: 11, value: 11 
+2016-11-01 16:13:38,153 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add line to storage with key: 11, value: 11 
+2016-11-01 16:13:38,153 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 15, value: 15 
+2016-11-01 16:13:38,153 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:14:08,655 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 51, 31, 110, 101, 119, 32, 13]
+2016-11-01 16:14:08,656 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:14:08,656 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache size equals maximum cache size.
+2016-11-01 16:14:08,656 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete element from cache with key: 15, value: 15 
+2016-11-01 16:14:08,656 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add line to storage with key: 15, value: 15 
+2016-11-01 16:14:08,657 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 13, value: new 
+2016-11-01 16:14:08,657 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:17:42,367 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 54, 31, 49, 54, 32, 13]
+2016-11-01 16:17:42,367 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:17:42,367 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache size equals maximum cache size.
+2016-11-01 16:17:42,367 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete element from cache with key: 13, value: new 
+2016-11-01 16:17:42,379 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add line to storage with key: 13, value: new 
+2016-11-01 16:17:42,379 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 16, value: 16 
+2016-11-01 16:17:42,379 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:17:47,076 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 49, 55, 31, 49, 55, 32, 13]
+2016-11-01 16:17:47,076 INFO  [Thread-2] root: RECEIVE 	<131.159.206.198:65100>: 'PUT'
+2016-11-01 16:17:47,076 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Cache size equals maximum cache size.
+2016-11-01 16:17:47,077 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Delete element from cache with key: 16, value: 16 
+2016-11-01 16:17:47,077 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add line to storage with key: 16, value: 16 
+2016-11-01 16:17:47,077 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: 17, value: 17 
+2016-11-01 16:17:47,077 INFO  [Thread-2] root: SEND 	<131.159.206.198:65100>: 'key: null, value: null'
+2016-11-01 16:18:57,868 INFO  [Thread-0] root: Connected to localhost on port 53166
+2016-11-01 16:18:57,870 INFO  [Thread-0] root: Connected to localhost on port 53167
+2016-11-01 16:18:57,880 DEBUG [Thread-4] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 16:18:57,880 INFO  [Thread-4] root: RECEIVE 	<127.0.0.1:53167>: 'PUT'
+2016-11-01 16:18:57,880 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Cache size equals maximum cache size.
+2016-11-01 16:18:57,880 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Delete element from cache with key: 17, value: 17 
+2016-11-01 16:18:57,881 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Add line to storage with key: 17, value: 17 
+2016-11-01 16:18:57,881 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 16:18:57,881 INFO  [Thread-4] root: SEND 	<127.0.0.1:53167>: 'key: null, value: null'
+2016-11-01 16:18:57,899 INFO  [Thread-0] root: Connected to localhost on port 53168
+2016-11-01 16:18:57,905 DEBUG [Thread-6] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 105, 110, 105, 116, 105, 97, 108, 13]
+2016-11-01 16:18:57,906 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:53169>: 'PUT'
+2016-11-01 16:18:57,906 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache size equals maximum cache size.
+2016-11-01 16:18:57,906 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Delete element from cache with key: foobar, value: bar
+2016-11-01 16:18:57,906 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add line to storage with key: foobar, value: bar
+2016-11-01 16:18:57,906 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add element to cache with with key: updateTestValue, value: initial
+2016-11-01 16:18:57,907 INFO  [Thread-6] root: SEND 	<127.0.0.1:53169>: 'key: null, value: null'
+2016-11-01 16:18:57,908 INFO  [Thread-0] root: Connected to localhost on port 53169
+2016-11-01 16:18:57,909 DEBUG [Thread-6] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 117, 112, 100, 97, 116, 101, 100, 13]
+2016-11-01 16:18:57,909 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:53169>: 'PUT'
+2016-11-01 16:18:57,909 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Update key updateTestValue with value updated
+2016-11-01 16:18:57,910 INFO  [Thread-6] root: SEND 	<127.0.0.1:53169>: 'key: null, value: updated'
+2016-11-01 16:18:57,922 INFO  [Thread-0] root: Connected to localhost on port 53170
+2016-11-01 16:18:57,922 DEBUG [Thread-7] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 116, 111, 68, 101, 108, 101, 116, 101, 13]
+2016-11-01 16:18:57,922 INFO  [Thread-7] root: RECEIVE 	<127.0.0.1:53170>: 'PUT'
+2016-11-01 16:18:57,922 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Cache size equals maximum cache size.
+2016-11-01 16:18:57,923 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Delete element from cache with key: 12, value: 12 
+2016-11-01 16:18:57,924 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Add line to storage with key: 12, value: 12 
+2016-11-01 16:18:57,924 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Add element to cache with with key: deleteTestValue, value: toDelete
+2016-11-01 16:18:57,925 INFO  [Thread-7] root: SEND 	<127.0.0.1:53170>: 'key: null, value: null'
+2016-11-01 16:18:57,926 DEBUG [Thread-7] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 110, 117, 108, 108, 13]
+2016-11-01 16:18:57,926 INFO  [Thread-7] root: RECEIVE 	<127.0.0.1:53170>: 'PUT'
+2016-11-01 16:18:57,926 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Delete value from cache with key: deleteTestValue
+2016-11-01 16:18:57,927 INFO  [Thread-7] root: SEND 	<127.0.0.1:53170>: 'key: null, value: null'
+2016-11-01 16:18:57,948 DEBUG [Thread-8] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 31, 98, 97, 114, 13]
+2016-11-01 16:18:57,949 INFO  [Thread-8] root: RECEIVE 	<127.0.0.1:53171>: 'PUT'
+2016-11-01 16:18:57,949 DEBUG [Thread-8] root: Thread[Thread-8,5,main]Add element to cache with with key: foo, value: bar
+2016-11-01 16:18:57,949 INFO  [Thread-8] root: SEND 	<127.0.0.1:53171>: 'key: null, value: null'
+2016-11-01 16:18:57,953 DEBUG [Thread-8] root: Recieved message in byte: [71, 69, 84, 31, 102, 111, 111, 31, 13]
+2016-11-01 16:18:57,953 INFO  [Thread-8] root: RECEIVE 	<127.0.0.1:53171>: 'GET'
+2016-11-01 16:18:57,953 DEBUG [Thread-8] root: Thread[Thread-8,5,main]Cache contains key foo
+2016-11-01 16:18:57,954 INFO  [Thread-8] root: SEND 	<127.0.0.1:53171>: 'key: null, value: bar'
+2016-11-01 16:18:57,967 INFO  [Thread-0] root: Connected to localhost on port 53171
+2016-11-01 16:18:57,970 DEBUG [Thread-9] root: Recieved message in byte: [71, 69, 84, 31, 97, 110, 32, 117, 110, 115, 101, 116, 32, 118, 97, 108, 117, 101, 31, 13]
+2016-11-01 16:18:57,970 INFO  [Thread-9] root: RECEIVE 	<127.0.0.1:53172>: 'GET'
+2016-11-01 16:18:57,970 DEBUG [Thread-9] root: Thread[Thread-9,5,main]Look for key an unset value on disk
+2016-11-01 16:18:57,971 INFO  [Thread-9] root: SEND 	<127.0.0.1:53172>: 'key: null, value: null'
+2016-11-01 16:18:57,975 INFO  [Thread-0] root: Connected to localhost on port 53172
