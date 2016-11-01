@@ -14,7 +14,6 @@ import common.messages.KVMessage;
 import common.messages.KVMessage.StatusType;
 import common.messages.Marshaller;
 
-
 /**
  * Represents a connection end point for a particular client that is 
  * connected to the server. This class is responsible for message reception 
