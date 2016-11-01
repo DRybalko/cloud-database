@@ -255,3 +255,18 @@
 2016-11-01 13:51:17,925 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 48, 31, 13]
 2016-11-01 13:53:32,653 DEBUG [main] root: Recieved message in byte: [-1]
 2016-11-01 13:53:32,655 INFO  [main] root: Get failed. No enum constant common.messages.KVMessage.StatusType.
+2016-11-01 14:13:07,253 INFO  [main] root: Try to establish connection with address: 131.159.217.108/50000
+2016-11-01 14:13:07,405 INFO  [main] root: Connection established successfuly
+2016-11-01 14:13:14,447 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 48, 31, 116, 104, 105, 115, 32, 13]
+2016-11-01 14:13:14,665 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 14:13:20,947 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 49, 31, 105, 115, 32, 13]
+2016-11-01 14:13:20,951 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 14:13:24,389 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 50, 31, 97, 32, 13]
+2016-11-01 14:13:24,393 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 14:13:29,143 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 48, 31, 13]
+2016-11-01 14:13:29,340 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 116, 104, 105, 115, 32, 13]
+2016-11-01 14:13:36,445 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 49, 31, 13]
+2016-11-01 14:13:36,476 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 105, 115, 32, 13]
+2016-11-01 14:13:42,804 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 51, 31, 116, 101, 115, 116, 32, 13]
+2016-11-01 14:13:42,837 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 14:14:17,294 INFO  [main] root: Connection to server was closed
