@@ -1,0 +1,126 @@
+2016-11-01 10:41:57,059 INFO  [main] root: 
+2016-11-01 10:44:23,333 INFO  [main] root: 
+2016-11-01 10:48:59,240 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 10:48:59,499 INFO  [main] root: Connection established successfuly
+2016-11-01 10:49:10,658 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 50, 51, 31, 104, 101, 108, 108, 111, 13]
+2016-11-01 10:49:10,716 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 10:49:18,807 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 10:49:18,809 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 104, 101, 108, 108, 111, 13]
+2016-11-01 10:49:55,080 INFO  [main] root: Connection to server was closed
+2016-11-01 10:50:16,691 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 10:50:16,718 INFO  [main] root: Connection established successfuly
+2016-11-01 10:50:20,756 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 10:50:20,759 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 69, 82, 82, 79, 82, 31, 13]
+2016-11-01 10:50:31,433 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 50, 51, 31, 104, 101, 108, 108, 111, 13]
+2016-11-01 10:50:31,435 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 10:50:41,952 INFO  [main] root: Connection to server was closed
+2016-11-01 10:50:57,183 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 10:50:57,186 INFO  [main] root: Connection established successfuly
+2016-11-01 10:51:00,924 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 10:51:00,925 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 69, 82, 82, 79, 82, 31, 13]
+2016-11-01 11:00:01,344 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:00:01,424 INFO  [main] root: Connection established successfuly
+2016-11-01 11:00:11,340 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 50, 51, 31, 68, 105, 109, 97, 13]
+2016-11-01 11:00:11,374 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:00:18,973 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 53, 52, 31, 83, 97, 115, 104, 97, 13]
+2016-11-01 11:00:18,974 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:00:22,763 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 53, 52, 31, 13]
+2016-11-01 11:00:22,763 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 83, 97, 115, 104, 97, 13]
+2016-11-01 11:00:25,479 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:00:25,480 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 68, 105, 109, 97, 13]
+2016-11-01 11:00:29,055 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 53, 52, 31, 13]
+2016-11-01 11:00:29,056 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 83, 97, 115, 104, 97, 13]
+2016-11-01 11:00:31,741 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:00:31,742 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 68, 105, 109, 97, 13]
+2016-11-01 11:00:35,675 INFO  [main] root: Connection to server was closed
+2016-11-01 11:00:40,718 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:00:40,720 INFO  [main] root: Connection established successfuly
+2016-11-01 11:00:42,727 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:00:42,728 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 68, 105, 109, 97, 13]
+2016-11-01 11:00:45,252 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 53, 52, 31, 13]
+2016-11-01 11:00:45,253 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 83, 97, 115, 104, 97, 13]
+2016-11-01 11:00:48,831 INFO  [main] root: Connection to server was closed
+2016-11-01 11:00:52,980 INFO  [main] root: Put failed. No connection!
+2016-11-01 11:01:01,015 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:01:01,043 ERROR [main] root: Socket closed
+2016-11-01 11:01:07,948 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:01:07,948 ERROR [main] root: Socket closed
+2016-11-01 11:01:19,686 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:01:19,689 INFO  [main] root: Connection established successfuly
+2016-11-01 11:01:24,000 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:01:24,002 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 68, 105, 109, 97, 13]
+2016-11-01 11:01:32,583 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 50, 51, 31, 110, 111, 110, 97, 13]
+2016-11-01 11:01:32,585 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 85, 80, 68, 65, 84, 69, 31, 110, 111, 110, 97, 13]
+2016-11-01 11:01:35,160 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:01:35,161 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 110, 111, 110, 97, 13]
+2016-11-01 11:01:39,017 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 53, 52, 31, 13]
+2016-11-01 11:01:39,042 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 83, 97, 115, 104, 97, 13]
+2016-11-01 11:01:42,468 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:01:42,469 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 110, 111, 110, 97, 13]
+2016-11-01 11:01:47,964 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 50, 51, 31, 100, 105, 109, 97, 13]
+2016-11-01 11:01:47,965 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 85, 80, 68, 65, 84, 69, 31, 100, 105, 109, 97, 13]
+2016-11-01 11:01:49,823 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:01:49,824 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 100, 105, 109, 97, 13]
+2016-11-01 11:01:59,227 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 50, 51, 31, 110, 117, 108, 108, 13]
+2016-11-01 11:01:59,228 DEBUG [main] root: Recieved message in byte: [68, 69, 76, 69, 84, 69, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:02:06,688 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:02:06,689 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 69, 82, 82, 79, 82, 31, 13]
+2016-11-01 11:02:11,333 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 53, 50, 49, 51, 31, 13]
+2016-11-01 11:02:11,334 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 69, 82, 82, 79, 82, 31, 13]
+2016-11-01 11:02:14,646 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 53, 52, 31, 13]
+2016-11-01 11:02:14,647 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 83, 97, 115, 104, 97, 13]
+2016-11-01 11:02:25,894 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 53, 52, 31, 110, 117, 108, 108, 13]
+2016-11-01 11:02:25,896 DEBUG [main] root: Recieved message in byte: [68, 69, 76, 69, 84, 69, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:03:36,178 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:03:36,233 INFO  [main] root: Connection established successfuly
+2016-11-01 11:03:43,230 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 50, 51, 31, 13]
+2016-11-01 11:03:43,253 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 69, 82, 82, 79, 82, 31, 13]
+2016-11-01 11:03:47,889 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 49, 31, 97, 13]
+2016-11-01 11:03:47,917 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:03:50,251 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 50, 31, 98, 13]
+2016-11-01 11:03:50,252 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:03:53,472 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 51, 31, 99, 13]
+2016-11-01 11:03:53,473 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:03:57,197 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 52, 31, 100, 13]
+2016-11-01 11:03:57,197 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:04:01,752 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 53, 31, 101, 13]
+2016-11-01 11:04:01,753 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:04:06,528 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 54, 31, 102, 13]
+2016-11-01 11:04:06,529 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:04:25,964 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 53, 31, 13]
+2016-11-01 11:04:25,965 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 101, 13]
+2016-11-01 11:04:28,163 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 54, 31, 13]
+2016-11-01 11:04:28,164 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 102, 13]
+2016-11-01 11:10:31,846 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:10:31,968 INFO  [main] root: Connection established successfuly
+2016-11-01 11:12:17,529 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:12:17,621 INFO  [main] root: Connection established successfuly
+2016-11-01 11:14:07,694 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:14:07,717 INFO  [main] root: Connection refused
+2016-11-01 11:14:33,950 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:14:33,971 INFO  [main] root: Connection established successfuly
+2016-11-01 11:15:32,698 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:15:32,772 INFO  [main] root: Connection established successfuly
+2016-11-01 11:15:34,938 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 31, 13]
+2016-11-01 11:18:06,158 DEBUG [main] root: Recieved message in byte: [-1]
+2016-11-01 11:18:06,159 INFO  [main] root: Get failed. No enum constant common.messages.KVMessage.StatusType.
+2016-11-01 11:18:37,429 INFO  [main] root: Try to establish connection with address: localhost/50000
+2016-11-01 11:18:37,496 INFO  [main] root: Connection established successfuly
+2016-11-01 11:18:46,103 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 31, 13]
+2016-11-01 11:18:46,111 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 97, 97, 97, 13]
+2016-11-01 11:18:48,857 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 50, 31, 13]
+2016-11-01 11:18:48,858 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 98, 98, 98, 13]
+2016-11-01 11:18:53,557 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 53, 31, 13]
+2016-11-01 11:18:53,558 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 69, 82, 82, 79, 82, 31, 13]
+2016-11-01 11:18:55,306 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 49, 31, 13]
+2016-11-01 11:18:55,308 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 97, 97, 97, 13]
+2016-11-01 11:19:20,076 DEBUG [main] root: Message to send in byte: [71, 69, 84, 31, 51, 31, 13]
+2016-11-01 11:19:20,077 DEBUG [main] root: Recieved message in byte: [71, 69, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 99, 99, 99, 13]
+2016-11-01 11:19:27,744 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 53, 31, 107, 107, 107, 13]
+2016-11-01 11:19:27,745 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:19:30,261 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 54, 31, 115, 115, 100, 102, 115, 13]
+2016-11-01 11:19:30,262 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:19:32,812 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 55, 31, 115, 100, 102, 115, 100, 102, 13]
+2016-11-01 11:19:32,813 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]
+2016-11-01 11:19:37,020 DEBUG [main] root: Message to send in byte: [80, 85, 84, 31, 56, 31, 115, 97, 100, 102, 115, 97, 100, 102, 13]
+2016-11-01 11:19:37,020 DEBUG [main] root: Recieved message in byte: [80, 85, 84, 95, 83, 85, 67, 67, 69, 83, 83, 31, 13]

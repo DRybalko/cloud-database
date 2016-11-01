@@ -9,8 +9,8 @@ import logger.LogSetup;
 import org.apache.log4j.*;
 
 import common.messages.KVMessage;
-
 import client.KVCommInterface;
+import client.KVStore;
 
 /** 
  * This class is needed to process the user input from the console. 
@@ -63,7 +63,7 @@ public class CommandLineProcessor {
 	private static void parseInput() {
 		String command = input[0];
 		switch (command) {
-		case "connect": connectToServer();
+		case "connect": connect();
 						break;
 		case "disconnect": disconnect();
 						break;
@@ -81,7 +81,16 @@ public class CommandLineProcessor {
 		}
 	}
 
-	private static void connectToServer() {
+	private static void connect() {
+		if (input.length >= 3) {
+			kvStore = new KVStore(input[1], Integer.valueOf(input[2]));
+			establishConnection();
+		} else {
+			errorMessage();
+		}
+	}
+	
+	private static void establishConnection() {
 		try {
 			kvStore.connect();
 			System.out.println("Connection was established successfuly");
@@ -99,7 +108,7 @@ public class CommandLineProcessor {
 	private static void logLevel() {
 		if (input.length >= 2) {
 			String logLevel = input[1];
-			if (LogSetup.isValidLevel(logLevel)) logger.setLevel(Level.toLevel(logLevel));
+			logger.getRootLogger().setLevel(Level.toLevel(logLevel));
 			System.out.println(LINE_START + "Current logging level: "
 					+ logger.getLevel());
 		} else {

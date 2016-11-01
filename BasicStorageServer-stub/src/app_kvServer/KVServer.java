@@ -9,13 +9,15 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 public class KVServer extends Thread {
+	
+	private static final int MAX_CACHE_SIZE = 5;
+	private static final String CACHE_STRATEGY = "fifo";
 
 	private ServerSocket serverSocket;
 	private static Logger logger = Logger.getRootLogger();
 	private int port;
 	private boolean running;
-	private String cacheStrategy;
-	private int cacheSize;
+	private PersistenceLogic persistenceLogic;
 	
 	/**
 	 * Start KV Server at given port
@@ -30,8 +32,7 @@ public class KVServer extends Thread {
 	 */
 	public KVServer(int port, int cacheSize, String cacheStrategy) {
 		this.port = port;
-		this.cacheSize = cacheSize;
-		this.cacheStrategy = cacheStrategy;
+		this.persistenceLogic = new PersistenceLogic(cacheSize, cacheStrategy);
 	}
 
 	/**
@@ -39,8 +40,7 @@ public class KVServer extends Thread {
 	 * Loops until the the server should be closed.
 	 */
 	public void run() {
-		running = initializeServer();
-		
+		running = initializeServer();		
 		if(serverSocket != null) {
 			while(isRunning()){
 				try {
@@ -53,9 +53,13 @@ public class KVServer extends Thread {
 		logger.info("Server stopped.");
 	}
 	
+	private boolean isRunning() {
+		return this.running;
+	}
+	
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();                
-		ClientConnection connection = new ClientConnection(client, cacheSize, cacheStrategy);
+		ClientConnection connection = new ClientConnection(client, persistenceLogic);
 		new Thread(connection).start();
 
 		logger.info("Connected to " 
@@ -63,23 +67,7 @@ public class KVServer extends Thread {
 				+  " on port " + client.getPort());
 	}
 
-	private boolean isRunning() {
-		return this.running;
-	}
-
-	/**
-	 * Stops the server insofar that it won't listen at the given port any more.
-	 */
-	public void stopServer(){
-		running = false;
-		try {
-			serverSocket.close();
-		} catch (IOException e) {
-			logger.error("Error! " +
-					"Unable to close socket on port: " + port, e);
-		}
-	}
-
+	
 	private boolean initializeServer() {
 		logger.info("Initialize server ...");
 		try {
@@ -93,6 +81,18 @@ public class KVServer extends Thread {
 				logger.error("Port " + port + " is already bound!");
 			}
 			return false;
+		}
+	}
+	/**
+	 * Stops the server insofar that it won't listen at the given port any more.
+	 */
+	public void stopServer(){
+		running = false;
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			logger.error("Error! " +
+					"Unable to close socket on port: " + port, e);
 		}
 	}
 
@@ -122,8 +122,7 @@ public class KVServer extends Thread {
 			System.out.println("Usage: Server <port>!");
 		} else {
 			int port = Integer.parseInt(args[0]);
-			//TODO set right parameters
-			new KVServer(port, 10, "lfu").start();
+			new KVServer(port, MAX_CACHE_SIZE, CACHE_STRATEGY).start();
 		}
 	}
 	

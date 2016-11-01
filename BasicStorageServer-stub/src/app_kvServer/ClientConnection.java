@@ -35,19 +35,15 @@ public class ClientConnection implements Runnable {
 	private InputStream input;
 	private OutputStream output;
 	private PersistenceLogic persistenceLogic;
-	
-	private int cacheSize;
-	private String cacheStrategy;
 
 	/**
 	 * Constructs a new CientConnection object for a given TCP socket.
 	 * @param clientSocket the Socket object for the client connection.
 	 */
-	public ClientConnection(Socket clientSocket, int cacheSize, String cacheStrategy) {
+	public ClientConnection(Socket clientSocket, PersistenceLogic persistenceLogic) {
 		this.clientSocket = clientSocket;
 		this.isOpen = true;
-		this.cacheSize = cacheSize;
-		this.cacheStrategy = cacheStrategy;
+		this.persistenceLogic = persistenceLogic;
 	}
 
 	/**
@@ -55,7 +51,6 @@ public class ClientConnection implements Runnable {
 	 * Loops until the connection is closed or aborted by the client.
 	 */
 	public void run() {
-		persistenceLogic = new PersistenceLogic(cacheSize, cacheStrategy);
 		try {
 			receiveAndProcessMessage();
 		} catch (IOException ioe) {
@@ -148,4 +143,5 @@ public class ClientConnection implements Runnable {
 		}
 		return convertedArray;
 	}
+	
 }

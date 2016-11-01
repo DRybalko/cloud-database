@@ -67,27 +67,4 @@ public class KVStore implements KVCommInterface {
 		}
 		return new KVMessageItem(errorType);
 	}
-	
-/*	public static void main(String[] args) throws Exception {
-		try {
-			LogSetup logSetup = new LogSetup("logs/client/client.log", Level.ERROR);
-		} catch (IOException e) {
-			System.out.println("Logger could not be initialized");
-		}
-		KVStore store = new KVStore("localhost", 50000);
-		store.connect();
-		System.out.println(store.put("1000", "Hi").getStatus().toString());
-		System.out.println(store.put("1001", "Hello").getStatus().toString());
-		System.out.println(store.put("1002", "Welcome").getStatus().toString());
-		System.out.println(store.get("1000").getStatus().toString() + ":" + store.get("1000").getValue());
-		System.out.println(store.get("1001").getStatus().toString() + ":" + store.get("1001").getValue());
-		System.out.println(store.put("1000", "Dima").getStatus().toString());
-		System.out.println(store.get("1000").getStatus().toString() + ":" + store.get("1000").getValue());
-		System.out.println(store.put("1005", "Sevastopol").getStatus().toString());
-		System.out.println(store.put("1006", "Munich").getStatus().toString());
-		System.out.println(store.put("1009", "Watermelon").getStatus().toString());
-		System.out.println(store.get("1005").getStatus().toString() + ":" + store.get("1005").getValue());
-		System.out.println(store.get("1000").getStatus().toString() + ":" + store.get("1000").getValue());
-	}
-	*/
 }

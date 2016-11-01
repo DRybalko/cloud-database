@@ -36,7 +36,7 @@ public class KVMessageItem implements KVMessage{
 		} else if (this.status.equals(StatusType.PUT_ERROR)) {
 			message = "Put operation failed.";
 		} else if (this.status.equals(StatusType.DELETE_SUCCESS)) {
-			message = "Value " + this.getValue() + "was deleted successfuly.";
+			message = "Value was deleted successfuly.";
 		} else if (this.status.equals(StatusType.DELETE_ERROR)) {
 			message = "Delete operation failed";
 		}

@@ -61,7 +61,7 @@ public class PersistenceLogic {
 			KVTuple tuple = lookUpElementOnDisk(key);
 			if (tuple.getValue() != null) {
 				putElementToCache(tuple.getKey(), tuple.getValue());
-				return new KVMessageItem(StatusType.GET_SUCCESS, tuple.getKey());
+				return new KVMessageItem(StatusType.GET_SUCCESS, tuple.getValue());
 			} else {
 				return new KVMessageItem(StatusType.GET_ERROR);
 			}
