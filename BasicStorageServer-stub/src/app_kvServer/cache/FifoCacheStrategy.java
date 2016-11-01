@@ -8,7 +8,7 @@ import app_kvServer.KVTuple;
 public class FifoCacheStrategy implements CacheStrategy {
 
 	private LinkedList<KVTuple> queue;
-	private HashMap<String, String> kvPairs;
+	private HashMap<String, KVTuple> kvPairs;
 	
 	public FifoCacheStrategy() {
 		queue = new LinkedList<>();
@@ -16,8 +16,9 @@ public class FifoCacheStrategy implements CacheStrategy {
 	}
 
 	public void addElement(String key, String value) {
-		kvPairs.put(key, value);
-		queue.add(new KVTuple(key, value));
+		KVTuple tupleToAdd = new KVTuple(key, value);
+		kvPairs.put(key, tupleToAdd);
+		queue.add(tupleToAdd);
 	}
 	
 	public KVTuple deleteElement() {
@@ -27,7 +28,7 @@ public class FifoCacheStrategy implements CacheStrategy {
 	}
 
 	public String getValueFor(String key) {
-		return kvPairs.get(key);
+		return kvPairs.get(key).getValue();
 	}
 
 	public boolean contains(String key) {
@@ -35,7 +36,8 @@ public class FifoCacheStrategy implements CacheStrategy {
 	}
 
 	public void updateElement(String key, String value) {
-		kvPairs.replace(key, value);
+		KVTuple tupleToUpdate = kvPairs.get(key);
+		tupleToUpdate.setValue(value);
 	}
 
 	public int size() {
@@ -43,8 +45,8 @@ public class FifoCacheStrategy implements CacheStrategy {
 	}
 	
 	public void deleteValueFor(String key) {
-		String value = kvPairs.remove(key);
-		queue.remove(new KVTuple(key, value));
+		KVTuple tupleToDelete = kvPairs.remove(key);
+		queue.remove(tupleToDelete);
 	}
 	
 }

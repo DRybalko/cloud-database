@@ -101,6 +101,7 @@ public class KVServer extends Thread {
 	 * @param args contains the port number at args[0].
 	 */
 	public static void main(String[] args) {
+		setupLogger();
 		try {
 			processArgs(args);
 		} catch (IOException e) {
@@ -112,11 +113,9 @@ public class KVServer extends Thread {
 			System.out.println("Usage: Server <port>!");
 			System.exit(1);
 		}
-		setupLogger();
 	}
 	
 	private static void processArgs(String[] args) throws IOException {
-		new LogSetup("logs/server.log", Level.ALL);
 		if(args.length != 1) {
 			System.out.println("Error! Invalid number of arguments!");
 			System.out.println("Usage: Server <port>!");
@@ -128,7 +127,7 @@ public class KVServer extends Thread {
 	
 	private static void setupLogger() {
 		try {
-			new LogSetup("logs/server/server.log", Level.ERROR);
+			new LogSetup("logs/server/server.log", Level.ALL);
 		} catch (IOException e) {
 			System.out.println("Logger could not be initialized");
 		}
