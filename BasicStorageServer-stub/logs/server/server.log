@@ -400,3 +400,221 @@
 2016-11-01 16:18:57,970 DEBUG [Thread-9] root: Thread[Thread-9,5,main]Look for key an unset value on disk
 2016-11-01 16:18:57,971 INFO  [Thread-9] root: SEND 	<127.0.0.1:53172>: 'key: null, value: null'
 2016-11-01 16:18:57,975 INFO  [Thread-0] root: Connected to localhost on port 53172
+2016-11-01 21:30:31,005 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 21:30:31,149 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 21:30:42,814 INFO  [Thread-0] root: Connected to localhost on port 55050
+2016-11-01 21:30:42,820 INFO  [Thread-0] root: Connected to localhost on port 55051
+2016-11-01 21:30:42,853 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:30:42,870 INFO  [Thread-2] root: RECEIVE 	<127.0.0.1:55051>: 'PUT'
+2016-11-01 21:30:42,884 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:30:42,886 INFO  [Thread-2] root: SEND 	<127.0.0.1:55051>: 'key: null, value: null'
+2016-11-01 21:30:42,948 INFO  [Thread-0] root: Connected to localhost on port 55052
+2016-11-01 21:30:42,958 DEBUG [Thread-4] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 105, 110, 105, 116, 105, 97, 108, 13]
+2016-11-01 21:30:42,958 INFO  [Thread-4] root: RECEIVE 	<127.0.0.1:55053>: 'PUT'
+2016-11-01 21:30:42,959 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Add element to cache with with key: updateTestValue, value: initial
+2016-11-01 21:30:42,959 INFO  [Thread-4] root: SEND 	<127.0.0.1:55053>: 'key: null, value: null'
+2016-11-01 21:30:42,961 INFO  [Thread-0] root: Connected to localhost on port 55053
+2016-11-01 21:30:42,964 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 116, 111, 68, 101, 108, 101, 116, 101, 13]
+2016-11-01 21:30:42,965 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55054>: 'PUT'
+2016-11-01 21:30:42,967 INFO  [Thread-0] root: Connected to localhost on port 55054
+2016-11-01 21:30:42,967 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Add element to cache with with key: deleteTestValue, value: toDelete
+2016-11-01 21:30:42,967 INFO  [Thread-5] root: SEND 	<127.0.0.1:55054>: 'key: null, value: null'
+2016-11-01 21:30:42,970 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 110, 117, 108, 108, 13]
+2016-11-01 21:30:42,970 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55054>: 'PUT'
+2016-11-01 21:30:42,970 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Delete value from cache with key: deleteTestValue
+2016-11-01 21:30:43,028 INFO  [Thread-5] root: SEND 	<127.0.0.1:55054>: 'key: null, value: null'
+2016-11-01 21:30:43,038 INFO  [Thread-0] root: Connected to localhost on port 55055
+2016-11-01 21:30:43,040 DEBUG [Thread-6] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 31, 98, 97, 114, 13]
+2016-11-01 21:30:43,040 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55055>: 'PUT'
+2016-11-01 21:30:43,040 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add element to cache with with key: foo, value: bar
+2016-11-01 21:30:43,040 INFO  [Thread-6] root: SEND 	<127.0.0.1:55055>: 'key: null, value: null'
+2016-11-01 21:30:43,045 DEBUG [Thread-6] root: Recieved message in byte: [71, 69, 84, 31, 102, 111, 111, 31, 13]
+2016-11-01 21:30:43,045 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55055>: 'GET'
+2016-11-01 21:30:43,045 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache contains key foo
+2016-11-01 21:30:43,046 INFO  [Thread-6] root: SEND 	<127.0.0.1:55055>: 'key: null, value: bar'
+2016-11-01 21:30:43,061 DEBUG [Thread-7] root: Recieved message in byte: [71, 69, 84, 31, 97, 110, 32, 117, 110, 115, 101, 116, 32, 118, 97, 108, 117, 101, 31, 13]
+2016-11-01 21:30:43,061 INFO  [Thread-0] root: Connected to localhost on port 55056
+2016-11-01 21:30:43,061 INFO  [Thread-7] root: RECEIVE 	<127.0.0.1:55056>: 'GET'
+2016-11-01 21:30:43,061 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Look for key an unset value on disk
+2016-11-01 21:30:43,062 INFO  [Thread-7] root: SEND 	<127.0.0.1:55056>: 'key: null, value: null'
+2016-11-01 21:31:37,428 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 21:31:37,444 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 21:31:44,872 INFO  [Thread-0] root: Connected to localhost on port 55066
+2016-11-01 21:31:44,888 INFO  [Thread-0] root: Connected to localhost on port 55067
+2016-11-01 21:31:44,890 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:31:44,894 INFO  [Thread-2] root: RECEIVE 	<127.0.0.1:55067>: 'PUT'
+2016-11-01 21:31:44,895 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:31:44,908 INFO  [Thread-2] root: SEND 	<127.0.0.1:55067>: 'key: null, value: null'
+2016-11-01 21:31:44,942 INFO  [Thread-0] root: Connected to localhost on port 55068
+2016-11-01 21:31:44,943 DEBUG [Thread-4] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 105, 110, 105, 116, 105, 97, 108, 13]
+2016-11-01 21:31:44,944 INFO  [Thread-4] root: RECEIVE 	<127.0.0.1:55069>: 'PUT'
+2016-11-01 21:31:44,945 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Add element to cache with with key: updateTestValue, value: initial
+2016-11-01 21:31:44,945 INFO  [Thread-4] root: SEND 	<127.0.0.1:55069>: 'key: null, value: null'
+2016-11-01 21:31:44,948 INFO  [Thread-0] root: Connected to localhost on port 55069
+2016-11-01 21:31:44,950 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 116, 111, 68, 101, 108, 101, 116, 101, 13]
+2016-11-01 21:31:44,951 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55070>: 'PUT'
+2016-11-01 21:31:44,951 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Add element to cache with with key: deleteTestValue, value: toDelete
+2016-11-01 21:31:44,951 INFO  [Thread-5] root: SEND 	<127.0.0.1:55070>: 'key: null, value: null'
+2016-11-01 21:31:44,954 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 110, 117, 108, 108, 13]
+2016-11-01 21:31:44,954 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55070>: 'PUT'
+2016-11-01 21:31:44,954 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Delete value from cache with key: deleteTestValue
+2016-11-01 21:31:44,955 INFO  [Thread-0] root: Connected to localhost on port 55070
+2016-11-01 21:31:44,975 INFO  [Thread-5] root: SEND 	<127.0.0.1:55070>: 'key: null, value: null'
+2016-11-01 21:31:45,006 DEBUG [Thread-6] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 31, 98, 97, 114, 13]
+2016-11-01 21:31:45,006 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55071>: 'PUT'
+2016-11-01 21:31:45,006 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add element to cache with with key: foo, value: bar
+2016-11-01 21:31:45,007 INFO  [Thread-0] root: Connected to localhost on port 55071
+2016-11-01 21:31:45,011 INFO  [Thread-6] root: SEND 	<127.0.0.1:55071>: 'key: null, value: null'
+2016-11-01 21:31:45,013 DEBUG [Thread-6] root: Recieved message in byte: [71, 69, 84, 31, 102, 111, 111, 31, 13]
+2016-11-01 21:31:45,013 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55071>: 'GET'
+2016-11-01 21:31:45,013 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache contains key foo
+2016-11-01 21:31:45,013 INFO  [Thread-6] root: SEND 	<127.0.0.1:55071>: 'key: null, value: bar'
+2016-11-01 21:31:45,029 DEBUG [Thread-7] root: Recieved message in byte: [71, 69, 84, 31, 97, 110, 32, 117, 110, 115, 101, 116, 32, 118, 97, 108, 117, 101, 31, 13]
+2016-11-01 21:31:45,029 INFO  [Thread-7] root: RECEIVE 	<127.0.0.1:55072>: 'GET'
+2016-11-01 21:31:45,029 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Look for key an unset value on disk
+2016-11-01 21:31:45,029 INFO  [Thread-7] root: SEND 	<127.0.0.1:55072>: 'key: null, value: null'
+2016-11-01 21:31:45,032 INFO  [Thread-0] root: Connected to localhost on port 55072
+2016-11-01 21:32:22,101 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 21:32:22,116 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 21:32:28,322 INFO  [Thread-0] root: Connected to localhost on port 55080
+2016-11-01 21:32:28,330 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:32:28,331 INFO  [Thread-0] root: Connected to localhost on port 55081
+2016-11-01 21:32:28,337 INFO  [Thread-2] root: RECEIVE 	<127.0.0.1:55081>: 'PUT'
+2016-11-01 21:32:28,347 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:32:28,363 INFO  [Thread-2] root: SEND 	<127.0.0.1:55081>: 'key: null, value: null'
+2016-11-01 21:32:28,428 INFO  [Thread-0] root: Connected to localhost on port 55082
+2016-11-01 21:32:28,435 DEBUG [Thread-4] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 105, 110, 105, 116, 105, 97, 108, 13]
+2016-11-01 21:32:28,435 INFO  [Thread-4] root: RECEIVE 	<127.0.0.1:55083>: 'PUT'
+2016-11-01 21:32:28,435 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Add element to cache with with key: updateTestValue, value: initial
+2016-11-01 21:32:28,435 INFO  [Thread-4] root: SEND 	<127.0.0.1:55083>: 'key: null, value: null'
+2016-11-01 21:32:28,438 INFO  [Thread-0] root: Connected to localhost on port 55083
+2016-11-01 21:32:28,451 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 116, 111, 68, 101, 108, 101, 116, 101, 13]
+2016-11-01 21:32:28,451 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55084>: 'PUT'
+2016-11-01 21:32:28,451 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Add element to cache with with key: deleteTestValue, value: toDelete
+2016-11-01 21:32:28,451 INFO  [Thread-5] root: SEND 	<127.0.0.1:55084>: 'key: null, value: null'
+2016-11-01 21:32:28,452 INFO  [Thread-0] root: Connected to localhost on port 55084
+2016-11-01 21:32:28,461 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 110, 117, 108, 108, 13]
+2016-11-01 21:32:28,462 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55084>: 'PUT'
+2016-11-01 21:32:28,462 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Delete value from cache with key: deleteTestValue
+2016-11-01 21:32:28,479 INFO  [Thread-5] root: SEND 	<127.0.0.1:55084>: 'key: null, value: null'
+2016-11-01 21:32:28,495 DEBUG [Thread-6] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 31, 98, 97, 114, 13]
+2016-11-01 21:32:28,497 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55085>: 'PUT'
+2016-11-01 21:32:28,496 INFO  [Thread-0] root: Connected to localhost on port 55085
+2016-11-01 21:32:28,498 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache size equals maximum cache size.
+2016-11-01 21:32:28,498 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Delete element from cache with key: foobar, value: bar
+2016-11-01 21:32:28,502 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add line to storage with key: foobar, value: bar
+2016-11-01 21:32:28,502 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add element to cache with with key: foo, value: bar
+2016-11-01 21:32:28,502 INFO  [Thread-6] root: SEND 	<127.0.0.1:55085>: 'key: null, value: null'
+2016-11-01 21:32:28,504 DEBUG [Thread-6] root: Recieved message in byte: [71, 69, 84, 31, 102, 111, 111, 31, 13]
+2016-11-01 21:32:28,504 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55085>: 'GET'
+2016-11-01 21:32:28,505 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache contains key foo
+2016-11-01 21:32:28,505 INFO  [Thread-6] root: SEND 	<127.0.0.1:55085>: 'key: null, value: bar'
+2016-11-01 21:32:28,508 DEBUG [Thread-7] root: Recieved message in byte: [71, 69, 84, 31, 97, 110, 32, 117, 110, 115, 101, 116, 32, 118, 97, 108, 117, 101, 31, 13]
+2016-11-01 21:32:28,508 INFO  [Thread-7] root: RECEIVE 	<127.0.0.1:55086>: 'GET'
+2016-11-01 21:32:28,509 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Look for key an unset value on disk
+2016-11-01 21:32:28,509 INFO  [Thread-0] root: Connected to localhost on port 55086
+2016-11-01 21:32:28,509 INFO  [Thread-7] root: SEND 	<127.0.0.1:55086>: 'key: null, value: null'
+2016-11-01 21:34:11,462 INFO  [Thread-0] root: Connected to localhost on port 55098
+2016-11-01 21:34:11,483 INFO  [Thread-0] root: Connected to localhost on port 55099
+2016-11-01 21:34:11,492 DEBUG [Thread-9] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:34:11,492 INFO  [Thread-9] root: RECEIVE 	<127.0.0.1:55099>: 'PUT'
+2016-11-01 21:34:11,515 DEBUG [Thread-9] root: Thread[Thread-9,5,main]Cache size equals maximum cache size.
+2016-11-01 21:34:11,515 DEBUG [Thread-9] root: Thread[Thread-9,5,main]Delete element from cache with key: updateTestValue, value: initial
+2016-11-01 21:34:11,536 DEBUG [Thread-9] root: Thread[Thread-9,5,main]Add line to storage with key: updateTestValue, value: initial
+2016-11-01 21:34:11,536 DEBUG [Thread-9] root: Thread[Thread-9,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:34:11,536 INFO  [Thread-9] root: SEND 	<127.0.0.1:55099>: 'key: null, value: null'
+2016-11-01 21:37:04,386 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 21:37:04,424 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 21:37:22,619 INFO  [Thread-0] root: Connected to localhost on port 55102
+2016-11-01 21:37:22,622 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:37:22,624 INFO  [Thread-0] root: Connected to localhost on port 55103
+2016-11-01 21:37:22,632 INFO  [Thread-2] root: RECEIVE 	<127.0.0.1:55103>: 'PUT'
+2016-11-01 21:37:22,632 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:37:22,635 INFO  [Thread-2] root: SEND 	<127.0.0.1:55103>: 'key: null, value: null'
+2016-11-01 21:37:22,675 INFO  [Thread-0] root: Connected to localhost on port 55104
+2016-11-01 21:37:22,682 INFO  [Thread-0] root: Connected to localhost on port 55105
+2016-11-01 21:37:22,683 DEBUG [Thread-4] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 105, 110, 105, 116, 105, 97, 108, 13]
+2016-11-01 21:37:22,687 INFO  [Thread-4] root: RECEIVE 	<127.0.0.1:55105>: 'PUT'
+2016-11-01 21:37:22,687 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Add element to cache with with key: updateTestValue, value: initial
+2016-11-01 21:37:22,687 INFO  [Thread-4] root: SEND 	<127.0.0.1:55105>: 'key: null, value: null'
+2016-11-01 21:37:22,713 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 116, 111, 68, 101, 108, 101, 116, 101, 13]
+2016-11-01 21:37:22,713 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55106>: 'PUT'
+2016-11-01 21:37:22,714 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Add element to cache with with key: deleteTestValue, value: toDelete
+2016-11-01 21:37:22,714 INFO  [Thread-5] root: SEND 	<127.0.0.1:55106>: 'key: null, value: null'
+2016-11-01 21:37:22,717 INFO  [Thread-0] root: Connected to localhost on port 55106
+2016-11-01 21:37:22,718 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 110, 117, 108, 108, 13]
+2016-11-01 21:37:22,718 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55106>: 'PUT'
+2016-11-01 21:37:22,718 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Delete value from cache with key: deleteTestValue
+2016-11-01 21:37:22,726 INFO  [Thread-5] root: SEND 	<127.0.0.1:55106>: 'key: null, value: null'
+2016-11-01 21:37:22,739 INFO  [Thread-0] root: Connected to localhost on port 55107
+2016-11-01 21:37:22,740 DEBUG [Thread-6] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 31, 98, 97, 114, 13]
+2016-11-01 21:37:22,741 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55107>: 'PUT'
+2016-11-01 21:37:22,741 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache size equals maximum cache size.
+2016-11-01 21:37:22,741 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Delete element from cache with key: foobar, value: bar
+2016-11-01 21:37:22,742 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add line to storage with key: foobar, value: bar
+2016-11-01 21:37:22,742 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add element to cache with with key: foo, value: bar
+2016-11-01 21:37:22,743 INFO  [Thread-6] root: SEND 	<127.0.0.1:55107>: 'key: null, value: null'
+2016-11-01 21:37:22,743 DEBUG [Thread-6] root: Recieved message in byte: [71, 69, 84, 31, 102, 111, 111, 31, 13]
+2016-11-01 21:37:22,744 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55107>: 'GET'
+2016-11-01 21:37:22,744 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache contains key foo
+2016-11-01 21:37:22,745 INFO  [Thread-6] root: SEND 	<127.0.0.1:55107>: 'key: null, value: bar'
+2016-11-01 21:37:22,770 DEBUG [Thread-7] root: Recieved message in byte: [71, 69, 84, 31, 97, 110, 32, 117, 110, 115, 101, 116, 32, 118, 97, 108, 117, 101, 31, 13]
+2016-11-01 21:37:22,771 INFO  [Thread-7] root: RECEIVE 	<127.0.0.1:55108>: 'GET'
+2016-11-01 21:37:22,771 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Look for key an unset value on disk
+2016-11-01 21:37:22,771 INFO  [Thread-7] root: SEND 	<127.0.0.1:55108>: 'key: null, value: null'
+2016-11-01 21:37:22,791 INFO  [Thread-0] root: Connected to localhost on port 55108
+2016-11-01 21:38:55,639 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 21:38:55,712 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 21:39:01,830 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:39:01,833 INFO  [Thread-1] root: RECEIVE 	<127.0.0.1:55125>: 'PUT'
+2016-11-01 21:39:01,835 INFO  [Thread-0] root: Connected to localhost on port 55125
+2016-11-01 21:39:01,839 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:39:01,856 INFO  [Thread-1] root: SEND 	<127.0.0.1:55125>: 'key: null, value: null'
+2016-11-01 21:39:22,449 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 21:39:22,489 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 21:39:28,442 INFO  [Thread-0] root: Connected to localhost on port 55130
+2016-11-01 21:39:51,145 DEBUG [Thread-1] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:40:53,949 INFO  [Thread-1] root: RECEIVE 	<127.0.0.1:55130>: 'PUT'
+2016-11-01 21:45:24,986 DEBUG [Thread-1] root: Thread[Thread-1,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:45:25,037 INFO  [Thread-1] root: SEND 	<127.0.0.1:55130>: 'key: null, value: null'
+2016-11-01 21:45:58,431 INFO  [Thread-0] root: Initialize server ...
+2016-11-01 21:45:58,461 INFO  [Thread-0] root: Server listening on port: 50000
+2016-11-01 21:46:16,387 INFO  [Thread-0] root: Connected to localhost on port 55147
+2016-11-01 21:46:16,388 INFO  [Thread-0] root: Connected to localhost on port 55148
+2016-11-01 21:46:16,394 DEBUG [Thread-2] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 98, 97, 114, 31, 98, 97, 114, 13]
+2016-11-01 21:46:16,399 INFO  [Thread-2] root: RECEIVE 	<127.0.0.1:55148>: 'PUT'
+2016-11-01 21:46:16,399 DEBUG [Thread-2] root: Thread[Thread-2,5,main]Add element to cache with with key: foobar, value: bar
+2016-11-01 21:46:16,403 INFO  [Thread-2] root: SEND 	<127.0.0.1:55148>: 'key: null, value: null'
+2016-11-01 21:46:16,412 INFO  [Thread-0] root: Connected to localhost on port 55149
+2016-11-01 21:46:16,414 DEBUG [Thread-4] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 105, 110, 105, 116, 105, 97, 108, 13]
+2016-11-01 21:46:16,415 INFO  [Thread-4] root: RECEIVE 	<127.0.0.1:55150>: 'PUT'
+2016-11-01 21:46:16,415 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Add element to cache with with key: updateTestValue, value: initial
+2016-11-01 21:46:16,415 INFO  [Thread-4] root: SEND 	<127.0.0.1:55150>: 'key: null, value: null'
+2016-11-01 21:46:16,423 DEBUG [Thread-4] root: Recieved message in byte: [80, 85, 84, 31, 117, 112, 100, 97, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 117, 112, 100, 97, 116, 101, 100, 13]
+2016-11-01 21:46:16,423 INFO  [Thread-4] root: RECEIVE 	<127.0.0.1:55150>: 'PUT'
+2016-11-01 21:46:16,424 DEBUG [Thread-4] root: Thread[Thread-4,5,main]Update key updateTestValue with value updated
+2016-11-01 21:46:16,424 INFO  [Thread-0] root: Connected to localhost on port 55150
+2016-11-01 21:46:16,437 INFO  [Thread-4] root: SEND 	<127.0.0.1:55150>: 'key: null, value: updated'
+2016-11-01 21:46:16,449 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 116, 111, 68, 101, 108, 101, 116, 101, 13]
+2016-11-01 21:46:16,449 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55151>: 'PUT'
+2016-11-01 21:46:16,449 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Add element to cache with with key: deleteTestValue, value: toDelete
+2016-11-01 21:46:16,450 INFO  [Thread-5] root: SEND 	<127.0.0.1:55151>: 'key: null, value: null'
+2016-11-01 21:46:16,453 DEBUG [Thread-5] root: Recieved message in byte: [80, 85, 84, 31, 100, 101, 108, 101, 116, 101, 84, 101, 115, 116, 86, 97, 108, 117, 101, 31, 110, 117, 108, 108, 13]
+2016-11-01 21:46:16,454 INFO  [Thread-0] root: Connected to localhost on port 55151
+2016-11-01 21:46:16,454 INFO  [Thread-5] root: RECEIVE 	<127.0.0.1:55151>: 'PUT'
+2016-11-01 21:46:16,454 DEBUG [Thread-5] root: Thread[Thread-5,5,main]Delete value from cache with key: deleteTestValue
+2016-11-01 21:46:16,455 INFO  [Thread-5] root: SEND 	<127.0.0.1:55151>: 'key: null, value: null'
+2016-11-01 21:46:16,466 INFO  [Thread-0] root: Connected to localhost on port 55152
+2016-11-01 21:46:16,467 DEBUG [Thread-6] root: Recieved message in byte: [80, 85, 84, 31, 102, 111, 111, 31, 98, 97, 114, 13]
+2016-11-01 21:46:16,467 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55152>: 'PUT'
+2016-11-01 21:46:16,467 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Add element to cache with with key: foo, value: bar
+2016-11-01 21:46:16,468 INFO  [Thread-6] root: SEND 	<127.0.0.1:55152>: 'key: null, value: null'
+2016-11-01 21:46:16,470 DEBUG [Thread-6] root: Recieved message in byte: [71, 69, 84, 31, 102, 111, 111, 31, 13]
+2016-11-01 21:46:16,470 INFO  [Thread-6] root: RECEIVE 	<127.0.0.1:55152>: 'GET'
+2016-11-01 21:46:16,470 DEBUG [Thread-6] root: Thread[Thread-6,5,main]Cache contains key foo
+2016-11-01 21:46:16,470 INFO  [Thread-6] root: SEND 	<127.0.0.1:55152>: 'key: null, value: bar'
+2016-11-01 21:46:16,485 INFO  [Thread-0] root: Connected to localhost on port 55153
+2016-11-01 21:46:16,485 DEBUG [Thread-7] root: Recieved message in byte: [71, 69, 84, 31, 97, 110, 32, 117, 110, 115, 101, 116, 32, 118, 97, 108, 117, 101, 31, 13]
+2016-11-01 21:46:16,499 INFO  [Thread-7] root: RECEIVE 	<127.0.0.1:55153>: 'GET'
+2016-11-01 21:46:16,499 DEBUG [Thread-7] root: Thread[Thread-7,5,main]Look for key an unset value on disk
+2016-11-01 21:46:16,499 INFO  [Thread-7] root: SEND 	<127.0.0.1:55153>: 'key: null, value: null'
