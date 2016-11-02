@@ -127,6 +127,20 @@ public class InteractionTest extends TestCase {
 		assertTrue(ex == null && response.getStatus() == StatusType.GET_ERROR);
 	}
 	
-
+	@Test
+	public void testDeleteNonExistingKvPair() {
+		String key = "keyForNull";
+		String value = "null";
+		Exception ex = null;
+		KVMessage response = null;
+		
+		try {
+			response = kvClient.put(key, value);
+		} catch (Exception e) {
+			ex = e;
+		}
+		
+		assertTrue(ex == null && response.getStatus() == StatusType.DELETE_ERROR);
+	}
 
 }

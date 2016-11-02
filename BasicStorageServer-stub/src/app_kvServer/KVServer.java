@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 
 public class KVServer extends Thread {
 	
-	private static final int MAX_CACHE_SIZE = 3;
+	private static final int MAX_CACHE_SIZE = 50;
 	private static final String CACHE_STRATEGY = "lfu";
 
 	private ServerSocket serverSocket;

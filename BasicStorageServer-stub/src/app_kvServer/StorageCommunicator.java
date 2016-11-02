@@ -68,10 +68,12 @@ public class StorageCommunicator {
 		}
 	}
 	
-	public void deleteFromStorage(String key) {
+	public boolean deleteFromStorage(String key) {
 		readFromFile();
+		if (!storage.containsKey(key)) return false;
 		storage.remove(key);
 		writeToFile();
+		return true;
 	}
 		
 	public String readValueFor(String key) {

@@ -3,6 +3,7 @@ package testing;
 
 import org.junit.Test;
 
+import client.KVStore;
 import common.messages.KVMessage;
 import common.messages.KVMessageItem;
 import common.messages.Marshaller;
@@ -50,4 +51,5 @@ public class AdditionalTest extends TestCase {
 		assertNull(unmarshaledMessage.getKey());
 		assertNull(unmarshaledMessage.getValue());
 	}
+
 }

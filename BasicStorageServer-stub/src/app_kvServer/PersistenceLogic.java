@@ -17,6 +17,8 @@ public class PersistenceLogic {
 	private StorageCommunicator storageCommunicator;
 	private Logger logger = Logger.getRootLogger();
 	
+	private final String CLASS_NAME = "PersistenceLogic: ";
+	
 	public PersistenceLogic(int cacheSize, String cacheStrategy) {
 		this.cacheSize = cacheSize;
 		this.cache = defineCacheStrategy(cacheStrategy);
@@ -36,24 +38,29 @@ public class PersistenceLogic {
 	public synchronized KVMessage put(String key, String value) {
 		if (cache.contains(key)) { 
 			if (value.trim().equals("null")) {
-				logger.debug(Thread.currentThread() + "Delete value from cache with key: "+key);
+				logger.debug(CLASS_NAME + " Delete value from cache with key: "+key);
 				cache.deleteValueFor(key);
 				storageCommunicator.deleteFromStorage(key);
 				return new KVMessageItem(StatusType.DELETE_SUCCESS);
 			}
-			logger.debug(Thread.currentThread() + "Update key "+key+" with value "+value);
+			logger.debug(CLASS_NAME + " Update key "+key+" with value "+value);
 			cache.updateElement(key, value); 
-			storageCommunicator.put(key, value);
+			if (storageCommunicator.readValueFor(key) != null) {
+				storageCommunicator.put(key, value);
+			}
 			return new KVMessageItem(StatusType.PUT_UPDATE, value);
 		}
 		else {
 			if (value == null) {
-				logger.debug(Thread.currentThread() + " Value is null, can not be updated.");
+				logger.debug(CLASS_NAME + " Value is null, can not be updated.");
 				return new KVMessageItem(StatusType.DELETE_ERROR);
 			}
 			if (value.trim().equals("null")) {
-				storageCommunicator.deleteFromStorage(key);
-				return new KVMessageItem(StatusType.DELETE_SUCCESS);
+				if (storageCommunicator.deleteFromStorage(key)) {
+					return new KVMessageItem(StatusType.DELETE_SUCCESS);
+				} else {
+					return new KVMessageItem(StatusType.DELETE_ERROR);
+				}
 			}
 			if (storageCommunicator.readValueFor(key) != null) {
 				putElementToCache(key, value);
