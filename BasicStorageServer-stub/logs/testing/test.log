@@ -1,2 +1,4 @@
 2016-10-31 19:23:27,046 ERROR [main] root: Socket closed
 2016-10-31 19:23:27,213 ERROR [main] root: Socket closed
+2016-11-07 18:46:11,328 ERROR [main] root: Error while processing file ecs.config. ecs.config (No such file or directory)
+2016-11-07 18:46:53,942 ERROR [main] root: Error while processing file ecs.config. ecs.config (No such file or directory)
