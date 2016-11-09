@@ -11,9 +11,7 @@ public class Range {
 		this.from = from;
 		this.to = to;
 	}
-	
-
-	
+		
 	public Range(byte[] bytes){
 		int i=0;		        
         while(bytes[i] != SEPARATOR){
