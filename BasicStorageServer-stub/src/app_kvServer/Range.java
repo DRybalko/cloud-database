@@ -4,6 +4,7 @@ public class Range {
 
 	private String from;
 	private String to;
+	private byte [] bytes;
 	private static final byte SEPARATOR = 45;
 	
 	
@@ -31,11 +32,7 @@ public class Range {
 		}
         this.to = new String(to);	
 	}
-	
 
-	public String getLower_limit() {
-		return from;
-	}
 	
 	public void setFrom(String from){
 		this.from = from;
@@ -51,4 +48,11 @@ public class Range {
 		return to;
 	}
 
+	public void setBytes(byte[] bytes){
+		this.bytes = bytes;
+	}
+	
+	public byte[] getBytes(){
+		return (from + "-" + to).getBytes();
+	}
 }
