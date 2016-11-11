@@ -11,13 +11,14 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-public class MetaDataTableInitializer {
+public class MetaDataTableController {
 
 	private Logger logger;
 	private Set<KVServerItem> availableServers;
+	private Set<KVServerItem> workingServers;
 	private List<KVServerItem> metaDataTable;
 	
-	public MetaDataTableInitializer(Set<KVServerItem> availableServers) {
+	public MetaDataTableController(Set<KVServerItem> availableServers) {
 		this.logger = Logger.getRootLogger();
 		this.availableServers = availableServers;
 		this.metaDataTable = new ArrayList<>();
@@ -114,29 +115,22 @@ public class MetaDataTableInitializer {
 		return  ByteArrayMath.compareByteArrays(server.getEndIndex(), node1.getEndIndex()) > 0
 			&& ByteArrayMath.compareByteArrays(server.getEndIndex(), node2.getEndIndex()) < 0;
 	}	
-	
-	/**
-	 * Only for testing
-	 * TODO DELETE BEFORE SUBMITTING!!!
-	 */
-	
-	/*
-	public static void main(String[] args) throws IOException {
-		KVServerItem server1 = new KVServerItem("server1", "23.23", "50000");
-		KVServerItem server2 = new KVServerItem("server2", "223.317", "50001");
-		KVServerItem server3 = new KVServerItem("server3", "346.216", "50002");
-		KVServerItem server4 = new KVServerItem("server4", "33.21", "50003");
-		KVServerItem server5 = new KVServerItem("server5", "11.21", "49999");
-		Set<KVServerItem> availables = new HashSet<>();
-		availables.add(server1);
-		availables.add(server2);
-		availables.add(server3);
-		availables.add(server4);
-		availables.add(server5);
-		new LogSetup("logs/testing/test.log", Level.ERROR);
-		MetaDataTableInitializer initialize = new MetaDataTableInitializer(availables);
-		List<KVServerItem> result = initialize.initializeTable(5);
-		System.out.println(result);
+
+	public void moveFromAvailableToWorking(KVServerItem server) {
+		this.availableServers.remove(server);
+		this.workingServers.add(server);
 	}
-	*/
+	
+	public void moveFromWorkingToAvailable(KVServerItem server) {
+		this.workingServers.remove(server);
+		this.availableServers.add(server);
+	}
+	
+	public Set<KVServerItem> getAvailableServers() {
+		return this.availableServers;
+	}
+	
+	public Set<KVServerItem> getWorkingServers() {
+		return this.workingServers;
+	}
 }
