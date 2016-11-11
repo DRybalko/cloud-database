@@ -18,11 +18,12 @@ public class ECSLogic {
 	}
 	
 	public void initService(int numberOfNodes, int cacheSize, String desplacementStrategy) {
-		MetaDataTableInitializer tableInitializer = new MetaDataTableInitializer(repository.getAvailableServers());
+		MetaDataTableController tableInitializer = new MetaDataTableController(repository.getAvailableServers());
 		metaDataTable = tableInitializer.initializeTable(numberOfNodes);
-		startServer();
+		initializeServers();
 	}
 	
+/*	
 	private void startServer() {
 		Process process;
 		Runtime run = Runtime.getRuntime();
@@ -42,16 +43,17 @@ public class ECSLogic {
 		//	logger.error("Server could not be launched."+e.getMessage());
 		}
 	}
+*/	
 	
-	private void startServers() {
+	private void initializeServers() {
 		Process process;
 		Runtime run = Runtime.getRuntime();
 		for (KVServerItem server: metaDataTable) {
-			String command = "ssh -n "+server.getIp()+" nohup java -jar /Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar +" + server.getPort() + " ERROR &";
+			String command = "ssh -n " + server.getIp() + " nohup java -jar /Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar +" + server.getPort() + " ERROR &";
 			try {
 				process = run.exec(command);
 			} catch (IOException e) {
-				logger.error("Server could not be launched."+e.getMessage());
+				logger.error("Server with IP: " + server.getIp() + " and Port: " + server.getPort() + " could not be launched."+e.getMessage());
 			}
 		}
 	}
