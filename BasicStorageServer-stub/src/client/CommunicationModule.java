@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import common.messages.MessageType;
+
 /**
  * The class NetworkCommunicator is responsible for sending the user's 
  * message to the server and receiving the answer from the server.
@@ -37,6 +39,9 @@ public class CommunicationModule {
 		logger.info("Connection established successfuly");
 		inputStream = echoSocket.getInputStream();	
 		outputStream = echoSocket.getOutputStream();
+		outputStream.write(MessageType.KV_MESSAGE.toString().getBytes());
+		outputStream.write((byte) 31); 
+		outputStream.flush();
 	}
 	
 	public void send(byte[] message) throws IOException {

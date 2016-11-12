@@ -3,7 +3,7 @@ package app_kvServer;
 import org.apache.log4j.Logger;
 
 import common.messages.KVMessage;
-import common.messages.KVMessage.StatusType;
+import common.messages.KVMessage.KvStatusType;
 import common.messages.KVMessageItem;
 import app_kvServer.cache.CacheStrategy;
 import app_kvServer.cache.FifoCacheStrategy;
@@ -41,33 +41,33 @@ public class PersistenceLogic {
 				logger.debug(CLASS_NAME + " Delete value from cache with key: "+key);
 				cache.deleteValueFor(key);
 				storageCommunicator.deleteFromStorage(key);
-				return new KVMessageItem(StatusType.DELETE_SUCCESS);
+				return new KVMessageItem(KvStatusType.DELETE_SUCCESS);
 			}
 			logger.debug(CLASS_NAME + " Update key "+key+" with value "+value);
 			cache.updateElement(key, value); 
 			if (storageCommunicator.readValueFor(key) != null) {
 				storageCommunicator.put(key, value);
 			}
-			return new KVMessageItem(StatusType.PUT_UPDATE, value);
+			return new KVMessageItem(KvStatusType.PUT_UPDATE, value);
 		}
 		else {
 			if (value == null) {
 				logger.debug(CLASS_NAME + " Value is null, can not be updated.");
-				return new KVMessageItem(StatusType.DELETE_ERROR);
+				return new KVMessageItem(KvStatusType.DELETE_ERROR);
 			}
 			if (value.trim().equals("null")) {
 				if (storageCommunicator.deleteFromStorage(key)) {
-					return new KVMessageItem(StatusType.DELETE_SUCCESS);
+					return new KVMessageItem(KvStatusType.DELETE_SUCCESS);
 				} else {
-					return new KVMessageItem(StatusType.DELETE_ERROR);
+					return new KVMessageItem(KvStatusType.DELETE_ERROR);
 				}
 			}
 			if (storageCommunicator.readValueFor(key) != null) {
 				putElementToCache(key, value);
-				return new KVMessageItem(StatusType.PUT_UPDATE);
+				return new KVMessageItem(KvStatusType.PUT_UPDATE);
 			}
 			putElementToCache(key, value);
-			return new KVMessageItem(StatusType.PUT_SUCCESS);
+			return new KVMessageItem(KvStatusType.PUT_SUCCESS);
 		}
 	}
 	
@@ -86,7 +86,7 @@ public class PersistenceLogic {
 	public synchronized KVMessage get(String key) {
 		if (cache.contains(key)) {
 			logger.debug(Thread.currentThread() + "Cache contains key "+key);
-			return new KVMessageItem(StatusType.GET_SUCCESS, cache.getValueFor(key));
+			return new KVMessageItem(KvStatusType.GET_SUCCESS, cache.getValueFor(key));
 		} else {
 			KVTuple tuple = lookUpElementOnDisk(key);
 			if (tuple.getValue() != null) {
@@ -94,9 +94,9 @@ public class PersistenceLogic {
 						+ " Value is not equal to null. Should write to cache. "
 						+ "Key: "+key+", value: "+tuple.getValue());
 				putElementToCache(tuple.getKey(), tuple.getValue());
-				return new KVMessageItem(StatusType.GET_SUCCESS, tuple.getValue());
+				return new KVMessageItem(KvStatusType.GET_SUCCESS, tuple.getValue());
 			} else {
-				return new KVMessageItem(StatusType.GET_ERROR);
+				return new KVMessageItem(KvStatusType.GET_ERROR);
 			}
 		} 
 	}

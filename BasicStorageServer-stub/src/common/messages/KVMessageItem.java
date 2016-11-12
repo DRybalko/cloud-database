@@ -12,20 +12,20 @@ public class KVMessageItem implements KVMessage{
 
 	private String key;
 	private String value;
-	private StatusType status;
+	private KvStatusType status;
 
-	public KVMessageItem(StatusType type, String key, String value){
+	public KVMessageItem(KvStatusType type, String key, String value){
 		this.key = key;
 		this.value = value;
 		this.status = type;
 	}
 
-	public KVMessageItem(StatusType type, String keyOrValue){
+	public KVMessageItem(KvStatusType type, String keyOrValue){
 		this.status = type;
-		if (type.equals(KVMessage.StatusType.GET)) {
+		if (type.equals(KVMessage.KvStatusType.GET)) {
 			this.key = keyOrValue;
-		} else if (type.equals(KVMessage.StatusType.GET_SUCCESS) ||
-				type.equals(KVMessage.StatusType.PUT_UPDATE)) {
+		} else if (type.equals(KVMessage.KvStatusType.GET_SUCCESS) ||
+				type.equals(KVMessage.KvStatusType.PUT_UPDATE)) {
 			this.value = keyOrValue;
 		}				
 	}
@@ -33,19 +33,19 @@ public class KVMessageItem implements KVMessage{
 	@Override
 	public String toString() {
 		String message = "";
-		if (this.status.equals(StatusType.GET_ERROR)) {
+		if (this.status.equals(KvStatusType.GET_ERROR)) {
 			message = "Get operation failed.";
-		} else if (this.status.equals(StatusType.GET_SUCCESS)) {
+		} else if (this.status.equals(KvStatusType.GET_SUCCESS)) {
 			message = "Returned value is: " + this.getValue();
-		} else if (this.status.equals(StatusType.PUT_SUCCESS)) {
+		} else if (this.status.equals(KvStatusType.PUT_SUCCESS)) {
 			message = "Put operation was successful.";
-		} else if (this.status.equals(StatusType.PUT_UPDATE)) {
+		} else if (this.status.equals(KvStatusType.PUT_UPDATE)) {
 			message = "New value for key was set.";
-		} else if (this.status.equals(StatusType.PUT_ERROR)) {
+		} else if (this.status.equals(KvStatusType.PUT_ERROR)) {
 			message = "Put operation failed.";
-		} else if (this.status.equals(StatusType.DELETE_SUCCESS)) {
+		} else if (this.status.equals(KvStatusType.DELETE_SUCCESS)) {
 			message = "Value was deleted successfuly.";
-		} else if (this.status.equals(StatusType.DELETE_ERROR)) {
+		} else if (this.status.equals(KvStatusType.DELETE_ERROR)) {
 			message = "Delete operation failed";
 		} else {
 			message = "Undefined status";
@@ -53,7 +53,7 @@ public class KVMessageItem implements KVMessage{
 		return message;	
 	}
 	
-	public KVMessageItem(StatusType type){
+	public KVMessageItem(KvStatusType type){
 		this.status = type;
 	}
 
@@ -65,11 +65,11 @@ public class KVMessageItem implements KVMessage{
 		return value;
 	}
 
-	public StatusType getStatus() {
+	public KvStatusType getStatus() {
 		return status;
 	}
 
-	public void setStatus(StatusType type) {
+	public void setStatus(KvStatusType type) {
 		this.status = type;
 	}
 

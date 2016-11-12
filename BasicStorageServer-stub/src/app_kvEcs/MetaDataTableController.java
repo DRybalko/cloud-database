@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -16,12 +17,15 @@ public class MetaDataTableController {
 	private Logger logger;
 	private Set<KVServerItem> availableServers;
 	private Set<KVServerItem> workingServers;
+	private Set<KVServerItem> initializedServers;
 	private List<KVServerItem> metaDataTable;
 	
 	public MetaDataTableController(Set<KVServerItem> availableServers) {
 		this.logger = Logger.getRootLogger();
 		this.availableServers = availableServers;
 		this.metaDataTable = new ArrayList<>();
+		this.workingServers = new HashSet<>();
+		this.initializedServers = new HashSet<>();
 	}
 	
 	public List<KVServerItem> initializeTable(int numberOfNodes) {
@@ -116,13 +120,23 @@ public class MetaDataTableController {
 			&& ByteArrayMath.compareByteArrays(server.getEndIndex(), node2.getEndIndex()) < 0;
 	}	
 
-	public void moveFromAvailableToWorking(KVServerItem server) {
+	public void moveFromAvailableToInitialized(KVServerItem server) {
 		this.availableServers.remove(server);
+		this.initializedServers.add(server);
+	}
+	
+	public void moveFromWorkingToInitialized(KVServerItem server) {
+		this.workingServers.remove(server);
+		this.initializedServers.add(server);
+	}
+	
+	public void moveFromInitializedToWorking(KVServerItem server) {
+		this.initializedServers.remove(server);
 		this.workingServers.add(server);
 	}
 	
-	public void moveFromWorkingToAvailable(KVServerItem server) {
-		this.workingServers.remove(server);
+	public void moveFromInitializedToAvailable(KVServerItem server) {
+		this.initializedServers.remove(server);
 		this.availableServers.add(server);
 	}
 	
@@ -132,5 +146,9 @@ public class MetaDataTableController {
 	
 	public Set<KVServerItem> getWorkingServers() {
 		return this.workingServers;
+	}
+	
+	public Set<KVServerItem> getInitializedServers() {
+		return this.initializedServers;
 	}
 }

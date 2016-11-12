@@ -5,7 +5,7 @@ import org.junit.Test;
 import client.KVStore;
 import junit.framework.TestCase;
 import common.messages.KVMessage;
-import common.messages.KVMessage.StatusType;
+import common.messages.KVMessage.KvStatusType;
 
 public class InteractionTest extends TestCase {
 
@@ -36,7 +36,7 @@ public class InteractionTest extends TestCase {
 			ex = e;
 		}
 		
-		assertTrue(ex == null && response.getStatus() == StatusType.PUT_SUCCESS);
+		assertTrue(ex == null && response.getStatus() == KvStatusType.PUT_SUCCESS);
 	}
 	
 	@Test
@@ -72,7 +72,7 @@ public class InteractionTest extends TestCase {
 			ex = e;
 		}
 
-		assertTrue(ex == null && response.getStatus() == StatusType.PUT_UPDATE
+		assertTrue(ex == null && response.getStatus() == KvStatusType.PUT_UPDATE
 				&& response.getValue().equals(updatedValue));
 	}
 	
@@ -92,7 +92,7 @@ public class InteractionTest extends TestCase {
 			ex = e;
 		}
 
-		assertTrue(ex == null && response.getStatus() == StatusType.DELETE_SUCCESS);
+		assertTrue(ex == null && response.getStatus() == KvStatusType.DELETE_SUCCESS);
 	}
 	
 	@Test
@@ -124,7 +124,7 @@ public class InteractionTest extends TestCase {
 			ex = e;
 		}
 
-		assertTrue(ex == null && response.getStatus() == StatusType.GET_ERROR);
+		assertTrue(ex == null && response.getStatus() == KvStatusType.GET_ERROR);
 	}
 	
 	@Test
@@ -140,7 +140,7 @@ public class InteractionTest extends TestCase {
 			ex = e;
 		}
 		
-		assertTrue(ex == null && response.getStatus() == StatusType.DELETE_ERROR);
+		assertTrue(ex == null && response.getStatus() == KvStatusType.DELETE_ERROR);
 	}
 
 }

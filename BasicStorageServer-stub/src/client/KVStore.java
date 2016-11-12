@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import org.apache.log4j.Logger;
 
 import common.messages.*;
-import common.messages.KVMessage.StatusType;
+import common.messages.KVMessage.KvStatusType;
 
 /**
  * This class is responsible for the communication with the server.
@@ -57,20 +57,21 @@ public class KVStore implements KVCommInterface {
 
 	public KVMessage put(String key, String value) throws Exception {
 		if (communicationModule.isClosed()) throw new Exception("No connection!");
-		KVMessage kvMessage = new KVMessageItem(StatusType.PUT, key, value);
-		return sendMessageWithErrorType(kvMessage, StatusType.PUT_ERROR);
+		KVMessage kvMessage = new KVMessageItem(KvStatusType.PUT, key, value);
+		return sendMessageWithErrorType(kvMessage, KvStatusType.PUT_ERROR);
 	}
 
 	public KVMessage get(String key) {
-		KVMessage kvMessage = new KVMessageItem(StatusType.GET, key);
-		return sendMessageWithErrorType(kvMessage, StatusType.GET_ERROR);
+		KVMessage kvMessage = new KVMessageItem(KvStatusType.GET, key);
+		return sendMessageWithErrorType(kvMessage, KvStatusType.GET_ERROR);
 	}
 
-	private KVMessage sendMessageWithErrorType(KVMessage kvMessage, StatusType errorType) {
+	private KVMessage sendMessageWithErrorType(KVMessage kvMessage, KvStatusType errorType) {
+		KVMessageMarshaller kVMessageMarshaller = new KVMessageMarshaller();
 		try {
-			communicationModule.send(Marshaller.marshal(kvMessage));
+			communicationModule.send(kVMessageMarshaller.marshal(kvMessage));
 			byte[] recievedMessage = communicationModule.receive();
-			return Marshaller.unmarshal(recievedMessage);
+			return kVMessageMarshaller.unmarshal(recievedMessage);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}

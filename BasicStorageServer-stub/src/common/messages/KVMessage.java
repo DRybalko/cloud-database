@@ -2,7 +2,7 @@ package common.messages;
 
 public interface KVMessage {
 	
-    public enum StatusType {
+    public enum KvStatusType {
     	GET,             		/* Get - request */
     	GET_ERROR,       		/* requested tuple (i.e. value) not found */
     	GET_SUCCESS,     		/* requested tuple (i.e. value) found */
@@ -33,7 +33,7 @@ public interface KVMessage {
 	 * @return a status string that is used to identify request types, 
 	 * response types and error types associated to the message.
 	 */
-	public StatusType getStatus();
+	public KvStatusType getStatus();
 	
 }
 

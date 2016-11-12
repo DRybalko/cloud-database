@@ -1,0 +1,6 @@
+2016-11-12 18:32:00,614 INFO  [main] root: Starting server with ip 127.0.0.1, port 50006
+2016-11-12 18:32:06,568 INFO  [main] root: Received message from server: REQUEST_ACCEPTED
+2016-11-12 18:42:05,960 INFO  [main] root: Starting server with ip 127.0.0.1, port 50006
+2016-11-12 18:42:06,677 INFO  [main] root: Received message from server: REQUEST_ACCEPTED
+2016-11-12 18:49:37,552 INFO  [main] root: Starting server with ip 127.0.0.1, port 50006
+2016-11-12 18:49:37,981 INFO  [main] root: Received message from server: REQUEST_ACCEPTED
