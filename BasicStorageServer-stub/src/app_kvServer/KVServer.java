@@ -3,15 +3,19 @@ package app_kvServer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.*;
+import java.util.List;
 
 import app_kvServer.ClientConnection;
 import app_kvServer.KVServer;
 import app_kvServer.PersistenceLogic;
 import logger.LogSetup;
 import app_kvServer.Range;
+import app_kvEcs.KVServerItem;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+
+import common.messages.MessageType;
 
 
 /**
@@ -22,8 +26,6 @@ import org.apache.log4j.Logger;
  * 
  * @see PersistenceLogic
  */
-
-
 public class KVServer {
 
 	private ServerSocket serverSocket;
@@ -36,6 +38,7 @@ public class KVServer {
 	private boolean stopped;
 	private byte[] startIndex;
 	private byte[] endIndex;
+	private List<KVServerItem> metaDataTable;
 
 	/**
 	 * Start KV Server at given port
@@ -51,12 +54,9 @@ public class KVServer {
 		try {
 			processArgs(args);
 		} catch (IOException e) {
-			System.out.println("Error! Unable to initialize logger!");
 			e.printStackTrace();
 			System.exit(1);
 		} catch (NumberFormatException nfe) {
-			System.out.println("Error! Invalid argument <port>! Not a number!");
-			System.out.println("Usage: Server <port>!");
 			System.exit(1);
 		}
 	}
@@ -86,8 +86,9 @@ public class KVServer {
 		running = initializeServer();
 		stopped = false;
 		if(serverSocket != null) {
-			while(this.running){
+			while(this.running) {
 				try {
+					logger.info("Server listens ...");
 					listen();
 				} catch (IOException e) {
 					logger.error("Error! " + "Unable to establish connection. \n", e);
@@ -115,10 +116,12 @@ public class KVServer {
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();
 		String messageHeader = getMessageHeader(client);	
-		if (messageHeader.equals("ECS")) {
+		//Message Header is needed to proceed communication with ECS and Client in different ways. Can have values ECS or KV_MESSAGE
+		if (messageHeader.equals(MessageType.ECS.toString())) {
+			logger.info("Connection to ECS established");
 			EcsConnection connection = new EcsConnection(client, this);
 			new Thread(connection).start();
-		} else {
+		} else if (messageHeader.equals(MessageType.KV_MESSAGE.toString())){
 			ClientConnection connection = new ClientConnection(client, this);
 			new Thread(connection).start();
 		}	
@@ -171,7 +174,7 @@ public class KVServer {
 	}
 
 	public void update(byte[] startIndex, byte[] endIndex) {
-		
+		//TODO implement this method
 	}
 
 	public PersistenceLogic getPersistenceLogic() {
@@ -188,6 +191,17 @@ public class KVServer {
 
 	public void setAcceptingRequests(boolean acceptingRequests) {
 		this.acceptingRequests = acceptingRequests;
-	} 
+	}
 
+	public void setStartIndex(byte[] startIndex) {
+		this.startIndex = startIndex;
+	}
+
+	public void setEndIndex(byte[] endIndex) {
+		this.endIndex = endIndex;
+	} 
+	
+	public void setMetaDataTable(List<KVServerItem> metaDataTable) {
+		this.metaDataTable = metaDataTable;
+	}
 }

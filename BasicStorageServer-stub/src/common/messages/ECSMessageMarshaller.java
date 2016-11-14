@@ -1,8 +1,15 @@
 package common.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
+import app_kvEcs.KVServerItem;
 import common.messages.ECSMessage.EcsStatusType;
 
 public class ECSMessageMarshaller extends Marshaller<ECSMessage> {
+	
+	private final String SERVER_ATTRIBUTE_SEPARATOR = "4k6S"; //random string to reduce possibility of generating same byte sequence in start and end index
 	
 	public byte[] marshal(ECSMessage message) {
 		StringBuilder stringBuilder = new StringBuilder();	
@@ -10,36 +17,68 @@ public class ECSMessageMarshaller extends Marshaller<ECSMessage> {
 		
 		stringBuilder.append(type);
 		stringBuilder.append(UNIT_SEPARATOR);
-		byte[] messageInBytes = stringBuilder.toString().getBytes();
-		return marshalDataLoad(message.getDataLoad(), messageInBytes);
+		if (message.getStatus().equals(EcsStatusType.META_DATA_TABLE)) {
+			stringBuilder.append(convertMetaDataTableToString(message.getMetaDataTable()));
+		} else if (message.getStatus().equals(EcsStatusType.UPDATE_START_INDEX)) {
+			stringBuilder.append(new String(message.getStartIndex(), CHARSET));
+		} else if (message.getStatus().equals(EcsStatusType.SERVER_START_END_INDEX)) {
+			stringBuilder.append(new String(message.getStartIndex(), CHARSET));
+			stringBuilder.append(UNIT_SEPARATOR);
+			stringBuilder.append(new String(message.getEndIndex(), CHARSET));
+		}		
+		stringBuilder.append(CARRIAGE);
+		return stringBuilder.toString().getBytes(CHARSET);
 	};
 	
-	public ECSMessageItem unmarshal(byte[] message){
+	private String convertMetaDataTableToString(List<KVServerItem> metaDataTable) {
 		StringBuilder stringBuilder = new StringBuilder();
-		int i = 0;
-		while (message[i] != UNIT_SEPARATOR) {
-			stringBuilder.append((char) message[i]);
-			i++;
+		ListIterator<KVServerItem> iterator = metaDataTable.listIterator();
+		while (iterator.hasNext()) {
+			String serverString = convertKVServerItemToBytes(iterator.next());
+			stringBuilder.append(serverString);
+			if (iterator.hasNext()) stringBuilder.append(UNIT_SEPARATOR);
 		}
-		ECSMessageItem unmarshalledMessage = new ECSMessageItem(EcsStatusType.valueOf(stringBuilder.toString()));
-		if (message.length > (i + 2)) {
-			byte[] dataLoad = new byte[message.length - i - 2];
-			System.arraycopy(message, i+1, dataLoad, 0, message.length - i - 2);
-			unmarshalledMessage.setDataLoad(dataLoad);
+		return stringBuilder.toString();
+	}
+	
+	private String convertKVServerItemToBytes(KVServerItem server) {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append(server.getName());
+		stringBuilder.append(SERVER_ATTRIBUTE_SEPARATOR);
+		stringBuilder.append(server.getIp());
+		stringBuilder.append(SERVER_ATTRIBUTE_SEPARATOR);
+		stringBuilder.append(server.getPort());
+		stringBuilder.append(SERVER_ATTRIBUTE_SEPARATOR);
+		stringBuilder.append(new String(server.getStartIndex(), CHARSET));
+		stringBuilder.append(SERVER_ATTRIBUTE_SEPARATOR);
+		stringBuilder.append(new String(server.getEndIndex(), CHARSET));
+		return stringBuilder.toString();
+	}
+	
+	public ECSMessageItem unmarshal(byte[] message){
+		String[] messageTokens = getMessageTokens(message);
+		ECSMessageItem messageItem = new ECSMessageItem(EcsStatusType.valueOf(messageTokens[0]));
+		if (messageTokens[0].equals(EcsStatusType.META_DATA_TABLE.toString())) {
+			messageItem.setMetaDataTable(convertStringToMetaDataTable(messageTokens));
+		} else if (messageTokens[0].equals(EcsStatusType.SERVER_START_END_INDEX.toString())) {
+			messageItem.setStartIndex(messageTokens[1].getBytes(CHARSET));
+			messageItem.setEndIndex(messageTokens[2].getBytes(CHARSET));
+		} else if (messageTokens[0].equals(EcsStatusType.UPDATE_START_INDEX.toString())) {
+			messageItem.setStartIndex(messageTokens[1].getBytes(CHARSET));
 		}
-		return unmarshalledMessage;
+		return messageItem;
 	}	
 	
-	private static byte[] marshalDataLoad(byte[] dataLoad, byte[] messageInBytes) {
-		byte[] marshaledMessage;
-		if (dataLoad == null) {
-			marshaledMessage = new byte[messageInBytes.length + 1];
-		} else {
-			 marshaledMessage = new byte[messageInBytes.length + dataLoad.length + 1];
-			 System.arraycopy(dataLoad, 0, marshaledMessage, messageInBytes.length, dataLoad.length);
+	private List<KVServerItem> convertStringToMetaDataTable(String[] messageTokens)  {
+		List<KVServerItem> metaDataTable = new ArrayList<>();
+		for (int i=1; i<messageTokens.length; i++) {
+			String[] serverTokens = messageTokens[i].split(SERVER_ATTRIBUTE_SEPARATOR);
+			KVServerItem kvServer = new KVServerItem(serverTokens[0], serverTokens[1], serverTokens[2]);
+			kvServer.setStartIndex(serverTokens[3].getBytes(CHARSET));
+			kvServer.setEndIndex(serverTokens[4].getBytes(CHARSET));
+			metaDataTable.add(kvServer);
 		}
-		System.arraycopy(messageInBytes, 0, marshaledMessage, 0, messageInBytes.length);
-		marshaledMessage[marshaledMessage.length - 1] = 13;
-		return marshaledMessage;
+		return metaDataTable;
 	}
+	
 }

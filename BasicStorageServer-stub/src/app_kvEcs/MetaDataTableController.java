@@ -3,7 +3,6 @@ package app_kvEcs;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +18,7 @@ public class MetaDataTableController {
 	private Set<KVServerItem> workingServers;
 	private Set<KVServerItem> initializedServers;
 	private List<KVServerItem> metaDataTable;
+	private MessageDigest messageDigest;
 	
 	public MetaDataTableController(Set<KVServerItem> availableServers) {
 		this.logger = Logger.getRootLogger();
@@ -26,6 +26,11 @@ public class MetaDataTableController {
 		this.metaDataTable = new ArrayList<>();
 		this.workingServers = new HashSet<>();
 		this.initializedServers = new HashSet<>();
+		try {
+			 messageDigest = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			logger.debug("MessageDigest could not be created. "+e.getMessage());
+		}	
 	}
 	
 	public List<KVServerItem> initializeTable(int numberOfNodes) {
@@ -34,7 +39,6 @@ public class MetaDataTableController {
 			if (serversIterator.hasNext()) {
 				KVServerItem server = serversIterator.next();
 				byte[] serverEndIndex = generateHashFor(server);
-				System.out.println("Server name:" + server.getName() + ", generated index: " + Arrays.toString(serverEndIndex));
 				server.setEndIndex(serverEndIndex);
 				addServerToMetaData(server);
 			} else {
@@ -45,15 +49,9 @@ public class MetaDataTableController {
 	}
 	
 	private byte[] generateHashFor(KVServerItem server) {
-		MessageDigest md = null;
-		try {
-			 md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			logger.debug("MessageDigest could not be created. "+e.getMessage());
-		}	
 		byte[] messageToHash = prepareMessageForHash(server.getIp(), server.getPort());
-		md.update(messageToHash);
-		return md.digest();
+		messageDigest.update(messageToHash);
+		return messageDigest.digest();
 	}
 	
 	public byte[] prepareMessageForHash(String ip, String port) {
@@ -91,7 +89,7 @@ public class MetaDataTableController {
 		existingNode.setStartIndex(ByteArrayMath.increment(serverToInsert.getEndIndex()));
 		metaDataTable.add(position, serverToInsert);
 	}
-	
+
 	private void addServerToMetaDataTableWithMoreThanOneElement(KVServerItem server) {
 		ListIterator<KVServerItem> iterator = metaDataTable.listIterator();
 		KVServerItem previousNode = iterator.next();
@@ -111,7 +109,7 @@ public class MetaDataTableController {
 		if (((byte) server.getEndIndex()[0]) < 0)  {
 			metaDataTable.add(server);
 		} else {
-			metaDataTable.set(0, server);
+			metaDataTable.add(0, server);
 		}
 	}
 	
@@ -120,24 +118,22 @@ public class MetaDataTableController {
 			&& ByteArrayMath.compareByteArrays(server.getEndIndex(), node2.getEndIndex()) < 0;
 	}	
 
-	public void moveFromAvailableToInitialized(KVServerItem server) {
+	//implemented differently, because not all available servers must be copied
+	public void moveOneFromAvailableToInitialized(KVServerItem server) {
 		this.availableServers.remove(server);
 		this.initializedServers.add(server);
 	}
 	
-	public void moveFromWorkingToInitialized(KVServerItem server) {
-		this.workingServers.remove(server);
-		this.initializedServers.add(server);
+	public void moveFromWorkingToInitialized() {
+		this.initializedServers.addAll(workingServers);
 	}
 	
-	public void moveFromInitializedToWorking(KVServerItem server) {
-		this.initializedServers.remove(server);
-		this.workingServers.add(server);
+	public void moveFromInitializedToWorking() {
+		this.workingServers.addAll(initializedServers);
 	}
 	
-	public void moveFromInitializedToAvailable(KVServerItem server) {
-		this.initializedServers.remove(server);
-		this.availableServers.add(server);
+	public void moveFromInitializedToAvailable() {
+		this.availableServers.addAll(initializedServers);
 	}
 	
 	public Set<KVServerItem> getAvailableServers() {
@@ -150,5 +146,9 @@ public class MetaDataTableController {
 	
 	public Set<KVServerItem> getInitializedServers() {
 		return this.initializedServers;
+	}
+	
+	public List<KVServerItem> getMetaDataTable() {
+		return this.metaDataTable;
 	}
 }

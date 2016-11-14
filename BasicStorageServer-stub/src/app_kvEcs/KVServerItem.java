@@ -1,7 +1,7 @@
 package app_kvEcs;
 
 public class KVServerItem {
-
+	
 	private String name;
 	private String ip;
 	private String port;
@@ -54,6 +54,4 @@ public class KVServerItem {
 	public void setEndIndex(byte[] endIndex) {
 		this.endIndex = endIndex;
 	}
-
-	
 }

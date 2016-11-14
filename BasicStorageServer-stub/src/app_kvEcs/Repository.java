@@ -2,7 +2,6 @@ package app_kvEcs;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashSet;
@@ -26,8 +25,6 @@ public class Repository {
 		try {
 			reader = new BufferedReader(new FileReader(file));
 			readFileLine(reader);
-		} catch (FileNotFoundException e) {
-			logger.error("Error while processing file " + fileName +". " + e.getMessage());
 		} catch (IOException e) {
 			logger.error("Error while processing file " + fileName +". " + e.getMessage());
 		} finally {

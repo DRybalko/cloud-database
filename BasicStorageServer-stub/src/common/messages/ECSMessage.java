@@ -1,5 +1,9 @@
 package common.messages;
 
+import java.util.List;
+
+import app_kvEcs.KVServerItem;
+
 public interface ECSMessage {
 
 	public enum EcsStatusType {
@@ -7,6 +11,8 @@ public interface ECSMessage {
 		STOP,
 		SHUT_DOWN,
 		UPDATE_START_INDEX,
+		META_DATA_TABLE,
+		SERVER_START_END_INDEX,
 		REQUEST_ACCEPTED,
 		ERROR
 	}	
@@ -17,9 +23,10 @@ public interface ECSMessage {
 	 */
 	public EcsStatusType getStatus();
 	
-
-	/**
-	 * @return data load to corresponding status type, e.g. index for UPDATE_START_INDEX
-	 */
-	public byte[] getDataLoad();
+	public byte[] getStartIndex();
+	
+	public byte[] getEndIndex();
+	
+	public List<KVServerItem> getMetaDataTable();
+	
 }
