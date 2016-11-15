@@ -48,21 +48,23 @@ public class MetaDataTableController {
 		return metaDataTable;
 	}
 	
-	private byte[] generateHashFor(KVServerItem server) {
+	public  byte[] generateHashFor(KVServerItem server) {
 		byte[] messageToHash = prepareMessageForHash(server.getIp(), server.getPort());
 		messageDigest.update(messageToHash);
 		return messageDigest.digest();
 	}
 	
-	public byte[] prepareMessageForHash(String ip, String port) {
-		byte[] ipInBytes = ip.getBytes();
-		byte[] portInBytes = port.getBytes();
+	//Method to convert to strings to byte and merge them to one byte array
+	public static byte[] prepareMessageForHash(String message1, String message2) {
+		byte[] ipInBytes = message1.getBytes();
+		byte[] portInBytes = message2.getBytes();
 		byte[] mergedMessage = new byte[ipInBytes.length + portInBytes.length];
 		System.arraycopy(ipInBytes, 0, mergedMessage, 0, ipInBytes.length);
 		System.arraycopy(portInBytes, 0, mergedMessage, ipInBytes.length, portInBytes.length);
 		return mergedMessage;
 	}
 	
+	//TODO maybe make public for KV Client
 	private void addServerToMetaData(KVServerItem server) {
 		if (metaDataTable.isEmpty()) addFirstElementToEmptyMetaData(server);
 		else if (metaDataTable.size() == 1) addServerToMetaDataTableWithOneElement(server);
