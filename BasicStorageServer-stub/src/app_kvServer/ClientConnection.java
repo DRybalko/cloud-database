@@ -89,7 +89,7 @@ public class ClientConnection implements Runnable {
 			return getResult;
 			//TODO check is server can proccess message(not stopped) 
 		} else if (message.getStatus().equals(KvStatusType.PUT)) {
-			//if (server.checkIfInRand(String key)) {
+			//if (server.checkIfInRange(String key)) {
 				return server.getPersistenceLogic().put(message.getKey(), message.getValue());
 			//} else {
 				//TODO new KVMessage with information about server responsible for this key. Information must be taken from sever.getMetaDataTable()
