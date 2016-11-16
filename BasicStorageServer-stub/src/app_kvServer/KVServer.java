@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 
 import app_kvServer.ClientConnection;
@@ -12,12 +13,12 @@ import app_kvServer.KVServer;
 import app_kvServer.PersistenceLogic;
 import logger.LogSetup;
 import app_kvServer.Range;
-import app_kvEcs.KVServerItem;
-import app_kvEcs.MetaDataTableController;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import common.logic.KVServerItem;
+import common.logic.MetaDataTableController;
 import common.messages.MessageType;
 
 
@@ -176,20 +177,8 @@ public class KVServer {
 		//TODO implement this method
 	}
 
-	public void update(byte[] startIndex, byte[] endIndex) {
+	public void updateStartIndex(byte[] startIndex) {
 		//TODO implement this method
-	}
-	
-	private byte[] generateHashForKV(String key, String value) {
-		MessageDigest messageDigest = null;
-		try {
-			 messageDigest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			logger.debug("MessageDigest could not be created. "+e.getMessage());
-		}	
-		byte[] messageToHash = MetaDataTableController.prepareMessageForHash(key, value);
-		messageDigest.update(messageToHash);
-		return messageDigest.digest();
 	}
 	
 	public PersistenceLogic getPersistenceLogic() {
@@ -209,10 +198,12 @@ public class KVServer {
 	}
 
 	public void setStartIndex(byte[] startIndex) {
+		logger.info("Server got start index " + Arrays.toString(startIndex));
 		this.startIndex = startIndex;
 	}
 
 	public void setEndIndex(byte[] endIndex) {
+		logger.info("Server got end index " + Arrays.toString(endIndex));
 		this.endIndex = endIndex;
 	} 
 	

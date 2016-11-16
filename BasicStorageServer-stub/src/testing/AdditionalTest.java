@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
 
-import app_kvEcs.KVServerItem;
+import common.logic.KVServerItem;
 import common.messages.ECSMessage.EcsStatusType;
 import common.messages.ECSMessageItem;
 import common.messages.ECSMessageMarshaller;

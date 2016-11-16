@@ -1,17 +1,19 @@
-package app_kvEcs;
+package app_kvEcs.logic;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import common.logic.KVServerItem;
+
 public class Repository {
 	
-	private Set<KVServerItem> availableServers;
+	private List<KVServerItem> availableServers;
 	private Logger logger;
 	
 	public Repository(String fileName) {
@@ -37,7 +39,7 @@ public class Repository {
 	}
 	
 	private void readFileLine(BufferedReader reader) throws IOException {
-		availableServers = new HashSet<KVServerItem>();
+		availableServers = new LinkedList<KVServerItem>();
 		String line;
 		while ((line = reader.readLine()) != null) {
 			String[] tokens = line.split(" ");
@@ -48,7 +50,7 @@ public class Repository {
 		}
 	}
 	
-	public Set<KVServerItem> getAvailableServers() {
+	public List<KVServerItem> getAvailableServers() {
 		return availableServers;
 	}
 

@@ -1,4 +1,4 @@
-package app_kvEcs;
+package app_kvEcs.client;
 
 public class ECSClient {
 

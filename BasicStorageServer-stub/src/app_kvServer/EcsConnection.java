@@ -18,7 +18,7 @@ public class EcsConnection implements Runnable{
 	private InputStream input;
 	private OutputStream output;
 	private boolean isOpen;
-	private Communicator<ECSMessage> communicator;
+	private ServerCommunicator<ECSMessage> communicator;
 	private KVServer server;
 
 	public EcsConnection(Socket ecs, KVServer server) {
@@ -26,7 +26,7 @@ public class EcsConnection implements Runnable{
 		this.logger = Logger.getRootLogger();
 		this.isOpen = true;
 		try {
-			this.communicator = new Communicator<>(ecsSocket, new ECSMessageMarshaller());
+			this.communicator = new ServerCommunicator<>(ecsSocket, new ECSMessageMarshaller());
 		} catch (IOException e) {
 			logger.error(e);
 		}
@@ -71,9 +71,10 @@ public class EcsConnection implements Runnable{
 	private ECSMessage processMessage(ECSMessage message) {
 		if (message.getStatus().equals(EcsStatusType.START)){
 			server.start();
-			logger.info("Got ECS request to start server. Server started");
-			logger.info("Server acceptingRequests flag has value: " + server.isAcceptingRequests());
+			logger.debug("Got ECS request to start server. Server started");
+			logger.debug("Server acceptingRequests flag has value: " + server.isAcceptingRequests());
 		} else if (message.getStatus().equals(EcsStatusType.SERVER_START_END_INDEX)) {
+			logger.debug("ECS request to initialize start and end index");
 			server.setStartIndex(message.getStartIndex());
 			server.setEndIndex(message.getEndIndex());
 		} else if (message.getStatus().equals(EcsStatusType.META_DATA_TABLE)) {
@@ -83,6 +84,8 @@ public class EcsConnection implements Runnable{
 			server.stop();
 		} else if (message.getStatus().equals(EcsStatusType.SHUT_DOWN)) {
 			server.shutDown();
+		} else if (message.getStatus().equals(EcsStatusType.UPDATE_START_INDEX)) {
+			server.updateStartIndex(message.getStartIndex());
 		}
 		return new ECSMessageItem(EcsStatusType.REQUEST_ACCEPTED);
 	}

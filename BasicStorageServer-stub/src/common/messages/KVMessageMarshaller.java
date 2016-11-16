@@ -1,5 +1,9 @@
 package common.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import common.logic.KVServerItem;
 import common.messages.KVMessage.KvStatusType;
 
 /**
@@ -23,6 +27,9 @@ public class KVMessageMarshaller extends Marshaller<KVMessage> {
 		if(message.getValue() != null){
 			stringBuilder.append(message.getValue());
 		}
+		if(message.getStatus().equals(KvStatusType.SERVER_NOT_RESPONSIBLE)) {
+			stringBuilder.append(convertKVServerItemToString(message.getServer()));
+		}
 		stringBuilder.append(CARRIAGE);
 		return stringBuilder.toString().getBytes();
 	};
@@ -32,8 +39,8 @@ public class KVMessageMarshaller extends Marshaller<KVMessage> {
 		KvStatusType type = KvStatusType.valueOf(messageTokens[0]);
 		return createMessage(messageTokens, type);
 	}
-	
-	private static KVMessage createMessage(String[] messageTokens, KvStatusType type){
+
+	private KVMessage createMessage(String[] messageTokens, KvStatusType type){
 		KVMessageItem message = new KVMessageItem(type);
 		if (type.equals(KvStatusType.GET_SUCCESS)) {
 			message.setValue(messageTokens[1]);
@@ -44,8 +51,9 @@ public class KVMessageMarshaller extends Marshaller<KVMessage> {
 			message.setValue(messageTokens[2]);
 		} else if (type.equals(KvStatusType.PUT_UPDATE)) {
 			message.setValue(messageTokens[1]);
+		} else if (type.equals(KvStatusType.SERVER_NOT_RESPONSIBLE)){
+			message.setServer(convertStringToMetaDataTableServer(messageTokens[1]));
 		}
 		return message;
 	}
-
 }

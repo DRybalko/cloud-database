@@ -1,5 +1,7 @@
 package common.messages;
 
+import common.logic.KVServerItem;
+
 /**
  * The class KVMessageItem provides three different constructors 
  * for the type KVMessageImpl. The different constructors are required 
@@ -13,6 +15,7 @@ public class KVMessageItem implements KVMessage{
 	private String key;
 	private String value;
 	private KvStatusType status;
+	private KVServerItem server;
 
 	public KVMessageItem(KvStatusType type, String key, String value){
 		this.key = key;
@@ -47,8 +50,12 @@ public class KVMessageItem implements KVMessage{
 			message = "Value was deleted successfuly.";
 		} else if (this.status.equals(KvStatusType.DELETE_ERROR)) {
 			message = "Delete operation failed";
+		} else if (this.status.equals(KvStatusType.SERVER_STOPPED)) {
+			message = "Server is currently stopped. Try to send message later";
+		} else if (this.status.equals(KvStatusType.SERVER_WRITE_LOCK)) {
+			message = "Server can not currently process put request. Get request are still working!";
 		} else {
-			message = "Undefined status";
+			message = "Undefined message status";
 		}
 		return message;	
 	}
@@ -80,4 +87,13 @@ public class KVMessageItem implements KVMessage{
 	public void setKey(String key){
 		this.key = key;
 	}
+
+	public KVServerItem getServer() {
+		return server;
+	}
+
+	public void setServer(KVServerItem server) {
+		this.server = server;
+	}
+
 }

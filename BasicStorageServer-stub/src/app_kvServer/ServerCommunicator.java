@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import common.messages.Marshaller;
 
-public class Communicator<T>{
+public class ServerCommunicator<T>{
 	
 	private int MAX_MESSAGE_SIZE = 128000;
 	
@@ -22,7 +22,7 @@ public class Communicator<T>{
 	private Logger logger;
 	private Marshaller<T> marshaller;
 	
-	public Communicator(Socket socket, Marshaller<T> marshaller) throws IOException {
+	public ServerCommunicator(Socket socket, Marshaller<T> marshaller) throws IOException {
 		this.input = socket.getInputStream();
 		this.output = socket.getOutputStream();
 		this.logger = Logger.getRootLogger();

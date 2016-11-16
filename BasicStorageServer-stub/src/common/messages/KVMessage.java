@@ -1,5 +1,7 @@
 package common.messages;
 
+import common.logic.KVServerItem;
+
 public interface KVMessage {
 	
     public enum KvStatusType {
@@ -35,6 +37,11 @@ public interface KVMessage {
 	 */
 	public KvStatusType getStatus();
 	
+	/**
+	 * @return a server item with corresponding start and end index
+	 * They are used to identify server responsible for key.
+	 */
+	public KVServerItem getServer();
 }
 
 

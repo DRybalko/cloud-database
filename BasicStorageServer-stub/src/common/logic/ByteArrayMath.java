@@ -1,4 +1,4 @@
-package app_kvEcs;
+package common.logic;
 
 import java.util.Arrays;
 

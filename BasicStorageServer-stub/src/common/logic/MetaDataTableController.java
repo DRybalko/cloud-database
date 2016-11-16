@@ -1,36 +1,22 @@
-package app_kvEcs;
+package common.logic;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 
 public class MetaDataTableController {
 
 	private Logger logger;
-	private Set<KVServerItem> availableServers;
-	private Set<KVServerItem> workingServers;
-	private Set<KVServerItem> initializedServers;
 	private List<KVServerItem> metaDataTable;
-	private MessageDigest messageDigest;
+	private List<KVServerItem> availableServers;
 	
-	public MetaDataTableController(Set<KVServerItem> availableServers) {
+	public MetaDataTableController(List<KVServerItem> availableServers) {
 		this.logger = Logger.getRootLogger();
+		this.metaDataTable = new LinkedList<>();
 		this.availableServers = availableServers;
-		this.metaDataTable = new ArrayList<>();
-		this.workingServers = new HashSet<>();
-		this.initializedServers = new HashSet<>();
-		try {
-			 messageDigest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			logger.debug("MessageDigest could not be created. "+e.getMessage());
-		}	
 	}
 	
 	public List<KVServerItem> initializeTable(int numberOfNodes) {
@@ -38,7 +24,7 @@ public class MetaDataTableController {
 		for (int i = 0; i < numberOfNodes; i++) {
 			if (serversIterator.hasNext()) {
 				KVServerItem server = serversIterator.next();
-				byte[] serverEndIndex = generateHashFor(server);
+				byte[] serverEndIndex = HashGenerator.generateHashForValues(server.getIp(), server.getPort());
 				server.setEndIndex(serverEndIndex);
 				addServerToMetaData(server);
 			} else {
@@ -48,27 +34,11 @@ public class MetaDataTableController {
 		return metaDataTable;
 	}
 	
-	public  byte[] generateHashFor(KVServerItem server) {
-		byte[] messageToHash = prepareMessageForHash(server.getIp(), server.getPort());
-		messageDigest.update(messageToHash);
-		return messageDigest.digest();
-	}
-	
-	//Method to convert to strings to byte and merge them to one byte array
-	public static byte[] prepareMessageForHash(String message1, String message2) {
-		byte[] ipInBytes = message1.getBytes();
-		byte[] portInBytes = message2.getBytes();
-		byte[] mergedMessage = new byte[ipInBytes.length + portInBytes.length];
-		System.arraycopy(ipInBytes, 0, mergedMessage, 0, ipInBytes.length);
-		System.arraycopy(portInBytes, 0, mergedMessage, ipInBytes.length, portInBytes.length);
-		return mergedMessage;
-	}
-	
-	//TODO maybe make public for KV Client
-	private void addServerToMetaData(KVServerItem server) {
+	public KVServerItem addServerToMetaData(KVServerItem server) {
 		if (metaDataTable.isEmpty()) addFirstElementToEmptyMetaData(server);
 		else if (metaDataTable.size() == 1) addServerToMetaDataTableWithOneElement(server);
 		else addServerToMetaDataTableWithMoreThanOneElement(server);
+		return server;
 	}
 	
 	private void addFirstElementToEmptyMetaData(KVServerItem server) {
@@ -98,7 +68,7 @@ public class MetaDataTableController {
 		KVServerItem nextNode;
 		while (iterator.hasNext()) {
 			nextNode = iterator.next();
-			if (isServerBetweenTwoOthers(server, previousNode, nextNode)) {
+			if (isValueBetweenTwoOthers(server.getEndIndex(), previousNode.getEndIndex(), nextNode.getEndIndex())) {
 				server.setStartIndex(ByteArrayMath.increment(previousNode.getEndIndex()));
 				nextNode.setStartIndex(ByteArrayMath.increment(server.getEndIndex()));
 				metaDataTable.add(iterator.previousIndex(), server);
@@ -115,42 +85,21 @@ public class MetaDataTableController {
 		}
 	}
 	
-	private boolean isServerBetweenTwoOthers(KVServerItem server, KVServerItem node1, KVServerItem node2) {
-		return  ByteArrayMath.compareByteArrays(server.getEndIndex(), node1.getEndIndex()) > 0
-			&& ByteArrayMath.compareByteArrays(server.getEndIndex(), node2.getEndIndex()) < 0;
+	private boolean isValueBetweenTwoOthers(byte[] newValue, byte[] node1, byte[] node2) {
+		return  ByteArrayMath.compareByteArrays(newValue, node1) > 0
+			&& ByteArrayMath.compareByteArrays(newValue, node2) < 0;
 	}	
-
-	//implemented differently, because not all available servers must be copied
-	public void moveOneFromAvailableToInitialized(KVServerItem server) {
-		this.availableServers.remove(server);
-		this.initializedServers.add(server);
-	}
-	
-	public void moveFromWorkingToInitialized() {
-		this.initializedServers.addAll(workingServers);
-	}
-	
-	public void moveFromInitializedToWorking() {
-		this.workingServers.addAll(initializedServers);
-	}
-	
-	public void moveFromInitializedToAvailable() {
-		this.availableServers.addAll(initializedServers);
-	}
-	
-	public Set<KVServerItem> getAvailableServers() {
-		return this.availableServers;
-	}
-	
-	public Set<KVServerItem> getWorkingServers() {
-		return this.workingServers;
-	}
-	
-	public Set<KVServerItem> getInitializedServers() {
-		return this.initializedServers;
-	}
 	
 	public List<KVServerItem> getMetaDataTable() {
 		return this.metaDataTable;
+	}
+	
+	public KVServerItem findResponsibleServer(byte[] value) {
+		for (KVServerItem server: metaDataTable) {
+			if (isValueBetweenTwoOthers(value, server.getStartIndex(), server.getEndIndex())) {
+				return server;
+			}
+		}
+		return null;
 	}
 }

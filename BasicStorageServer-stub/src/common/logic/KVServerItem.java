@@ -1,4 +1,4 @@
-package app_kvEcs;
+package common.logic;
 
 public class KVServerItem {
 	

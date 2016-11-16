@@ -1,4 +1,4 @@
-package app_kvEcs;
+package common.logic;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,36 +13,35 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import common.messages.ECSMessage;
-import common.messages.ECSMessageMarshaller;
+import common.messages.Marshaller;
 import common.messages.MessageType;
 
-public class Communicator {
+public class Communicator<T> {
 	
 	private final int TIMEOUT = 1000;
 	
 	//Map that contains socket for each server
 	private Map<String, Socket> serverSockets;
 	private Logger logger;
-	private ECSMessageMarshaller marshaller;
+	private Marshaller<T> marshaller;
 	
-	public Communicator() {
+	public Communicator(Marshaller<T> marshaller) {
 		this.serverSockets = new HashMap<>();
 		this.logger = Logger.getRootLogger();
-		this.marshaller = new ECSMessageMarshaller();
+		this.marshaller = marshaller;
 	}
 	
-	public ECSMessage sendMessage(KVServerItem server, ECSMessage message) {
+	public T sendMessage(KVServerItem server, T message) {
 		Socket socket;
 		if (serverSockets.containsKey(server.getName())) socket = serverSockets.get(server.getName());
 		else socket = createNewSocketFor(server);
-		ECSMessage reply = null;
+		T reply = null;
 		try {
 			OutputStream output = socket.getOutputStream();
 			output.write(marshaller.marshal(message));
 			output.flush();
 			InputStream input = socket.getInputStream();
-			reply = marshaller.unmarshal(readReply(input));
+			reply = (T) marshaller.unmarshal(readReply(input));
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}	
@@ -92,6 +91,18 @@ public class Communicator {
 	    } catch (IOException e) {
 	        return false; 
 	    }
+	}
+	
+	public void disconnect() {
+		for (Socket socket: serverSockets.values()) {
+			try {
+				socket.close();
+			} catch (IOException e) {
+				logger.error("Connection to socket with address: " + socket.getInetAddress().toString() 
+						+ " could not be closed. " + e.getMessage());
+			}
+		}
+		serverSockets = new HashMap<>();
 	}
 	
 }

@@ -80,15 +80,7 @@ public class CommandLineProcessor {
 	}
 
 	private static void connect() {
-		if (input.length >= 3) {
-			kvStore = new KVStore(input[1], Integer.valueOf(input[2]));
-			establishConnection();
-		} else {
-			errorMessage();
-		}
-	}
-	
-	private static void establishConnection() {
+		kvStore = new KVStore();
 		try {
 			kvStore.connect();
 			System.out.println("Connection was established successfuly");

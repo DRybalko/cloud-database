@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import app_kvEcs.ByteArrayMath;
+import common.logic.ByteArrayMath;
 
 public class ByteArrayMathTest {
 

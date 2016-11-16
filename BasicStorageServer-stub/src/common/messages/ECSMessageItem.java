@@ -2,7 +2,7 @@ package common.messages;
 
 import java.util.List;
 
-import app_kvEcs.KVServerItem;
+import common.logic.KVServerItem;
 
 public class ECSMessageItem implements ECSMessage{
 

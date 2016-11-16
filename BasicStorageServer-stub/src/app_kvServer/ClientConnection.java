@@ -27,7 +27,7 @@ public class ClientConnection implements Runnable {
 	private Socket clientSocket;
 	private InputStream input;
 	private KVServer server;
-	private Communicator<KVMessage> communicator;
+	private ServerCommunicator<KVMessage> communicator;
 
 	/**
 	 * Constructs a new CientConnection object for a given TCP socket.
@@ -38,7 +38,7 @@ public class ClientConnection implements Runnable {
 		this.isOpen = true;
 		this.server = server;
 		try {
-			this.communicator = new Communicator<KVMessage>(clientSocket, new KVMessageMarshaller());
+			this.communicator = new ServerCommunicator<KVMessage>(clientSocket, new KVMessageMarshaller());
 		} catch (IOException e) {
 			logger.info(e.getMessage());
 		}
