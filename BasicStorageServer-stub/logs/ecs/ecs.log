@@ -1,0 +1,4 @@
+2016-11-18 18:38:53,654 ERROR [main] root: Server with IP: 127.0.0.1 and Port: 50001 could not be launched.Cannot run program "ssh": CreateProcess error=2, The system cannot find the file specified
+2016-11-18 18:39:25,663 ERROR [main] root: Server node2 could not be started!
+2016-11-18 18:39:25,664 ERROR [main] root: Server with IP: 127.0.0.1 and Port: 50000 could not be launched.Cannot run program "ssh": CreateProcess error=2, The system cannot find the file specified
+2016-11-18 18:40:08,897 ERROR [main] root: Server with IP: 127.0.0.1 and Port: 50001 could not be launched.Cannot run program "ssh": CreateProcess error=2, The system cannot find the file specified

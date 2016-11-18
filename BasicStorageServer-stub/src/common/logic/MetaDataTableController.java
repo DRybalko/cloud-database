@@ -85,7 +85,7 @@ public class MetaDataTableController {
 		}
 	}
 	
-	private boolean isValueBetweenTwoOthers(byte[] newValue, byte[] node1, byte[] node2) {
+	public boolean isValueBetweenTwoOthers(byte[] newValue, byte[] node1, byte[] node2) {
 		return  ByteArrayMath.compareByteArrays(newValue, node1) > 0
 			&& ByteArrayMath.compareByteArrays(newValue, node2) < 0;
 	}	

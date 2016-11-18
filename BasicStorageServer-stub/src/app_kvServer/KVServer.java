@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.List;
 
 import app_kvServer.ClientConnection;
@@ -12,14 +13,19 @@ import app_kvServer.KVServer;
 import app_kvServer.PersistenceLogic;
 import logger.LogSetup;
 import app_kvServer.Range;
-import common.logic.ByteArrayMath;
-import common.logic.KVServerItem;
-import common.logic.MetaDataTableController;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import common.logic.ByteArrayMath;
+import common.logic.Communicator;
+import common.logic.HashGenerator;
+import common.logic.KVServerItem;
+import common.logic.MetaDataTableController;
+import common.messages.ECSMessage;
+import common.messages.ECSMessageItem;
 import common.messages.MessageType;
+import common.messages.ECSMessage.EcsStatusType;
 
 
 /**
@@ -31,20 +37,23 @@ import common.messages.MessageType;
  * @see PersistenceLogic
  */
 public class KVServer {
-
-	private ServerSocket serverSocket;
-	private Logger logger;
+	
+	
 	private int port;
 	private boolean running;
-	private PersistenceLogic persistenceLogic;
 	private boolean writeLock;
 	private boolean acceptingRequests;
 	private boolean stopped;
 	private byte[] startIndex;
 	private byte[] endIndex;
+	private ServerSocket serverSocket;
+	private Logger logger;
+	private PersistenceLogic persistenceLogic;
 	private List<KVServerItem> metaDataTable;
-	private KVServer server;
-
+	private MetaDataTableController table;
+	private KVServerItem server;
+	private Communicator<ECSMessage> communicator;
+	
 	/**
 	 * Start KV Server at given port
 	 * @param port given port for storage server to operate
@@ -173,42 +182,18 @@ public class KVServer {
 	public void unLockWrite() {
 		writeLock = false;
 	}
-	
-	public boolean isWriteLock(){
-		return writeLock;
-	}
 
-	public List<KVServerItem> getMetaDataTable(){
-		return metaDataTable;
-	}
-	
 	public void moveData(Range range, KVServer server) {
 		//TODO implement this method
+ 
 	}
 
-	public void update(byte[] startIndex, byte[] endIndex) {
-		//TODO implement this method
-	}
-	
-	private byte[] generateHashForKV(String key, String value) {
-		MessageDigest messageDigest = null;
-		try {
-			 messageDigest = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			logger.debug("MessageDigest could not be created. "+e.getMessage());
-		}	
-		byte[] messageToHash = MetaDataTableController.prepareMessageForHash(key, value);
-		messageDigest.update(messageToHash);
-		return messageDigest.digest();
-	}
-	
-	
-	public boolean checkIfInRange(String key){
-		if(ByteArrayMath.compareByteArrays(generateHashForKV(key,persistenceLogic.get(key).toString()), startIndex) < 0 ||
-				ByteArrayMath.compareByteArrays(generateHashForKV(key,persistenceLogic.get(key).toString()), endIndex) > 0 ){
-			return false;
-		}else
-		return true;
+	public void updateStartIndex(byte[] startIndex) {
+		server.setStartIndex(startIndex);
+		ECSMessageItem message = new ECSMessageItem(EcsStatusType.UPDATE_START_INDEX, server.getStartIndex());
+		logger.info("Try to update start index of server with name: "+server.getName()+", ip: "+server.getIp()+", port: "+server.getPort());
+		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(server, message);
+		logger.info("Server replied with: " + reply.getStatus().toString());	
 	}
 	
 	public PersistenceLogic getPersistenceLogic() {
@@ -228,14 +213,28 @@ public class KVServer {
 	}
 
 	public void setStartIndex(byte[] startIndex) {
+		logger.info("Server got start index " + Arrays.toString(startIndex));
 		this.startIndex = startIndex;
 	}
 
 	public void setEndIndex(byte[] endIndex) {
+		logger.info("Server got end index " + Arrays.toString(endIndex));
 		this.endIndex = endIndex;
 	} 
 	
 	public void setMetaDataTable(List<KVServerItem> metaDataTable) {
 		this.metaDataTable = metaDataTable;
+	}
+
+	public boolean checkIfInRange(String key){
+		if(table.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key),startIndex, endIndex)){
+			return true;
+		}else
+		return false;
+	}
+
+	
+	public boolean isWriteLock(){
+		return writeLock;
 	}
 }

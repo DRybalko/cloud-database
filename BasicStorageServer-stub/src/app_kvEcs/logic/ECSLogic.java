@@ -30,7 +30,7 @@ public class ECSLogic {
 	public ECSLogic(Repository repository) {
 		this.repository = repository;
 		try {
-			new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/ecs/ecs.log", Level.ALL);
+			new LogSetup("/C:/Users/Lenovo/git/cloud-database/BasicStorageServer-stub/logs/ecs/ecs.log", Level.ALL);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +49,7 @@ public class ECSLogic {
 	}
 	
 	private void initializeServer(int cacheSize, String displacementStrategy, KVServerItem server) {
-		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
+		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/C:/Users/Lenovo/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
 				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy)};		
 		try {
 			Runtime.getRuntime().exec(cmd);
@@ -84,7 +84,7 @@ public class ECSLogic {
 		return port + " " + cacheSize + " " +displacementStrategy;
 	}
 		
-	private void sendIndices(KVServerItem server) {
+	public void sendIndices(KVServerItem server) {
 		ECSMessageItem indicesMessage = new ECSMessageItem(EcsStatusType.SERVER_START_END_INDEX, server.getStartIndex(), server.getEndIndex());
 		logger.info("Try to send indices to server with name: "+server.getName());
 		logger.debug("Start index: " + Arrays.toString(indicesMessage.getStartIndex()));
