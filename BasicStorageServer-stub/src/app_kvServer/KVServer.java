@@ -17,9 +17,15 @@ import app_kvServer.Range;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import common.logic.ByteArrayMath;
+import common.logic.Communicator;
+import common.logic.HashGenerator;
 import common.logic.KVServerItem;
 import common.logic.MetaDataTableController;
+import common.messages.ECSMessage;
+import common.messages.ECSMessageItem;
 import common.messages.MessageType;
+import common.messages.ECSMessage.EcsStatusType;
 
 
 /**
@@ -31,19 +37,23 @@ import common.messages.MessageType;
  * @see PersistenceLogic
  */
 public class KVServer {
-
-	private ServerSocket serverSocket;
-	private Logger logger;
+	
+	
 	private int port;
 	private boolean running;
-	private PersistenceLogic persistenceLogic;
 	private boolean writeLock;
 	private boolean acceptingRequests;
 	private boolean stopped;
 	private byte[] startIndex;
 	private byte[] endIndex;
+	private ServerSocket serverSocket;
+	private Logger logger;
+	private PersistenceLogic persistenceLogic;
 	private List<KVServerItem> metaDataTable;
-
+	private MetaDataTableController table;
+	private KVServerItem server;
+	private Communicator<ECSMessage> communicator;
+	
 	/**
 	 * Start KV Server at given port
 	 * @param port given port for storage server to operate
@@ -175,10 +185,15 @@ public class KVServer {
 
 	public void moveData(Range range, KVServer server) {
 		//TODO implement this method
+ 
 	}
 
 	public void updateStartIndex(byte[] startIndex) {
-		//TODO implement this method
+		server.setStartIndex(startIndex);
+		ECSMessageItem message = new ECSMessageItem(EcsStatusType.UPDATE_START_INDEX, server.getStartIndex());
+		logger.info("Try to update start index of server with name: "+server.getName()+", ip: "+server.getIp()+", port: "+server.getPort());
+		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(server, message);
+		logger.info("Server replied with: " + reply.getStatus().toString());	
 	}
 	
 	public PersistenceLogic getPersistenceLogic() {
@@ -209,5 +224,17 @@ public class KVServer {
 	
 	public void setMetaDataTable(List<KVServerItem> metaDataTable) {
 		this.metaDataTable = metaDataTable;
+	}
+
+	public boolean checkIfInRange(String key){
+		if(table.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key),startIndex, endIndex)){
+			return true;
+		}else
+		return false;
+	}
+
+	
+	public boolean isWriteLock(){
+		return writeLock;
 	}
 }

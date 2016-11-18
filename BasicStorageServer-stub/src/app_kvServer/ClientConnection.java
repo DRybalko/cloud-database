@@ -6,6 +6,9 @@ import java.net.Socket;
 
 import org.apache.log4j.*;
 
+import app_kvEcs.logic.ECSLogic;
+import common.logic.KVServerItem;
+import common.logic.MetaDataTableController;
 import common.messages.KVMessage;
 import common.messages.KVMessage.KvStatusType;
 import common.messages.KVMessageItem;
@@ -28,7 +31,8 @@ public class ClientConnection implements Runnable {
 	private InputStream input;
 	private KVServer server;
 	private ServerCommunicator<KVMessage> communicator;
-
+	private MetaDataTableController metaDataTable;
+	private ECSLogic ecs; 
 	/**
 	 * Constructs a new CientConnection object for a given TCP socket.
 	 * @param clientSocket the Socket object for the client connection.
@@ -85,18 +89,29 @@ public class ClientConnection implements Runnable {
 
 	private KVMessage processMessage(KVMessage message) {
 		if (message.getStatus().equals(KvStatusType.GET)) {
+			if(!server.isAcceptingRequests()){
+				KVMessage kv = new KVMessageItem(KvStatusType.SERVER_STOPPED);
+				return kv;
+			}
 			KVMessage getResult = server.getPersistenceLogic().get(message.getKey());
 			return getResult;
-			//TODO check is server can proccess message(not stopped) 
 		} else if (message.getStatus().equals(KvStatusType.PUT)) {
-			//if (server.checkIfInRange(String key)) {
-				return server.getPersistenceLogic().put(message.getKey(), message.getValue());
-			//} else {
-				//TODO new KVMessage with information about server responsible for this key. Information must be taken from sever.getMetaDataTable()
-			//}
-		} else {
-			logger.error("Unnown message status, can not be proceeded.");
-			return null;
+			if(server.isWriteLock()){
+				KVMessage kv = new KVMessageItem(KvStatusType.SERVER_WRITE_LOCK);
+				return kv;
+			}else{
+				if (server.checkIfInRange(message.getKey())) {
+					return server.getPersistenceLogic().put(message.getKey(), message.getValue());				
+				} else {
+					//new KVMessage with information about server responsible for this key. 
+					KVServerItem responsible = metaDataTable.findResponsibleServer(message.getKey().getBytes());
+					ecs.sendIndices(responsible);
+					KVMessage result = new KVMessageItem(KvStatusType.SERVER_NOT_RESPONSIBLE);
+					return result;
+				}
+			}	
 		}
+		logger.error("Unnown message status, can not be proceeded.");
+		return null;
 	}
 }
