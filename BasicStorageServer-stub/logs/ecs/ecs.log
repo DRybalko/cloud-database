@@ -1,0 +1,40 @@
+2016-11-18 21:05:14,147 INFO  [main] root: Try to send indices to server with name: node4
+2016-11-18 21:05:14,149 DEBUG [main] root: Start index: [-35, -61, -3, -128, 52, 31, -115, -113, 58, -90, 121, 45, -34, -88, 61, -97]
+2016-11-18 21:05:14,149 DEBUG [main] root: End index: [6, 2, 14, -86, 125, 90, -23, 124, 21, 75, -7, -113, 110, -119, -121, -44]
+2016-11-18 21:05:14,166 INFO  [main] root: Server node4 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:14,166 INFO  [main] root: Try to send metaDataTable to server with name: node4
+2016-11-18 21:05:14,172 INFO  [main] root: Server node4 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:14,682 INFO  [main] root: Try to send indices to server with name: node3
+2016-11-18 21:05:14,682 DEBUG [main] root: Start index: [6, 2, 14, -86, 125, 90, -23, 124, 21, 75, -7, -113, 110, -119, -121, -43]
+2016-11-18 21:05:14,682 DEBUG [main] root: End index: [23, 82, -81, 32, -66, -70, 60, -37, 94, -121, -11, -66, 45, -45, -59, -34]
+2016-11-18 21:05:14,707 INFO  [main] root: Server node3 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:14,707 INFO  [main] root: Try to send metaDataTable to server with name: node3
+2016-11-18 21:05:14,715 INFO  [main] root: Server node3 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:15,230 INFO  [main] root: Try to send indices to server with name: node5
+2016-11-18 21:05:15,230 DEBUG [main] root: Start index: [23, 82, -81, 32, -66, -70, 60, -37, 94, -121, -11, -66, 45, -45, -59, -33]
+2016-11-18 21:05:15,230 DEBUG [main] root: End index: [29, 64, 105, -39, -57, 89, 95, -44, 111, -10, 78, 97, -53, -91, 81, -98]
+2016-11-18 21:05:15,256 INFO  [main] root: Server node5 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:15,256 INFO  [main] root: Try to send metaDataTable to server with name: node5
+2016-11-18 21:05:15,264 INFO  [main] root: Server node5 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:16,341 INFO  [main] root: Try to send indices to server with name: node2
+2016-11-18 21:05:16,342 DEBUG [main] root: Start index: [29, 64, 105, -39, -57, 89, 95, -44, 111, -10, 78, 97, -53, -91, 81, -97]
+2016-11-18 21:05:16,342 DEBUG [main] root: End index: [97, 35, 82, 98, -69, -49, 102, 53, 34, 39, -54, -113, -84, 6, 21, -13]
+2016-11-18 21:05:16,369 INFO  [main] root: Server node2 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:16,370 INFO  [main] root: Try to send metaDataTable to server with name: node2
+2016-11-18 21:05:16,377 INFO  [main] root: Server node2 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:17,392 INFO  [main] root: Try to send indices to server with name: node1
+2016-11-18 21:05:17,392 DEBUG [main] root: Start index: [97, 35, 82, 98, -69, -49, 102, 53, 34, 39, -54, -113, -84, 6, 21, -12]
+2016-11-18 21:05:17,392 DEBUG [main] root: End index: [-35, -61, -3, -128, 52, 31, -115, -113, 58, -90, 121, 45, -34, -88, 61, -98]
+2016-11-18 21:05:17,419 INFO  [main] root: Server node1 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:17,419 INFO  [main] root: Try to send metaDataTable to server with name: node1
+2016-11-18 21:05:17,427 INFO  [main] root: Server node1 replied: REQUEST_ACCEPTED
+2016-11-18 21:05:17,427 INFO  [main] root: Try to start server with name: node4, ip: 127.0.0.1, port: 50003
+2016-11-18 21:05:17,431 INFO  [main] root: Server replied with: REQUEST_ACCEPTED
+2016-11-18 21:05:17,431 INFO  [main] root: Try to start server with name: node3, ip: 127.0.0.1, port: 50002
+2016-11-18 21:05:17,470 INFO  [main] root: Server replied with: REQUEST_ACCEPTED
+2016-11-18 21:05:17,471 INFO  [main] root: Try to start server with name: node5, ip: 127.0.0.1, port: 50004
+2016-11-18 21:05:17,487 INFO  [main] root: Server replied with: REQUEST_ACCEPTED
+2016-11-18 21:05:17,487 INFO  [main] root: Try to start server with name: node2, ip: 127.0.0.1, port: 50001
+2016-11-18 21:05:17,494 INFO  [main] root: Server replied with: REQUEST_ACCEPTED
+2016-11-18 21:05:17,495 INFO  [main] root: Try to start server with name: node1, ip: 127.0.0.1, port: 50000
+2016-11-18 21:05:17,498 INFO  [main] root: Server replied with: REQUEST_ACCEPTED

@@ -72,18 +72,18 @@ public class EcsConnection implements Runnable{
 		if (message.getStatus().equals(EcsStatusType.START)){
 			server.start();
 			logger.debug("Got ECS request to start server. Server started");
-			logger.debug("Server acceptingRequests flag has value: " + server.isAcceptingRequests());
 		} else if (message.getStatus().equals(EcsStatusType.SERVER_START_END_INDEX)) {
 			logger.debug("ECS request to initialize start and end index");
 			server.setStartIndex(message.getStartIndex());
 			server.setEndIndex(message.getEndIndex());
 		} else if (message.getStatus().equals(EcsStatusType.META_DATA_TABLE)) {
-			logger.debug("Receive meta data table. Send a request");
+			logger.debug("Receive meta data table");
 			server.setMetaDataTable(message.getMetaDataTable());
 		} else if (message.getStatus().equals(EcsStatusType.STOP)) {
 			server.stop();
 		} else if (message.getStatus().equals(EcsStatusType.SHUT_DOWN)) {
 			server.shutDown();
+			return new ECSMessageItem(EcsStatusType.DATA_TRANSFERED);
 		} else if (message.getStatus().equals(EcsStatusType.UPDATE_START_INDEX)) {
 			server.updateStartIndex(message.getStartIndex());
 		}

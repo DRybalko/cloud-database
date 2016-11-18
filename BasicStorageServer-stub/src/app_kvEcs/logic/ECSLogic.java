@@ -2,7 +2,9 @@ package app_kvEcs.logic;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import logger.LogSetup;
 
@@ -14,6 +16,7 @@ import common.logic.KVServerItem;
 import common.logic.MetaDataTableController;
 import common.messages.ECSMessage;
 import common.messages.ECSMessage.EcsStatusType;
+import common.messages.ConnectionType;
 import common.messages.ECSMessageItem;
 import common.messages.ECSMessageMarshaller;
 
@@ -35,7 +38,7 @@ public class ECSLogic {
 			e.printStackTrace();
 		}
 		logger = Logger.getRootLogger();	
-		communicator = new Communicator<ECSMessage>(new ECSMessageMarshaller());
+		communicator = new Communicator<ECSMessage>(new ECSMessageMarshaller(), ConnectionType.ECS);
 	}
 	
 	public void initService(int numberOfNodes, int cacheSize, String displacementStrategy) {
@@ -141,13 +144,13 @@ public class ECSLogic {
 	
 	public void addNode(int cacheSize, String displacementStrategy) {
 		KVServerItem newServer = serverSetStatus.getAvailableServers().get(0);
-		metaDataTableController.addServerToMetaData(newServer);
+		KVServerItem serverToUpdate = metaDataTableController.addServerToMetaData(newServer);
 		initializeServer(cacheSize, displacementStrategy, newServer);
 		serverSetStatus.moveFromAvailableToInitialized(newServer);
 		startServer(newServer);
 		serverSetStatus.moveFromInitializedToWorking(newServer);
+		updateStartIndex(serverToUpdate);
 		updateMetaDataTableOfWorkingServers();
-		updateNeighborsStartIndex(newServer);
 	}
 	
 	private void updateMetaDataTableOfWorkingServers() {
@@ -155,16 +158,7 @@ public class ECSLogic {
 			sendMetaDataTable(server);
 		}
 	}
-	
-	private void updateNeighborsStartIndex(KVServerItem server) {
-		List<KVServerItem> metaDataTable = metaDataTableController.getMetaDataTable();
-		int serverIndex = metaDataTable.indexOf(server);
-		KVServerItem previousItem = metaDataTable.get(serverIndex - 1);
-		updateStartIndex(previousItem);
-		KVServerItem nextItem = metaDataTable.get(serverIndex + 1);
-		updateStartIndex(nextItem);
-	}
-	
+
 	private void updateStartIndex(KVServerItem server) {
 		ECSMessageItem message = new ECSMessageItem(EcsStatusType.UPDATE_START_INDEX, server.getStartIndex());
 		logger.info("Try to update start index of server with name: "+server.getName()+", ip: "+server.getIp()+", port: "+server.getPort());
@@ -173,13 +167,34 @@ public class ECSLogic {
 	}
 	
 	public void removeNode() {
-		//TODO add implementation
+		KVServerItem serverToRemove;
+		if (serverSetStatus.getWorkingServers().size() > 0) {
+			serverToRemove = serverSetStatus.getWorkingServers().get(0);
+			removeServer(serverToRemove);
+		} else if (serverSetStatus.getInitializedServers().size() > 0) {
+			serverToRemove = serverSetStatus.getInitializedServers().get(0);
+			removeServer(serverToRemove);
+		} else {
+			logger.warn("Server could not be removed. No servers to remove");
+		}
+
+	}
+	
+	private void removeServer(KVServerItem server) {
+		KVServerItem serverToUpdate = metaDataTableController.removeServerFromMetaData(server);
+		updateStartIndex(serverToUpdate);
+		ECSMessage stopMessage = new ECSMessageItem(EcsStatusType.SHUT_DOWN);
+		communicator.sendMessage(server, stopMessage);
+		serverSetStatus.moveFromWorkingToInitialized(server);
+		serverSetStatus.moveFromInitializedToAvailable(server);
+		updateMetaDataTableOfWorkingServers();
 	}
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Repository repository = new Repository("ecs.config");
 		ECSLogic ecsLogic = new ECSLogic(repository);
-		ecsLogic.initService(2, 10, "LFU");
+		ecsLogic.initService(5, 10, "LFU");
 		ecsLogic.start();
+	//	ecsLogic.addNode(10, "LFU");
 	}
 }

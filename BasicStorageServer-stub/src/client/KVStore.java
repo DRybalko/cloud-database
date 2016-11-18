@@ -43,7 +43,7 @@ public class KVStore implements KVCommInterface {
 	}
 	
 	public void connect() throws IOException {
-		communicator = new Communicator<KVMessage>(new KVMessageMarshaller());
+		communicator = new Communicator<KVMessage>(new KVMessageMarshaller(), ConnectionType.KV_MESSAGE);
 	}
 
 	public void disconnect() {
@@ -67,7 +67,7 @@ public class KVStore implements KVCommInterface {
 		KVMessage reply = communicator.sendMessage(responsibleServer, kvMessage);
 		if (isServerNotResponsible(reply)) {
 			metaDataTableController.addServerToMetaData(reply.getServer());
-			communicator.sendMessage(reply.getServer(), kvMessage);
+			reply = communicator.sendMessage(reply.getServer(), kvMessage);
 		}
 		return reply;
 	}

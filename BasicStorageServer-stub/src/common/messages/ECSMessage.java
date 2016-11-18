@@ -14,6 +14,7 @@ public interface ECSMessage {
 		META_DATA_TABLE,
 		SERVER_START_END_INDEX,
 		REQUEST_ACCEPTED,
+		DATA_TRANSFERED,
 		ERROR
 	}	
 

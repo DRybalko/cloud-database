@@ -2,9 +2,8 @@ package app_kvServer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,9 +16,12 @@ import app_kvServer.Range;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import common.logic.HashGenerator;
 import common.logic.KVServerItem;
-import common.logic.MetaDataTableController;
-import common.messages.MessageType;
+import common.messages.ConnectionType;
+import common.messages.KVMessageItem;
+import common.messages.KVMessageMarshaller;
+import common.messages.KVMessage.KvStatusType;
 
 
 /**
@@ -33,6 +35,7 @@ import common.messages.MessageType;
 public class KVServer {
 
 	private ServerSocket serverSocket;
+	private String serverName;
 	private Logger logger;
 	private int port;
 	private boolean running;
@@ -42,6 +45,7 @@ public class KVServer {
 	private boolean stopped;
 	private byte[] startIndex;
 	private byte[] endIndex;
+	private List<String> keys;
 	private List<KVServerItem> metaDataTable;
 
 	/**
@@ -71,6 +75,7 @@ public class KVServer {
 		int cacheSize = Integer.parseInt(args[1]);
 		String cacheStrategy = args[2];
 		KVServer server = new KVServer(port, cacheSize, cacheStrategy);
+		server.setServerName("Server "+args[0]);
 		server.run();
 	}
 
@@ -92,26 +97,25 @@ public class KVServer {
 		if(serverSocket != null) {
 			while(this.running) {
 				try {
-					logger.info("Server listens ...");
 					listen();
 				} catch (IOException e) {
-					logger.error("Error! " + "Unable to establish connection. \n", e);
+					logger.error(serverName + ":Error! " + "Unable to establish connection. \n", e);
 				}
 			}
 		}
-		logger.info("Server stopped.");
+		logger.info(serverName + ":Server stopped.");
 	}
 
 	private boolean initializeServer() {
-		logger.info("Initialize server ...");
+		logger.info(serverName + ":Initialize server ...");
 		try {
 			serverSocket = new ServerSocket(port);
-			logger.info("Server listening on port: " + serverSocket.getLocalPort());    
+			logger.info(serverName + ":Server listening on port: " + serverSocket.getLocalPort());    
 			return true;
 		} catch (IOException e) {
-			logger.error("Error! Cannot open server socket:");
+			logger.error(serverName + ":Error! Cannot open server socket:");
 			if(e instanceof BindException){
-				logger.error("Port " + port + " is already bound!");
+				logger.error(serverName + ":Port " + port + " is already bound!");
 			}
 			return false;
 		}
@@ -121,15 +125,15 @@ public class KVServer {
 		Socket client = serverSocket.accept();
 		String messageHeader = getMessageHeader(client);	
 		//Message Header is needed to proceed communication with ECS and Client in different ways. Can have values ECS or KV_MESSAGE
-		if (messageHeader.equals(MessageType.ECS.toString())) {
-			logger.info("Connection to ECS established");
+		if (messageHeader.equals(ConnectionType.ECS.toString())) {
+			logger.info(serverName + ":Connection to ECS established");
 			EcsConnection connection = new EcsConnection(client, this);
 			new Thread(connection).start();
-		} else if (messageHeader.equals(MessageType.KV_MESSAGE.toString())){
+		} else if (messageHeader.equals(ConnectionType.KV_MESSAGE.toString())){
 			ClientConnection connection = new ClientConnection(client, this);
 			new Thread(connection).start();
 		}	
-		logger.info("Connected to " 
+		logger.info(serverName + ":Connected to " 
 				+ client.getInetAddress().getHostName() 
 				+  " on port " + client.getPort());
 	}
@@ -145,7 +149,7 @@ public class KVServer {
 		InputStream input = client.getInputStream();
 		StringBuilder sb =  new StringBuilder();
 		byte symbol = (byte) input.read();
-		logger.info("Checking input stream ...");
+		logger.info(serverName + ":Checking input stream ...");
 		while (input.available() > 0 && (symbol != (byte) 31)) {
 			sb.append((char) symbol);
 			symbol = (byte) input.read();
@@ -162,6 +166,8 @@ public class KVServer {
 	}
 
 	public void shutDown() {
+		
+	//	moveData(new Range(), new Server());
 		running = false;
 	}
 
@@ -173,22 +179,30 @@ public class KVServer {
 		writeLock = false;
 	}
 
-	public void moveData(Range range, KVServer server) {
-		//TODO implement this method
+	public void moveData(Range range, KVServerItem server) {
+		/*		Socket socket = new Socket(server.getIp(), Integer.parseInt(server.getPort()));
+		OutputStream output = socket.getOutputStream();
+		output.write(ConnectionType.KV_MESSAGE.toString().getBytes());
+		output.write((byte) 31);
+		output.flush();
+		for (String key: keys) {
+			 if (range.in(HashGenerator.generateHashFor(key)) {
+				 KVMessageItem getMessage = (KVMessageItem) persistenceLogic.get(key);
+				 KVMessageItem messageToSend = new KVMessageItem(KvStatusType.PUT, key, getMessage.getValue());
+				 KVMessageMarshaller marshaller = new KVMessageMarshaller();
+				 output.write(marshaller.marshal(messageToSend));
+			 }
+		 }*/
 	}
 
 	public void updateStartIndex(byte[] startIndex) {
-		//TODO implement this method
+		this.startIndex = startIndex;
 	}
 	
 	public PersistenceLogic getPersistenceLogic() {
 		return persistenceLogic;
 	}
-
-	public void setPersistenceLogic(PersistenceLogic persistenceLogic) {
-		this.persistenceLogic = persistenceLogic;
-	}
-
+	
 	public boolean isAcceptingRequests() {
 		return acceptingRequests;
 	}
@@ -198,16 +212,37 @@ public class KVServer {
 	}
 
 	public void setStartIndex(byte[] startIndex) {
-		logger.info("Server got start index " + Arrays.toString(startIndex));
+		logger.info(serverName + ":Server got start index " + Arrays.toString(startIndex));
 		this.startIndex = startIndex;
 	}
 
 	public void setEndIndex(byte[] endIndex) {
-		logger.info("Server got end index " + Arrays.toString(endIndex));
+		logger.info(serverName + ":Server got end index " + Arrays.toString(endIndex));
 		this.endIndex = endIndex;
 	} 
 	
 	public void setMetaDataTable(List<KVServerItem> metaDataTable) {
 		this.metaDataTable = metaDataTable;
 	}
+
+	public byte[] getStartIndex() {
+		return startIndex;
+	}
+
+	public byte[] getEndIndex() {
+		return endIndex;
+	}
+
+	public String getServerName() {
+		return serverName;
+	}
+
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
+	
+	public List<KVServerItem> getMetaDataTable() {
+		return this.metaDataTable;
+	}
+	
 }

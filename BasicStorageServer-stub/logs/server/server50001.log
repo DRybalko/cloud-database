@@ -1,0 +1,75 @@
+2016-11-18 19:25:42,534 INFO  [main] root: Initialize server ...
+2016-11-18 19:25:42,568 INFO  [main] root: Server listening on port: 50001
+2016-11-18 19:25:42,569 INFO  [main] root: Server listens ...
+2016-11-18 19:25:42,939 INFO  [main] root: Checking input stream ...
+2016-11-18 19:25:42,991 INFO  [main] root: Connected to localhost on port 51895
+2016-11-18 19:25:42,991 INFO  [main] root: Server listens ...
+2016-11-18 19:25:43,003 INFO  [main] root: Checking input stream ...
+2016-11-18 19:25:43,003 INFO  [main] root: Connection to ECS established
+2016-11-18 19:25:43,007 DEBUG [Thread-0] root: EcsConnection started thread...
+2016-11-18 19:25:43,007 DEBUG [Thread-0] root: Start receiving message
+2016-11-18 19:25:43,007 INFO  [Thread-0] root: Communicator starts receiving message
+2016-11-18 19:25:43,007 INFO  [main] root: Connected to localhost on port 51896
+2016-11-18 19:25:43,007 INFO  [main] root: Server listens ...
+2016-11-18 19:25:43,011 INFO  [Thread-0] root: RECEIVE from 	<127.0.0.1:51896
+2016-11-18 19:25:43,011 INFO  [Thread-0] root: Received message status: SERVER_START_END_INDEX
+2016-11-18 19:25:43,011 DEBUG [Thread-0] root: ECS request to initialize start and end index
+2016-11-18 19:25:43,012 INFO  [Thread-0] root: Server got start index [-35, -61, -3, -128, 52, 31, -115, -113, 58, -90, 121, 45, -34, -88, 61, -97]
+2016-11-18 19:25:43,012 INFO  [Thread-0] root: Server got end index [97, 35, 82, 98, -69, -49, 102, 53, 34, 39, -54, -113, -84, 6, 21, -13]
+2016-11-18 19:25:43,012 INFO  [Thread-0] root: Sending message ...
+2016-11-18 19:25:43,013 INFO  [Thread-0] root: SEND to 	<127.0.0.1:51896
+2016-11-18 19:25:43,013 DEBUG [Thread-0] root: Message sent
+2016-11-18 19:25:43,016 DEBUG [Thread-0] root: Start receiving message
+2016-11-18 19:25:43,016 INFO  [Thread-0] root: Communicator starts receiving message
+2016-11-18 19:25:43,018 INFO  [Thread-0] root: RECEIVE from 	<127.0.0.1:51896
+2016-11-18 19:25:43,019 INFO  [Thread-0] root: Received message status: META_DATA_TABLE
+2016-11-18 19:25:43,019 DEBUG [Thread-0] root: Receive meta data table
+2016-11-18 19:25:43,019 INFO  [Thread-0] root: Sending message ...
+2016-11-18 19:25:43,019 INFO  [Thread-0] root: SEND to 	<127.0.0.1:51896
+2016-11-18 19:25:43,019 DEBUG [Thread-0] root: Message sent
+2016-11-18 19:25:44,080 DEBUG [Thread-0] root: Start receiving message
+2016-11-18 19:25:44,080 INFO  [Thread-0] root: Communicator starts receiving message
+2016-11-18 19:25:44,080 INFO  [Thread-0] root: RECEIVE from 	<127.0.0.1:51896
+2016-11-18 19:25:44,081 INFO  [Thread-0] root: Received message status: START
+2016-11-18 19:25:44,081 DEBUG [Thread-0] root: Got ECS request to start server. Server started
+2016-11-18 19:25:44,081 INFO  [Thread-0] root: Sending message ...
+2016-11-18 19:25:44,081 INFO  [Thread-0] root: SEND to 	<127.0.0.1:51896
+2016-11-18 19:25:44,081 DEBUG [Thread-0] root: Message sent
+2016-11-18 19:26:19,883 INFO  [main] root: Checking input stream ...
+2016-11-18 19:26:19,895 INFO  [main] root: Connected to localhost on port 51947
+2016-11-18 19:26:19,896 INFO  [main] root: Server listens ...
+2016-11-18 19:26:19,985 INFO  [main] root: Checking input stream ...
+2016-11-18 19:26:19,985 INFO  [main] root: Connection to ECS established
+2016-11-18 19:26:19,986 DEBUG [Thread-1] root: EcsConnection started thread...
+2016-11-18 19:26:19,987 INFO  [main] root: Connected to localhost on port 51948
+2016-11-18 19:26:19,987 DEBUG [Thread-1] root: Start receiving message
+2016-11-18 19:26:19,987 INFO  [main] root: Server listens ...
+2016-11-18 19:26:19,987 INFO  [Thread-1] root: Communicator starts receiving message
+2016-11-18 19:26:19,989 INFO  [Thread-1] root: RECEIVE from 	<127.0.0.1:51948
+2016-11-18 19:26:19,990 INFO  [Thread-1] root: Received message status: SERVER_START_END_INDEX
+2016-11-18 19:26:19,990 DEBUG [Thread-1] root: ECS request to initialize start and end index
+2016-11-18 19:26:19,990 INFO  [Thread-1] root: Server got start index [-35, -61, -3, -128, 52, 31, -115, -113, 58, -90, 121, 45, -34, -88, 61, -97]
+2016-11-18 19:26:19,991 INFO  [Thread-1] root: Server got end index [97, 35, 82, 98, -69, -49, 102, 53, 34, 39, -54, -113, -84, 6, 21, -13]
+2016-11-18 19:26:19,991 INFO  [Thread-1] root: Sending message ...
+2016-11-18 19:26:19,991 INFO  [Thread-1] root: SEND to 	<127.0.0.1:51948
+2016-11-18 19:26:19,991 DEBUG [Thread-1] root: Message sent
+2016-11-18 19:26:20,005 DEBUG [Thread-1] root: Start receiving message
+2016-11-18 19:26:20,005 INFO  [Thread-1] root: Communicator starts receiving message
+2016-11-18 19:26:20,015 INFO  [Thread-1] root: RECEIVE from 	<127.0.0.1:51948
+2016-11-18 19:26:20,017 INFO  [Thread-1] root: Received message status: META_DATA_TABLE
+2016-11-18 19:26:20,017 DEBUG [Thread-1] root: Receive meta data table
+2016-11-18 19:26:20,017 INFO  [Thread-1] root: Sending message ...
+2016-11-18 19:26:20,018 INFO  [Thread-1] root: SEND to 	<127.0.0.1:51948
+2016-11-18 19:26:20,018 DEBUG [Thread-1] root: Message sent
+2016-11-18 19:26:20,172 DEBUG [Thread-1] root: Start receiving message
+2016-11-18 19:26:20,172 INFO  [Thread-1] root: Communicator starts receiving message
+2016-11-18 19:26:20,172 INFO  [Thread-1] root: RECEIVE from 	<127.0.0.1:51948
+2016-11-18 19:26:20,173 INFO  [Thread-1] root: Received message status: START
+2016-11-18 19:26:20,173 DEBUG [Thread-1] root: Got ECS request to start server. Server started
+2016-11-18 19:26:20,174 INFO  [Thread-1] root: Sending message ...
+2016-11-18 19:26:20,175 INFO  [Thread-1] root: SEND to 	<127.0.0.1:51948
+2016-11-18 19:26:20,175 DEBUG [Thread-1] root: Message sent
+2016-11-18 19:26:21,660 INFO  [main] root: Initialize server ...
+2016-11-18 19:26:21,719 ERROR [main] root: Error! Cannot open server socket:
+2016-11-18 19:26:21,720 ERROR [main] root: Port 50001 is already bound!
+2016-11-18 19:26:21,720 INFO  [main] root: Server stopped.
