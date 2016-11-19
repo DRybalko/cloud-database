@@ -60,7 +60,7 @@ public class ECSLogic {
 		if (hasReplied(server)) {
 			serverSetStatus.moveFromAvailableToInitialized(server);
 			sendIndices(server);
-			if (hasReplied(server)) sendMetaDataTable(server);
+			sendMetaDataTable(server);
 		}
 	}
 	

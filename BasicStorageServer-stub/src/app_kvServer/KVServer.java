@@ -76,7 +76,7 @@ public class KVServer {
 	}
 
 	private static void processArgs(String[] args) throws IOException {
-		new LogSetup("C:/Users/Lenovo/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
+		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
 		int port = Integer.parseInt(args[0]);
 		int cacheSize = Integer.parseInt(args[1]);
 		String cacheStrategy = args[2];
@@ -118,7 +118,6 @@ public class KVServer {
 		logger.info(serverName + ":Initialize server ...");
 		try {
 			serverSocket = new ServerSocket(port);
-		
 			logger.info(serverName + ":Server listening on port: " + serverSocket.getLocalPort());    
 			return true;
 		} catch (IOException e) {
@@ -132,9 +131,8 @@ public class KVServer {
 
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();
-		String messageHeader = getMessageHeader(client);
+		String messageHeader = getMessageHeader(client);	
 		//Message Header is needed to proceed communication with ECS and Client in different ways. Can have values ECS or KV_MESSAGE
-		logger.debug("message header is " + messageHeader);
 		if (messageHeader.equals(ConnectionType.ECS.toString())) {
 			logger.info(serverName + ":Connection to ECS established");
 			EcsConnection connection = new EcsConnection(client, this);
@@ -147,7 +145,7 @@ public class KVServer {
 				+ client.getInetAddress().getHostName() 
 				+  " on port " + client.getPort());
 	}
-	
+
 	/**
 	 * 
 	 * @param client with InputStream
@@ -159,10 +157,9 @@ public class KVServer {
 		InputStream input = client.getInputStream();
 		StringBuilder sb =  new StringBuilder();
 		byte symbol = (byte) input.read();
-		sb.append((char) symbol);
 		logger.info(serverName + ":Checking input stream ...");
-		while (input.available() > 0 ) {
-			if (!(symbol == (byte) 31)) {
+		while (input.available() > 0) {
+			if (symbol != (byte) 31) {
 				symbol = (byte) input.read();
 				sb.append((char) symbol);
 			}
