@@ -1,6 +1,7 @@
 package common.messages;
 
 import java.util.List;
+import java.util.Map;
 
 import common.logic.KVServerItem;
 
@@ -14,7 +15,7 @@ public interface ECSMessage {
 		META_DATA_TABLE,
 		SERVER_START_END_INDEX,
 		REQUEST_ACCEPTED,
-		DATA_TRANSFERED,
+		DATA_TRANSFER,
 		ERROR
 	}	
 
@@ -30,4 +31,5 @@ public interface ECSMessage {
 	
 	public List<KVServerItem> getMetaDataTable();
 	
+	public Map<String, String> getKeyValuesForDataTransfer();
 }

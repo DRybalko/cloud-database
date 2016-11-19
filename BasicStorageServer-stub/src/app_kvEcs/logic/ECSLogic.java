@@ -2,9 +2,7 @@ package app_kvEcs.logic;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 import logger.LogSetup;
 
@@ -52,13 +50,13 @@ public class ECSLogic {
 	}
 	
 	private void initializeServer(int cacheSize, String displacementStrategy, KVServerItem server) {
-		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
-				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy)};		
+		/*String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
+				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy, server.getName())};		
 		try {
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			logger.error("Server with IP: " + server.getIp() + " and Port: " + server.getPort() + " could not be launched."+e.getMessage());
-		}
+		} */
 		if (isInitialized(server)) {
 			serverSetStatus.moveFromAvailableToInitialized(server);
 			sendIndices(server);
@@ -83,8 +81,8 @@ public class ECSLogic {
 		return true;
 	}
 
-	private String getServerConfiguration(String port, int cacheSize, String displacementStrategy) {
-		return port + " " + cacheSize + " " +displacementStrategy;
+	private String getServerConfiguration(String port, int cacheSize, String displacementStrategy, String name) {
+		return port + " " + cacheSize + " " +displacementStrategy+" "+name;
 	}
 		
 	private void sendIndices(KVServerItem server) {
@@ -149,7 +147,7 @@ public class ECSLogic {
 		serverSetStatus.moveFromAvailableToInitialized(newServer);
 		startServer(newServer);
 		serverSetStatus.moveFromInitializedToWorking(newServer);
-		updateStartIndex(serverToUpdate);
+		updateStartIndex(serverToUpdate, newServer);
 		updateMetaDataTableOfWorkingServers();
 	}
 	
@@ -159,11 +157,13 @@ public class ECSLogic {
 		}
 	}
 
-	private void updateStartIndex(KVServerItem server) {
-		ECSMessageItem message = new ECSMessageItem(EcsStatusType.UPDATE_START_INDEX, server.getStartIndex());
-		logger.info("Try to update start index of server with name: "+server.getName()+", ip: "+server.getIp()+", port: "+server.getPort());
-		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(server, message);
-		logger.info("Server replied with: " + reply.getStatus().toString());
+	private void updateStartIndex(KVServerItem dataTransferFrom, KVServerItem dataTransferTo) {
+		ECSMessageItem message = new ECSMessageItem(EcsStatusType.UPDATE_START_INDEX, dataTransferFrom.getStartIndex());
+		logger.info("Try to update start index of server with name: "+dataTransferFrom.getName()+", ip: "+dataTransferFrom.getIp()+", port: "+dataTransferFrom.getPort());
+		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(dataTransferFrom, message);
+		logger.info("Server to update replied with: " + reply.getStatus().toString());
+		ECSMessageItem transferDataReply = (ECSMessageItem) communicator.sendMessage(dataTransferTo, reply);
+		logger.info("New server replied with: " + transferDataReply.getStatus().toString());
 	}
 	
 	public void removeNode() {
@@ -180,21 +180,23 @@ public class ECSLogic {
 
 	}
 	
-	private void removeServer(KVServerItem server) {
-		KVServerItem serverToUpdate = metaDataTableController.removeServerFromMetaData(server);
-		updateStartIndex(serverToUpdate);
+	private void removeServer(KVServerItem serverToRemove) {
+		KVServerItem serverToTransferData = metaDataTableController.removeServerFromMetaData(serverToRemove);
+		serverToRemove.setStartIndex(serverToRemove.getEndIndex());
+		updateStartIndex(serverToRemove, serverToTransferData);
 		ECSMessage stopMessage = new ECSMessageItem(EcsStatusType.SHUT_DOWN);
-		communicator.sendMessage(server, stopMessage);
-		serverSetStatus.moveFromWorkingToInitialized(server);
-		serverSetStatus.moveFromInitializedToAvailable(server);
+		communicator.sendMessage(serverToRemove, stopMessage);
+		serverSetStatus.moveFromWorkingToInitialized(serverToRemove);
+		serverSetStatus.moveFromInitializedToAvailable(serverToRemove);
 		updateMetaDataTableOfWorkingServers();
 	}
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Repository repository = new Repository("ecs.config");
 		ECSLogic ecsLogic = new ECSLogic(repository);
-		ecsLogic.initService(5, 10, "LFU");
+		ecsLogic.initService(2, 10, "LFU");
 		ecsLogic.start();
 	//	ecsLogic.addNode(10, "LFU");
+		ecsLogic.removeNode();
 	}
 }

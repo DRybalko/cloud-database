@@ -4,21 +4,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import app_kvServer.ClientConnection;
 import app_kvServer.KVServer;
 import app_kvServer.PersistenceLogic;
 import logger.LogSetup;
-import app_kvServer.Range;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import common.logic.ByteArrayMath;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
 import common.messages.ConnectionType;
+import common.messages.ECSMessage.EcsStatusType;
+import common.messages.ECSMessageItem;
 import common.messages.KVMessageItem;
 import common.messages.KVMessageMarshaller;
 import common.messages.KVMessage.KvStatusType;
@@ -70,21 +76,23 @@ public class KVServer {
 	}
 
 	private static void processArgs(String[] args) throws IOException {
-		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server.log", Level.ALL);
+		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
 		int port = Integer.parseInt(args[0]);
 		int cacheSize = Integer.parseInt(args[1]);
 		String cacheStrategy = args[2];
-		KVServer server = new KVServer(port, cacheSize, cacheStrategy);
-		server.setServerName("Server "+args[0]);
+		String name = args[3];
+		KVServer server = new KVServer(port, cacheSize, cacheStrategy, name);
 		server.run();
 	}
 
-	public KVServer(int port, int cacheSize, String strategy) {
+	public KVServer(int port, int cacheSize, String strategy, String name) {
 		this.port = port;
 		this.persistenceLogic = new PersistenceLogic(cacheSize, strategy);
 		this.acceptingRequests = false;
 		this.writeLock = false;
 		this.logger = Logger.getRootLogger();
+		this.keys = new ArrayList<>();
+		this.serverName = name;
 	}
 
 	/**
@@ -166,9 +174,14 @@ public class KVServer {
 	}
 
 	public void shutDown() {
-		
-	//	moveData(new Range(), new Server());
+		logger.info("Stopping server, closing socket...");
 		running = false;
+		try {
+			this.serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.info("Server shut down");
 	}
 
 	public void lockWrite() {
@@ -179,24 +192,18 @@ public class KVServer {
 		writeLock = false;
 	}
 
-	public void moveData(Range range, KVServerItem server) {
-		/*		Socket socket = new Socket(server.getIp(), Integer.parseInt(server.getPort()));
-		OutputStream output = socket.getOutputStream();
-		output.write(ConnectionType.KV_MESSAGE.toString().getBytes());
-		output.write((byte) 31);
-		output.flush();
+	public ECSMessageItem moveData(byte[] startIndex, byte[] endIndex) {
+		Map<String, String> keyValuesForDataTransfer = new HashMap<>();
 		for (String key: keys) {
-			 if (range.in(HashGenerator.generateHashFor(key)) {
-				 KVMessageItem getMessage = (KVMessageItem) persistenceLogic.get(key);
-				 KVMessageItem messageToSend = new KVMessageItem(KvStatusType.PUT, key, getMessage.getValue());
-				 KVMessageMarshaller marshaller = new KVMessageMarshaller();
-				 output.write(marshaller.marshal(messageToSend));
-			 }
-		 }*/
+			if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key), startIndex, endIndex)) {
+				keyValuesForDataTransfer.put(key, persistenceLogic.get(key).getValue());
+			}
+		}
+		return new ECSMessageItem(EcsStatusType.DATA_TRANSFER, keyValuesForDataTransfer);
 	}
 
-	public void updateStartIndex(byte[] startIndex) {
-		this.startIndex = startIndex;
+	public ECSMessageItem updateStartIndex(byte[] newStartIndex) {
+		return moveData(this.startIndex, newStartIndex);
 	}
 	
 	public PersistenceLogic getPersistenceLogic() {
@@ -245,4 +252,21 @@ public class KVServer {
 		return this.metaDataTable;
 	}
 	
+	public void addKey(String key) {
+		this.keys.add(key);
+	}
+	
+	public void deleteKey(String key) {
+		for (String keyElement: keys) {
+			if (keyElement.equals(key)) keys.remove(keyElement);
+		}	
+	}
+	
+	public boolean isRunning() {
+		return this.running;
+	}
+	
+	public List<String> getKeys() {
+		return keys;
+	}
 }

@@ -69,7 +69,7 @@ public class ClientConnection implements Runnable {
 
 	private void receiveAndProcessMessage() throws IOException {
 		input = clientSocket.getInputStream();	
-		while(isOpen) {
+		while(isOpen && server.isRunning()) {
 			try {
 				if (input.available() > 0 && server.isAcceptingRequests()) {
 					KVMessage receivedMessage = communicator.receiveMessage();
@@ -77,6 +77,7 @@ public class ClientConnection implements Runnable {
 							+ " and end index " + Arrays.toString(server.getEndIndex())
 							+ " received message: StatusType: "+receivedMessage.getStatus() 
 							+ " with hash value " + Arrays.toString(HashGenerator.generateHashFor(receivedMessage.getKey())));
+					addKeyToKeyList(receivedMessage);
 					KVMessage returnMessage = processMessage(receivedMessage);
 					logger.debug(SERVER_NAME+"Message to send: StatusType: "+returnMessage.getStatus());
 					communicator.sendMessage(returnMessage);
@@ -91,6 +92,17 @@ public class ClientConnection implements Runnable {
 		}
 	}
 
+	private void addKeyToKeyList(KVMessage receivedMessage) {
+		logger.debug("Check if received message is put");
+		if (receivedMessage.getStatus().equals(KvStatusType.PUT) && !receivedMessage.getValue().equals("null")) {
+			logger.debug("Message is put");
+			server.addKey(receivedMessage.getKey());
+		} else if (receivedMessage.getStatus().equals(KvStatusType.PUT) && receivedMessage.getValue().equals("null")) {
+			logger.debug("Message is not put");
+			server.deleteKey(receivedMessage.getKey());
+		}
+	}
+	
 	private KVMessage processMessage(KVMessage message) {
 		if (message.getStatus().equals(KvStatusType.GET)) {
 			KVMessage getResult = server.getPersistenceLogic().get(message.getKey());
