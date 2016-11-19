@@ -158,10 +158,13 @@ public class KVServer {
 		StringBuilder sb =  new StringBuilder();
 		byte symbol = (byte) input.read();
 		logger.info(serverName + ":Checking input stream ...");
-		while (input.available() > 0 && (symbol != (byte) 31)) {
-			sb.append((char) symbol);
-			symbol = (byte) input.read();
+		while (input.available() > 0) {
+			if (symbol != (byte) 31) {
+				symbol = (byte) input.read();
+				sb.append((char) symbol);
+			}
 		}
+		input.read();
 		return sb.toString();
 	}
 	
