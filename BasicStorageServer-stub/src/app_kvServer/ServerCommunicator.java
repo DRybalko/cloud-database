@@ -39,6 +39,7 @@ public class ServerCommunicator<T>{
 		logger.info("Sending message ...");
 		byte[] msgBytes = marshaller.marshal(message);
 		output.write(msgBytes, 0, msgBytes.length);
+		output.write((byte) 13);
 		output.flush();
 		logger.info("SEND to \t<" 
 				+ socket.getInetAddress().getHostAddress() + ":" 
@@ -50,7 +51,8 @@ public class ServerCommunicator<T>{
 		List<Byte> readMessage = new ArrayList<>();
 		readMessage.add((byte) input.read());
 		while (input.available() > 0 && readMessage.size() <= MAX_MESSAGE_SIZE) {
-			readMessage.add((byte) input.read());
+			byte readByte = (byte) input.read();
+			readMessage.add(readByte);
 		}
 		byte[] receivedMessage = convertToByteArray(readMessage);
 

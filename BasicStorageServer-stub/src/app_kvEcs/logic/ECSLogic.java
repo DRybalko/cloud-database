@@ -57,14 +57,14 @@ public class ECSLogic {
 		} catch (IOException e) {
 			logger.error("Server with IP: " + server.getIp() + " and Port: " + server.getPort() + " could not be launched."+e.getMessage());
 		} */
-		if (isInitialized(server)) {
+		if (hasReplied(server)) {
 			serverSetStatus.moveFromAvailableToInitialized(server);
 			sendIndices(server);
-			sendMetaDataTable(server);
+			if (hasReplied(server)) sendMetaDataTable(server);
 		}
 	}
 	
-	private boolean isInitialized(KVServerItem server) {
+	private boolean hasReplied(KVServerItem server) {
 		int waitingTime = 0;
 		while (!communicator.checkStarted(server)) {
 			try {
@@ -194,9 +194,10 @@ public class ECSLogic {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Repository repository = new Repository("ecs.config");
 		ECSLogic ecsLogic = new ECSLogic(repository);
-		ecsLogic.initService(2, 10, "LFU");
+		//TODO!!! SERVER ANZAHL!
+		ecsLogic.initService(2, 2, "LFU");
 		ecsLogic.start();
 	//	ecsLogic.addNode(10, "LFU");
-		ecsLogic.removeNode();
+	//	ecsLogic.removeNode();
 	}
 }
