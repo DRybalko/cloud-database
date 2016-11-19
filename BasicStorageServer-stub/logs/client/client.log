@@ -1,0 +1,5 @@
+2016-11-18 18:52:06,067 INFO  [main] root: Put failed. null
+2016-11-18 18:52:16,165 INFO  [main] root: Put failed. null
+2016-11-18 18:52:24,214 INFO  [main] root: Put failed. null
+2016-11-18 22:17:48,395 INFO  [main] root: Put failed. No enum constant common.messages.KVMessage.KvStatusType.
+2016-11-18 22:21:53,170 INFO  [main] root: Put failed. No enum constant common.messages.KVMessage.KvStatusType.

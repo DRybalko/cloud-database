@@ -73,4 +73,14 @@ public class ByteArrayMath {
 		return compareByteArrays(number, setForAll(new byte[number.length], (byte) 0));
 	}
 
+	
+	public static boolean isValueBetweenTwoOthers(byte[] newValue, byte[] startValue, byte[] endValue) {
+		if (ByteArrayMath.compareByteArrays(startValue, endValue) < 0) {
+			return ByteArrayMath.compareByteArrays(newValue, startValue) > 0
+					&& ByteArrayMath.compareByteArrays(newValue, endValue) < 0;
+		} else {
+			return ByteArrayMath.compareByteArrays(newValue, startValue) > 0 
+					|| ByteArrayMath.compareByteArrays(newValue, endValue) < 0;
+		}
+	}
 }

@@ -1,6 +1,6 @@
 package common.messages;
 
-public enum MessageType {
+public enum ConnectionType {
 	
 	KV_MESSAGE,
 	ECS

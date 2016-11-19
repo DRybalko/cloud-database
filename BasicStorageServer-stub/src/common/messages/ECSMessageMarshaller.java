@@ -1,8 +1,11 @@
 package common.messages;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import common.logic.KVServerItem;
 import common.messages.ECSMessage.EcsStatusType;
@@ -23,7 +26,9 @@ public class ECSMessageMarshaller extends Marshaller<ECSMessage> {
 			stringBuilder.append(new String(message.getStartIndex(), CHARSET));
 			stringBuilder.append(UNIT_SEPARATOR);
 			stringBuilder.append(new String(message.getEndIndex(), CHARSET));
-		}		
+		} else if (message.getStatus().equals(EcsStatusType.DATA_TRANSFER)) {
+			stringBuilder.append(convertKeyValuesToString(message.getKeyValuesForDataTransfer()));
+		}
 		stringBuilder.append(CARRIAGE);
 		return stringBuilder.toString().getBytes(CHARSET);
 	};
@@ -39,8 +44,20 @@ public class ECSMessageMarshaller extends Marshaller<ECSMessage> {
 		return stringBuilder.toString();
 	}
 	
+	private String convertKeyValuesToString(Map<String, String> keyValues) {
+		StringBuilder stringBuilder = new StringBuilder();
+		Iterator<String> iterator = keyValues.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = iterator.next();
+			stringBuilder.append(key + ATTRIBUTE_SEPARATOR + keyValues.get(key));
+			if (iterator.hasNext()) stringBuilder.append(UNIT_SEPARATOR);
+		}
+		return stringBuilder.toString();
+	}
+	
 	
 	public ECSMessageItem unmarshal(byte[] message){
+		if (message[0] == -1) return new ECSMessageItem(EcsStatusType.SHUT_DOWN);
 		String[] messageTokens = getMessageTokens(message);
 		ECSMessageItem messageItem = new ECSMessageItem(EcsStatusType.valueOf(messageTokens[0]));
 		if (messageTokens[0].equals(EcsStatusType.META_DATA_TABLE.toString())) {
@@ -50,6 +67,8 @@ public class ECSMessageMarshaller extends Marshaller<ECSMessage> {
 			messageItem.setEndIndex(messageTokens[2].getBytes(CHARSET));
 		} else if (messageTokens[0].equals(EcsStatusType.UPDATE_START_INDEX.toString())) {
 			messageItem.setStartIndex(messageTokens[1].getBytes(CHARSET));
+		} else if (messageTokens[0].equals(EcsStatusType.DATA_TRANSFER.toString())) {
+			messageItem.setKeyValuesForDataTransfer(convertStringToKeyValuesMap(messageTokens));
 		}
 		return messageItem;
 	}	
@@ -61,6 +80,15 @@ public class ECSMessageMarshaller extends Marshaller<ECSMessage> {
 			metaDataTable.add(kvServer);
 		}
 		return metaDataTable;
+	}
+	
+	private Map<String, String> convertStringToKeyValuesMap(String[] messageTokens) {
+		Map<String, String> keyValues = new HashMap<>();
+		for (int i=1; i<messageTokens.length; i++) {
+			String[] keyValuePair = messageTokens[i].split(ATTRIBUTE_SEPARATOR);
+			keyValues.put(keyValuePair[0], keyValuePair[1]);
+		}
+		return keyValues;
 	}
 	
 }

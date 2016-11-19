@@ -2,30 +2,32 @@ package app_kvServer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
 
 import app_kvServer.ClientConnection;
 import app_kvServer.KVServer;
 import app_kvServer.PersistenceLogic;
 import logger.LogSetup;
-import app_kvServer.Range;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import common.logic.ByteArrayMath;
-import common.logic.Communicator;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
-import common.logic.MetaDataTableController;
-import common.messages.ECSMessage;
-import common.messages.ECSMessageItem;
-import common.messages.MessageType;
+import common.messages.ConnectionType;
 import common.messages.ECSMessage.EcsStatusType;
+import common.messages.ECSMessageItem;
+import common.messages.KVMessageItem;
+import common.messages.KVMessageMarshaller;
+import common.messages.KVMessage.KvStatusType;
 
 
 /**
@@ -37,23 +39,21 @@ import common.messages.ECSMessage.EcsStatusType;
  * @see PersistenceLogic
  */
 public class KVServer {
-	
-	
+
+	private ServerSocket serverSocket;
+	private String serverName;
+	private Logger logger;
 	private int port;
 	private boolean running;
+	private PersistenceLogic persistenceLogic;
 	private boolean writeLock;
 	private boolean acceptingRequests;
 	private boolean stopped;
 	private byte[] startIndex;
 	private byte[] endIndex;
-	private ServerSocket serverSocket;
-	private Logger logger;
-	private PersistenceLogic persistenceLogic;
+	private List<String> keys;
 	private List<KVServerItem> metaDataTable;
-	private MetaDataTableController table;
-	private KVServerItem server;
-	private Communicator<ECSMessage> communicator;
-	
+
 	/**
 	 * Start KV Server at given port
 	 * @param port given port for storage server to operate
@@ -76,20 +76,23 @@ public class KVServer {
 	}
 
 	private static void processArgs(String[] args) throws IOException {
-		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server.log", Level.ALL);
+		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
 		int port = Integer.parseInt(args[0]);
 		int cacheSize = Integer.parseInt(args[1]);
 		String cacheStrategy = args[2];
-		KVServer server = new KVServer(port, cacheSize, cacheStrategy);
+		String name = args[3];
+		KVServer server = new KVServer(port, cacheSize, cacheStrategy, name);
 		server.run();
 	}
 
-	public KVServer(int port, int cacheSize, String strategy) {
+	public KVServer(int port, int cacheSize, String strategy, String name) {
 		this.port = port;
 		this.persistenceLogic = new PersistenceLogic(cacheSize, strategy);
 		this.acceptingRequests = false;
 		this.writeLock = false;
 		this.logger = Logger.getRootLogger();
+		this.keys = new ArrayList<>();
+		this.serverName = name;
 	}
 
 	/**
@@ -102,26 +105,25 @@ public class KVServer {
 		if(serverSocket != null) {
 			while(this.running) {
 				try {
-					logger.info("Server listens ...");
 					listen();
 				} catch (IOException e) {
-					logger.error("Error! " + "Unable to establish connection. \n", e);
+					logger.error(serverName + ":Error! " + "Unable to establish connection. \n", e);
 				}
 			}
 		}
-		logger.info("Server stopped.");
+		logger.info(serverName + ":Server stopped.");
 	}
 
 	private boolean initializeServer() {
-		logger.info("Initialize server ...");
+		logger.info(serverName + ":Initialize server ...");
 		try {
 			serverSocket = new ServerSocket(port);
-			logger.info("Server listening on port: " + serverSocket.getLocalPort());    
+			logger.info(serverName + ":Server listening on port: " + serverSocket.getLocalPort());    
 			return true;
 		} catch (IOException e) {
-			logger.error("Error! Cannot open server socket:");
+			logger.error(serverName + ":Error! Cannot open server socket:");
 			if(e instanceof BindException){
-				logger.error("Port " + port + " is already bound!");
+				logger.error(serverName + ":Port " + port + " is already bound!");
 			}
 			return false;
 		}
@@ -131,15 +133,15 @@ public class KVServer {
 		Socket client = serverSocket.accept();
 		String messageHeader = getMessageHeader(client);	
 		//Message Header is needed to proceed communication with ECS and Client in different ways. Can have values ECS or KV_MESSAGE
-		if (messageHeader.equals(MessageType.ECS.toString())) {
-			logger.info("Connection to ECS established");
+		if (messageHeader.equals(ConnectionType.ECS.toString())) {
+			logger.info(serverName + ":Connection to ECS established");
 			EcsConnection connection = new EcsConnection(client, this);
 			new Thread(connection).start();
-		} else if (messageHeader.equals(MessageType.KV_MESSAGE.toString())){
+		} else if (messageHeader.equals(ConnectionType.KV_MESSAGE.toString())){
 			ClientConnection connection = new ClientConnection(client, this);
 			new Thread(connection).start();
 		}	
-		logger.info("Connected to " 
+		logger.info(serverName + ":Connected to " 
 				+ client.getInetAddress().getHostName() 
 				+  " on port " + client.getPort());
 	}
@@ -155,7 +157,7 @@ public class KVServer {
 		InputStream input = client.getInputStream();
 		StringBuilder sb =  new StringBuilder();
 		byte symbol = (byte) input.read();
-		logger.info("Checking input stream ...");
+		logger.info(serverName + ":Checking input stream ...");
 		while (input.available() > 0 && (symbol != (byte) 31)) {
 			sb.append((char) symbol);
 			symbol = (byte) input.read();
@@ -172,7 +174,14 @@ public class KVServer {
 	}
 
 	public void shutDown() {
+		logger.info("Stopping server, closing socket...");
 		running = false;
+		try {
+			this.serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		logger.info("Server shut down");
 	}
 
 	public void lockWrite() {
@@ -183,27 +192,24 @@ public class KVServer {
 		writeLock = false;
 	}
 
-	public void moveData(Range range, KVServer server) {
-		//TODO implement this method
- 
+	public ECSMessageItem moveData(byte[] startIndex, byte[] endIndex) {
+		Map<String, String> keyValuesForDataTransfer = new HashMap<>();
+		for (String key: keys) {
+			if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key), startIndex, endIndex)) {
+				keyValuesForDataTransfer.put(key, persistenceLogic.get(key).getValue());
+			}
+		}
+		return new ECSMessageItem(EcsStatusType.DATA_TRANSFER, keyValuesForDataTransfer);
 	}
 
-	public void updateStartIndex(byte[] startIndex) {
-		server.setStartIndex(startIndex);
-		ECSMessageItem message = new ECSMessageItem(EcsStatusType.UPDATE_START_INDEX, server.getStartIndex());
-		logger.info("Try to update start index of server with name: "+server.getName()+", ip: "+server.getIp()+", port: "+server.getPort());
-		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(server, message);
-		logger.info("Server replied with: " + reply.getStatus().toString());	
+	public ECSMessageItem updateStartIndex(byte[] newStartIndex) {
+		return moveData(this.startIndex, newStartIndex);
 	}
 	
 	public PersistenceLogic getPersistenceLogic() {
 		return persistenceLogic;
 	}
-
-	public void setPersistenceLogic(PersistenceLogic persistenceLogic) {
-		this.persistenceLogic = persistenceLogic;
-	}
-
+	
 	public boolean isAcceptingRequests() {
 		return acceptingRequests;
 	}
@@ -213,12 +219,12 @@ public class KVServer {
 	}
 
 	public void setStartIndex(byte[] startIndex) {
-		logger.info("Server got start index " + Arrays.toString(startIndex));
+		logger.info(serverName + ":Server got start index " + Arrays.toString(startIndex));
 		this.startIndex = startIndex;
 	}
 
 	public void setEndIndex(byte[] endIndex) {
-		logger.info("Server got end index " + Arrays.toString(endIndex));
+		logger.info(serverName + ":Server got end index " + Arrays.toString(endIndex));
 		this.endIndex = endIndex;
 	} 
 	
@@ -226,15 +232,41 @@ public class KVServer {
 		this.metaDataTable = metaDataTable;
 	}
 
-	public boolean checkIfInRange(String key){
-		if(table.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key),startIndex, endIndex)){
-			return true;
-		}else
-		return false;
+	public byte[] getStartIndex() {
+		return startIndex;
 	}
 
+	public byte[] getEndIndex() {
+		return endIndex;
+	}
+
+	public String getServerName() {
+		return serverName;
+	}
+
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
 	
-	public boolean isWriteLock(){
-		return writeLock;
+	public List<KVServerItem> getMetaDataTable() {
+		return this.metaDataTable;
+	}
+	
+	public void addKey(String key) {
+		this.keys.add(key);
+	}
+	
+	public void deleteKey(String key) {
+		for (String keyElement: keys) {
+			if (keyElement.equals(key)) keys.remove(keyElement);
+		}	
+	}
+	
+	public boolean isRunning() {
+		return this.running;
+	}
+	
+	public List<String> getKeys() {
+		return keys;
 	}
 }

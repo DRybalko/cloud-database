@@ -14,7 +14,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import common.messages.Marshaller;
-import common.messages.MessageType;
+import common.messages.ConnectionType;
 
 public class Communicator<T> {
 	
@@ -24,11 +24,13 @@ public class Communicator<T> {
 	private Map<String, Socket> serverSockets;
 	private Logger logger;
 	private Marshaller<T> marshaller;
+	private ConnectionType connectionType;
 	
-	public Communicator(Marshaller<T> marshaller) {
+	public Communicator(Marshaller<T> marshaller, ConnectionType connectionType) {
 		this.serverSockets = new HashMap<>();
 		this.logger = Logger.getRootLogger();
 		this.marshaller = marshaller;
+		this.connectionType = connectionType;
 	}
 	
 	public T sendMessage(KVServerItem server, T message) {
@@ -53,7 +55,7 @@ public class Communicator<T> {
 		try {
 			socket = new Socket(server.getIp(), Integer.parseInt(server.getPort()));
 			OutputStream output = socket.getOutputStream();
-			output.write(MessageType.ECS.toString().getBytes());
+			output.write(connectionType.toString().getBytes());
 			output.write((byte) 31);
 			output.flush();
 			serverSockets.put(server.getName(), socket);

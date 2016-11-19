@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 import common.messages.ECSMessage;
@@ -51,7 +53,7 @@ public class EcsConnection implements Runnable{
 	private void receiveAndProcessMessage() throws IOException {
 		output = ecsSocket.getOutputStream();
 		input = ecsSocket.getInputStream();	
-		while(isOpen) {
+		while(isOpen && server.isRunning()) {
 			try {
 				if (input.available() > 0) {
 					logger.debug("Start receiving message");
@@ -72,22 +74,29 @@ public class EcsConnection implements Runnable{
 		if (message.getStatus().equals(EcsStatusType.START)){
 			server.start();
 			logger.debug("Got ECS request to start server. Server started");
-			logger.debug("Server acceptingRequests flag has value: " + server.isAcceptingRequests());
 		} else if (message.getStatus().equals(EcsStatusType.SERVER_START_END_INDEX)) {
 			logger.debug("ECS request to initialize start and end index");
 			server.setStartIndex(message.getStartIndex());
 			server.setEndIndex(message.getEndIndex());
 		} else if (message.getStatus().equals(EcsStatusType.META_DATA_TABLE)) {
-			logger.debug("Receive meta data table. Send a request");
+			logger.debug("Receive meta data table");
 			server.setMetaDataTable(message.getMetaDataTable());
 		} else if (message.getStatus().equals(EcsStatusType.STOP)) {
 			server.stop();
 		} else if (message.getStatus().equals(EcsStatusType.SHUT_DOWN)) {
 			server.shutDown();
 		} else if (message.getStatus().equals(EcsStatusType.UPDATE_START_INDEX)) {
-			server.updateStartIndex(message.getStartIndex());
+			return server.updateStartIndex(message.getStartIndex());
+		} else if (message.getStatus().equals(EcsStatusType.DATA_TRANSFER)) {
+			addValuesToPersistenceLogic(message.getKeyValuesForDataTransfer());
 		}
 		return new ECSMessageItem(EcsStatusType.REQUEST_ACCEPTED);
+	}
+	
+	private void addValuesToPersistenceLogic(Map<String, String> keyValues) {
+		for (String key: keyValues.keySet()) {
+			server.getPersistenceLogic().put(key, keyValues.get(key));
+		}
 	}
 	
 	private void closeConnection() throws IOException {
