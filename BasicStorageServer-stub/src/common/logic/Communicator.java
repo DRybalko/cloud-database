@@ -41,7 +41,6 @@ public class Communicator<T> {
 		try {
 			OutputStream output = socket.getOutputStream();
 			output.write(marshaller.marshal(message));
-			output.write((byte) 13);
 			output.flush();
 			InputStream input = socket.getInputStream();
 			reply = (T) marshaller.unmarshal(readReply(input));
@@ -58,7 +57,6 @@ public class Communicator<T> {
 			OutputStream output = socket.getOutputStream();
 			output.write(connectionType.toString().getBytes());
 			output.write((byte) 31);
-			output.write((byte) 13);
 			output.flush();
 			serverSockets.put(server.getName(), socket);
 		} catch (IOException e) {
@@ -69,11 +67,10 @@ public class Communicator<T> {
 	
 	private byte[] readReply(InputStream input) throws IOException {
 		List<Byte> readMessage = new ArrayList<>();
-		byte readByte = (byte) input.read();
+		int readByte = input.read();
 		readMessage.add((byte)readByte);
-		while (input.available() > 0 && readByte != (byte) 13) {
-			readByte = (byte) input.read();
-			if (!(readByte == (byte) 13)) readMessage.add(readByte);
+		while (input.available() > 0) {
+			readMessage.add((byte) input.read());
 		}
 		return convertToByteArray(readMessage);
 	}
