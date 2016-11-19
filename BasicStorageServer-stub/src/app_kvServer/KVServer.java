@@ -76,7 +76,7 @@ public class KVServer {
 	}
 
 	private static void processArgs(String[] args) throws IOException {
-		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
+		new LogSetup("C:/Users/Lenovo/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
 		int port = Integer.parseInt(args[0]);
 		int cacheSize = Integer.parseInt(args[1]);
 		String cacheStrategy = args[2];
@@ -131,39 +131,11 @@ public class KVServer {
 
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();
-		String messageHeader = getMessageHeader(client);	
-		//Message Header is needed to proceed communication with ECS and Client in different ways. Can have values ECS or KV_MESSAGE
-		if (messageHeader.equals(ConnectionType.ECS.toString())) {
-			logger.info(serverName + ":Connection to ECS established");
-			EcsConnection connection = new EcsConnection(client, this);
-			new Thread(connection).start();
-		} else if (messageHeader.equals(ConnectionType.KV_MESSAGE.toString())){
-			ClientConnection connection = new ClientConnection(client, this);
-			new Thread(connection).start();
-		}	
-		logger.info(serverName + ":Connected to " 
-				+ client.getInetAddress().getHostName() 
-				+  " on port " + client.getPort());
+		ConnectionTypeProcessor processor = new ConnectionTypeProcessor(this, client);
+		new Thread(processor).start();
 	}
 
-	/**
-	 * 
-	 * @param client with InputStream
-	 * @return message header. Can be ECS or KV_CLIENT. Used to differentiate between two
-	 * separate communication channels. 
-	 * @throws IOException
-	 */
-	private String getMessageHeader(Socket client) throws IOException {
-		InputStream input = client.getInputStream();
-		StringBuilder sb =  new StringBuilder();
-		byte symbol = (byte) input.read();
-		logger.info(serverName + ":Checking input stream ...");
-		while (input.available() > 0 && (symbol != (byte) 31)) {
-			sb.append((char) symbol);
-			symbol = (byte) input.read();
-		}
-		return sb.toString();
-	}
+
 	
 	public void start() {
 		acceptingRequests = true;
