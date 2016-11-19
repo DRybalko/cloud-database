@@ -52,7 +52,7 @@ public class ServerCommunicator<T>{
 		readMessage.add((byte) input.read());
 		while (input.available() > 0 && readMessage.size() <= MAX_MESSAGE_SIZE) {
 			byte readByte = (byte) input.read();
-			readMessage.add(readByte);
+			if (!(readByte == (byte) 13)) readMessage.add(readByte);
 		}
 		byte[] receivedMessage = convertToByteArray(readMessage);
 
