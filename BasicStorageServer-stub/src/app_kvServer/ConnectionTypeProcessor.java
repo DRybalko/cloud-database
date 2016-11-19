@@ -59,6 +59,7 @@ public class ConnectionTypeProcessor implements Runnable  {
 			sb.append((char) symbol);
 			symbol = (byte) input.read();
 		}
+		sb.append((char) symbol);
 		return sb.toString();
 	}
 
