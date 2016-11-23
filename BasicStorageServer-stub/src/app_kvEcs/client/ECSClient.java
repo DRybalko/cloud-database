@@ -3,19 +3,12 @@ package app_kvEcs.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import app_kvClient.CommandLineProcessor;
 import app_kvEcs.logic.ECSLogic;
 import app_kvEcs.logic.Repository;
-import app_kvServer.EcsConnection;
 import app_kvServer.KVServer;
-import client.KVCommInterface;
-import client.KVStore;
 import common.logic.KVServerItem;
-import common.messages.KVMessage;
+
 
 public class ECSClient {
 
