@@ -151,7 +151,7 @@ public class ECSLogic {
 		updateMetaDataTableOfWorkingServers();
 	}
 	
-	private void updateMetaDataTableOfWorkingServers() {
+	public void updateMetaDataTableOfWorkingServers() {
 		for (KVServerItem server: serverSetStatus.getWorkingServers()) {
 			sendMetaDataTable(server);
 		}
