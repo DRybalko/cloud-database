@@ -133,6 +133,7 @@ public class KVServer {
 		Socket client = serverSocket.accept();
 		String messageHeader = getMessageHeader(client);	
 		//Message Header is needed to proceed communication with ECS and Client in different ways. Can have values ECS or KV_MESSAGE
+		logger.info("Header: "+messageHeader + "-");
 		if (messageHeader.equals(ConnectionType.ECS.toString())) {
 			logger.info(serverName + ":Connection to ECS established");
 			EcsConnection connection = new EcsConnection(client, this);
@@ -157,11 +158,15 @@ public class KVServer {
 		InputStream input = client.getInputStream();
 		StringBuilder sb =  new StringBuilder();
 		byte symbol = (byte) input.read();
+		sb.append((char) symbol);
 		logger.info(serverName + ":Checking input stream ...");
 		while (input.available() > 0) {
 			if (symbol != (byte) 31) {
 				symbol = (byte) input.read();
 				sb.append((char) symbol);
+				if (sb.toString().equals("ECS") || sb.toString().equals("KV_MESSAGE")) break;
+			} else {
+				break;
 			}
 		}
 		input.read();

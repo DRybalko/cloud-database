@@ -109,6 +109,9 @@ public class CommandLineProcessor {
 	private static void put() {
 		if (input.length >= 3) {
 			try {
+				logger.info("-------------------------------------");
+				long time1 = System.currentTimeMillis();
+				logger.info(time1);
 				StringBuilder stringBuilder = new StringBuilder();
 				for (int i = 2; i < input.length; i++) {
 					stringBuilder.append(input[i]);
@@ -116,6 +119,10 @@ public class CommandLineProcessor {
 				}
 				KVMessage message = kvStore.put(input[1], stringBuilder.toString());
 				System.out.println(message.toString());
+				long time2 = System.currentTimeMillis();
+				logger.info(time2);
+				logger.info("-------------------------------------");
+				logger.info("Time in millis "+ (time1 - time2));
 			} catch (Exception e) {
 				logger.info("Put failed. "+e.getMessage());
 			}
@@ -126,12 +133,19 @@ public class CommandLineProcessor {
 	
 	private static void get() {
 		if (input.length >= 2) {
+			logger.info("-------------------------------------");
+			long time1 = System.currentTimeMillis();
+			logger.info(time1);
 			try {
 				KVMessage message = kvStore.get(input[1]);
 				System.out.println(message.toString());
 			} catch (Exception e) {
 				logger.info("Get failed. " + e.getMessage());
 			}
+			long time2 = System.currentTimeMillis();
+			logger.info(time2);
+			logger.info("-------------------------------------");
+			logger.info("Time in millis "+ (time1 - time2));
 		} else {
 			errorMessage();
 		}

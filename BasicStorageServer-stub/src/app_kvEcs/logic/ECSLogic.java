@@ -195,7 +195,7 @@ public class ECSLogic {
 		Repository repository = new Repository("ecs.config");
 		ECSLogic ecsLogic = new ECSLogic(repository);
 		//TODO!!! SERVER ANZAHL!
-		ecsLogic.initService(2, 2, "LFU");
+		ecsLogic.initService(15, 15, "FIFO");
 		ecsLogic.start();
 	//	ecsLogic.addNode(10, "LFU");
 	//	ecsLogic.removeNode();
