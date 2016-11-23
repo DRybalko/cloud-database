@@ -50,7 +50,7 @@ public class ECSLogic {
 	}
 	
 	private void initializeServer(int cacheSize, String displacementStrategy, KVServerItem server) {
-		/*String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
+		/*String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "C:/Users/Lenovo/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
 				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy, server.getName())};		
 		try {
 			Runtime.getRuntime().exec(cmd);
@@ -151,7 +151,7 @@ public class ECSLogic {
 		updateMetaDataTableOfWorkingServers();
 	}
 	
-	private void updateMetaDataTableOfWorkingServers() {
+	public void updateMetaDataTableOfWorkingServers() {
 		for (KVServerItem server: serverSetStatus.getWorkingServers()) {
 			sendMetaDataTable(server);
 		}
