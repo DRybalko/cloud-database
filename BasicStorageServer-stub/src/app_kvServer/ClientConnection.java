@@ -8,6 +8,7 @@ import org.apache.log4j.*;
 
 import common.logic.ServerCommunicator;
 import common.messages.ECSMessageItem;
+import common.messages.KVMessage.KvStatusType;
 import common.messages.KVMessageItem;
 import common.messages.Message;
 import common.messages.Message.MessageType;
@@ -82,6 +83,9 @@ public class ClientConnection implements Runnable {
 	
 	private Message processMessage(Message message) {
 		if (message.getMessageType().equals(MessageType.CLIENT_TO_SERVER)) {
+			if (!server.getServerStatusInformation().isAcceptingClientRequests()) {
+				return new KVMessageItem(KvStatusType.SERVER_STOPPED);
+			}
 			KVMessageProcessor kvMessageProcessor = new KVMessageProcessor(server);
 			return kvMessageProcessor.processMessage((KVMessageItem) message);
 		} else if (message.getMessageType().equals(MessageType.ECS_TO_SERVER)) {

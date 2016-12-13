@@ -57,7 +57,7 @@ public class KVServer {
 	}
 
 	private static void processArgs(String[] args) throws IOException {
-		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
+		new LogSetup("logs/server/server"+args[0]+".log", Level.ALL);
 		int port = Integer.parseInt(args[0]);
 		int cacheSize = Integer.parseInt(args[1]);
 		String cacheStrategy = args[2];

@@ -54,7 +54,8 @@ public class ECSLogic {
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			logger.error("Server with IP: " + server.getIp() + " and Port: " + server.getPort() + " could not be launched."+e.getMessage());
-		} 
+		}
+		
 		if (hasReplied(server)) {
 			serverSetStatus.moveFromAvailableToInitialized(server);
 			sendIndices(server);
