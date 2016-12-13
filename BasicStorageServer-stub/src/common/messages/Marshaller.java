@@ -1,49 +1,43 @@
 package common.messages;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
-import common.logic.KVServerItem;
+import common.messages.Message.MessageType;
 
-public abstract class Marshaller<T> {
+public class Marshaller {
 	
-	protected static final char UNIT_SEPARATOR = (char) 30; //Should be generated in hash function with very low probability
-	protected static final char CARRIAGE = (char) 13;
-	protected static final String ATTRIBUTE_SEPARATOR = "4k6S"; //random string to reduce possibility of generating same byte sequence in start and end index
-	protected static final Charset CHARSET = Charset.forName("ISO-8859-1");
+	private static final String UNIT_SEPARATOR = "9c3V%_"; //Should be generated in hash function with very low probability
+	private static final Charset CHARSET = Charset.forName("ISO-8859-1");
 	
-	public abstract T unmarshal(byte[] message);
+	public Message unmarshal(byte[] message) {
+		String[] messageTokens = getMessageTokens(message);
+		String[] messageDataLoad = Arrays.copyOfRange(messageTokens, 1, messageTokens.length);
+		if (messageTokens[0].equals(MessageType.CLIENT_TO_SERVER.toString())) {
+			return KVMessageMarshaller.unmarshal(messageDataLoad);
+		} else if (messageTokens[0].equals(MessageType.ECS_TO_SERVER.toString())) {
+			return ECSMessageMarshaller.unmarshal(messageDataLoad);
+		} else if (messageTokens[0].equals(MessageType.SERVER_TO_SERVER.toString())) {
+			return PingMessageMarshaller.unmarshal(messageDataLoad);
+		}
+		return null;
+	}
 	
-	public abstract byte[] marshal(T message);
+	public byte[] marshal(Message message) {
+		if (message instanceof KVMessageItem) {
+			return KVMessageMarshaller.marshal((KVMessageItem) message);
+		} else if (message instanceof ECSMessageItem) {
+			return ECSMessageMarshaller.marshal((ECSMessageItem) message);
+		} else if (message instanceof PingMessageItem) {
+			return PingMessageMarshaller.marshal((PingMessageItem) message);
+		}
+		return null;
+	}
 	
-	/**
-	 * Method to convert received byte array into string array. Splits message based on UNIT_SEPARATOR
-	 * character. Removes carriage from the end of the message;
-	 */
-	protected String[] getMessageTokens(byte[] message){
+	private static String[] getMessageTokens(byte[] message){
 		String receivedMessage = new String(message, CHARSET);
 		receivedMessage = receivedMessage.substring(0, receivedMessage.length() - 1);
-		return receivedMessage.split(String.valueOf(UNIT_SEPARATOR));
+		return receivedMessage.split(UNIT_SEPARATOR);
 	}
 	
-	protected String convertKVServerItemToString(KVServerItem server) {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(server.getName());
-		stringBuilder.append(ATTRIBUTE_SEPARATOR);
-		stringBuilder.append(server.getIp());
-		stringBuilder.append(ATTRIBUTE_SEPARATOR);
-		stringBuilder.append(server.getPort());
-		stringBuilder.append(ATTRIBUTE_SEPARATOR);
-		stringBuilder.append(new String(server.getStartIndex(), CHARSET));
-		stringBuilder.append(ATTRIBUTE_SEPARATOR);
-		stringBuilder.append(new String(server.getEndIndex(), CHARSET));
-		return stringBuilder.toString();
-	}
-	
-	protected KVServerItem convertStringToMetaDataTableServer(String message)  {
-		String[] serverTokens = message.split(ATTRIBUTE_SEPARATOR);
-		KVServerItem kvServer = new KVServerItem(serverTokens[0], serverTokens[1], serverTokens[2]);
-		kvServer.setStartIndex(serverTokens[3].getBytes(CHARSET));
-		kvServer.setEndIndex(serverTokens[4].getBytes(CHARSET));
-		return kvServer;
-	}
 }

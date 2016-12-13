@@ -25,9 +25,9 @@ import common.messages.KVMessage.KvStatusType;
 public class KVStore implements KVCommInterface {
 
 	//First server to send put or get message to
-	private final KVServerItem initialKVServerItem = new KVServerItem("node8", "localhost", "50002");
+	private final KVServerItem initialKVServerItem = new KVServerItem("node1", "localhost", "50000");
 	
-	private Communicator<KVMessage> communicator;
+	private Communicator communicator;
 	private MetaDataTableController metaDataTableController;
 
 	public KVStore() {
@@ -38,7 +38,7 @@ public class KVStore implements KVCommInterface {
 	}
 	
 	public void connect() throws IOException {
-		communicator = new Communicator<KVMessage>(new KVMessageMarshaller(), ConnectionType.KV_MESSAGE);
+		communicator = new Communicator();
 	}
 
 	public void disconnect() {
@@ -47,26 +47,33 @@ public class KVStore implements KVCommInterface {
 
 	public KVMessage put(String key, String value) throws Exception {
 		if (communicator == null) throw new Exception("No connection!");
-		KVMessage kvMessage = new KVMessageItem(KvStatusType.PUT, key, value);
+		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.PUT, key, value);
 		return sendMessage(kvMessage);
 	}
 
 	public KVMessage get(String key) {
-		KVMessage kvMessage = new KVMessageItem(KvStatusType.GET, key);
+		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.GET, key);
 		return sendMessage(kvMessage);
 	}
 
-	private KVMessage sendMessage(KVMessage kvMessage) {
+	private KVMessageItem sendMessage(KVMessageItem kvMessage) {
 		byte[] hashedTuple = HashGenerator.generateHashFor(kvMessage.getKey());
 		KVServerItem responsibleServer = metaDataTableController.findResponsibleServer(hashedTuple);
-		KVMessage reply = communicator.sendMessage(responsibleServer, kvMessage);
+		KVMessageItem reply = (KVMessageItem) communicator.sendMessage(responsibleServer, kvMessage);
+		while (reply == null && !metaDataTableController.getMetaDataTable().isEmpty()) {
+			responsibleServer = deleteServerAndGetNext(responsibleServer);
+			reply = (KVMessageItem) communicator.sendMessage(responsibleServer, kvMessage);
+		}
 		if (isServerNotResponsible(reply)) {
 			metaDataTableController.addServerToMetaData(reply.getServer());
-			reply = communicator.sendMessage(reply.getServer(), kvMessage);
+			reply = (KVMessageItem) communicator.sendMessage(reply.getServer(), kvMessage);
 		}
 		return reply;
 	}
 	
+	private KVServerItem deleteServerAndGetNext(KVServerItem serverToRemove) {
+		return metaDataTableController.removeServerFromMetaData(serverToRemove);
+	}
 	private boolean isServerNotResponsible(KVMessage message) {
 		return message.getStatus().equals(KvStatusType.SERVER_NOT_RESPONSIBLE);
 	}

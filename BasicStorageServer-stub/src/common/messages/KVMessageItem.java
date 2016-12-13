@@ -9,14 +9,17 @@ import common.logic.KVServerItem;
  *
  * @see KVMessage
  */
-
-public class KVMessageItem implements KVMessage{
+public class KVMessageItem extends Message implements KVMessage{
 
 	private String key;
 	private String value;
 	private KvStatusType status;
 	private KVServerItem server;
-
+	
+	public KVMessageItem(KvStatusType type){
+		this.status = type;
+	}
+	
 	public KVMessageItem(KvStatusType type, String key, String value){
 		this.key = key;
 		this.value = value;
@@ -25,10 +28,10 @@ public class KVMessageItem implements KVMessage{
 
 	public KVMessageItem(KvStatusType type, String keyOrValue){
 		this.status = type;
-		if (type.equals(KVMessage.KvStatusType.GET)) {
+		if (type.equals(KvStatusType.GET)) {
 			this.key = keyOrValue;
-		} else if (type.equals(KVMessage.KvStatusType.GET_SUCCESS) ||
-				type.equals(KVMessage.KvStatusType.PUT_UPDATE)) {
+		} else if (type.equals(KvStatusType.GET_SUCCESS) ||
+				type.equals(KvStatusType.PUT_UPDATE)) {
 			this.value = keyOrValue;
 		}				
 	}
@@ -59,10 +62,6 @@ public class KVMessageItem implements KVMessage{
 		}
 		return message;	
 	}
-	
-	public KVMessageItem(KvStatusType type){
-		this.status = type;
-	}
 
 	public String getKey() {
 		return key;	
@@ -70,14 +69,6 @@ public class KVMessageItem implements KVMessage{
 
 	public String getValue() {
 		return value;
-	}
-
-	public KvStatusType getStatus() {
-		return status;
-	}
-
-	public void setStatus(KvStatusType type) {
-		this.status = type;
 	}
 
 	public void setValue(String value){
@@ -94,6 +85,14 @@ public class KVMessageItem implements KVMessage{
 
 	public void setServer(KVServerItem server) {
 		this.server = server;
+	}
+
+	public KvStatusType getStatus() {
+		return status;
+	}
+
+	public void setStatus(KvStatusType status) {
+		this.status = status;
 	}
 
 }

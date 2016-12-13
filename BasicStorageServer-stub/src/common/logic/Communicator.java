@@ -14,36 +14,35 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import common.messages.Marshaller;
-import common.messages.ConnectionType;
+import common.messages.Message;
 
-public class Communicator<T> {
+public class Communicator {
 	
 	private final int TIMEOUT = 1000;
 	
 	//Map that contains socket for each server
 	private Map<String, Socket> serverSockets;
 	private Logger logger;
-	private Marshaller<T> marshaller;
-	private ConnectionType connectionType;
+	private Marshaller marshaller;
 	
-	public Communicator(Marshaller<T> marshaller, ConnectionType connectionType) {
+	public Communicator() {
 		this.serverSockets = new HashMap<>();
 		this.logger = Logger.getRootLogger();
-		this.marshaller = marshaller;
-		this.connectionType = connectionType;
+		this.marshaller = new Marshaller();
 	}
 	
-	public T sendMessage(KVServerItem server, T message) {
+	public Message sendMessage(KVServerItem server, Message message) {
 		Socket socket;
 		if (serverSockets.containsKey(server.getName())) socket = serverSockets.get(server.getName());
 		else socket = createNewSocketFor(server);
-		T reply = null;
+		if (socket == null) return null;
+		Message reply = null;
 		try {
 			OutputStream output = socket.getOutputStream();
 			output.write(marshaller.marshal(message));
 			output.flush();
 			InputStream input = socket.getInputStream();
-			reply = (T) marshaller.unmarshal(readReply(input));
+			reply = marshaller.unmarshal(readReply(input));
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}	
@@ -54,13 +53,10 @@ public class Communicator<T> {
 		Socket socket = null;
 		try {
 			socket = new Socket(server.getIp(), Integer.parseInt(server.getPort()));
-			OutputStream output = socket.getOutputStream();
-			output.write(connectionType.toString().getBytes());
-			output.write((byte) 31);
-			output.flush();
 			serverSockets.put(server.getName(), socket);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			return null;
 		}
 		return socket;
 	}
@@ -83,7 +79,6 @@ public class Communicator<T> {
 		}
 		return convertedArray;
 	}
-	
 	
 	public boolean checkStarted(KVServerItem server) {
 		try (Socket socket = new Socket()) {

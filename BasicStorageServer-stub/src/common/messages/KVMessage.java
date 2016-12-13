@@ -4,11 +4,12 @@ import common.logic.KVServerItem;
 
 public interface KVMessage {
 	
-    public enum KvStatusType {
-    	GET,             		/* Get - request */
+	public enum KvStatusType {
+		GET,             		/* Get - request */
     	GET_ERROR,       		/* requested tuple (i.e. value) not found */
     	GET_SUCCESS,     		/* requested tuple (i.e. value) found */
     	PUT,               		/* Put - request */
+    	PUT_REPLICATION,		/* Put - request from another server to store replication of KV pair */
     	PUT_SUCCESS,     		/* Put - request successful, tuple inserted */
     	PUT_UPDATE,      		/* Put - request successful, i.e., value updated */
     	PUT_ERROR,       		/* Put - request not successful */
@@ -17,8 +18,9 @@ public interface KVMessage {
     	SERVER_STOPPED,         /* Server is stopped, no requests are processed */
     	SERVER_WRITE_LOCK,      /* Server locked for out, only get possible */
     	SERVER_NOT_RESPONSIBLE  /* Request not successful, server not responsible for key */
-}
-
+	}
+	
+	public KvStatusType getStatus();
 	/**
 	 * @return the key that is associated with this message, 
 	 * 		null if not key is associated.
@@ -30,12 +32,6 @@ public interface KVMessage {
 	 * 		null if not value is associated.
 	 */
 	public String getValue();
-	
-	/**
-	 * @return a status string that is used to identify request types, 
-	 * response types and error types associated to the message.
-	 */
-	public KvStatusType getStatus();
 	
 	/**
 	 * @return a server item with corresponding start and end index

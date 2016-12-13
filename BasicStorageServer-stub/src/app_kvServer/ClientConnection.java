@@ -3,17 +3,15 @@ package app_kvServer;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 
 import org.apache.log4j.*;
 
-import common.logic.ByteArrayMath;
-import common.logic.HashGenerator;
-import common.logic.KVServerItem;
-import common.messages.KVMessage;
-import common.messages.KVMessage.KvStatusType;
+import common.logic.ServerCommunicator;
+import common.messages.ECSMessageItem;
 import common.messages.KVMessageItem;
-import common.messages.KVMessageMarshaller;
+import common.messages.Message;
+import common.messages.Message.MessageType;
+import common.messages.PingMessageItem;
 
 /**
  * Represents a connection end point for a particular client that is 
@@ -29,10 +27,9 @@ public class ClientConnection implements Runnable {
 	private boolean isOpen;
 
 	private Socket clientSocket;
-	private InputStream input;
+	private ServerCommunicator communicator;
 	private KVServer server;
-	private ServerCommunicator<KVMessage> communicator;
-
+	
 	/**
 	 * Constructs a new CientConnection object for a given TCP socket.
 	 * @param clientSocket the Socket object for the client connection.
@@ -42,11 +39,11 @@ public class ClientConnection implements Runnable {
 		this.isOpen = true;
 		this.server = server;
 		try {
-			this.communicator = new ServerCommunicator<KVMessage>(clientSocket, new KVMessageMarshaller());
+			this.communicator = new ServerCommunicator(clientSocket);
 		} catch (IOException e) {
 			logger.info(e.getMessage());
 		}
-		this.SERVER_NAME = server.getServerName() + ":";
+		this.SERVER_NAME = server.getServerStatusInformation().getServerName() + ":";
 	}
 
 	/**
@@ -68,67 +65,34 @@ public class ClientConnection implements Runnable {
 	}
 
 	private void receiveAndProcessMessage() throws IOException {
-		input = clientSocket.getInputStream();	
-		while(isOpen && server.isRunning()) {
+		InputStream input = clientSocket.getInputStream();	
+		while(isOpen && server.getServerStatusInformation().isRunning()) {
 			try {
-				if (input.available() > 0 && server.isAcceptingRequests()) {
-					KVMessage receivedMessage = communicator.receiveMessage();
-					logger.debug(SERVER_NAME+"Server with start index " + Arrays.toString(server.getStartIndex()) 
-							+ " and end index " + Arrays.toString(server.getEndIndex())
-							+ " received message: StatusType: "+receivedMessage.getStatus() 
-							+ " with hash value " + Arrays.toString(HashGenerator.generateHashFor(receivedMessage.getKey())));
-					addKeyToKeyList(receivedMessage);
-					KVMessage returnMessage = processMessage(receivedMessage);
-					logger.debug(SERVER_NAME+"Message to send: StatusType: "+returnMessage.getStatus());
+				if (input.available() > 0) {
+					Message receivedMessage = communicator.receiveMessage();
+					Message returnMessage = processMessage(receivedMessage);
 					communicator.sendMessage(returnMessage);
-				} else if (input.available() > 0 && !server.isAcceptingRequests()){
-					communicator.sendMessage(new KVMessageItem(KvStatusType.SERVER_STOPPED));
-					input.skip(input.available());
-				} 
+				}
 			} catch (IOException ex) {
 				logger.error(SERVER_NAME+"Error! Connection lost!");
 				isOpen = false;
 			}				
 		}
 	}
-
-	private void addKeyToKeyList(KVMessage receivedMessage) {
-		logger.debug("Check if received message is put");
-		if (receivedMessage.getStatus().equals(KvStatusType.PUT) && !receivedMessage.getValue().equals("null")) {
-			logger.debug("Message is put");
-			server.addKey(receivedMessage.getKey());
-		} else if (receivedMessage.getStatus().equals(KvStatusType.PUT) && receivedMessage.getValue().equals("null")) {
-			logger.debug("Message is not put");
-			server.deleteKey(receivedMessage.getKey());
-		}
-	}
 	
-	private KVMessage processMessage(KVMessage message) {
-		if (message.getStatus().equals(KvStatusType.GET)) {
-			KVMessage getResult = server.getPersistenceLogic().get(message.getKey());
-			return getResult;
-			//TODO check is server can process message(not stopped) 
-		} else if (message.getStatus().equals(KvStatusType.PUT)) {
-			if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(message.getKey()), server.getStartIndex(), server.getEndIndex())) {
-				return server.getPersistenceLogic().put(message.getKey(), message.getValue());
-			} else {
-				KVServerItem responsibleServer = findResponsibleServer(HashGenerator.generateHashFor(message.getKey()));
-				KVMessageItem responseMessage =  new KVMessageItem(KvStatusType.SERVER_NOT_RESPONSIBLE);
-				responseMessage.setServer(responsibleServer);
-				return responseMessage;
-			}
+	private Message processMessage(Message message) {
+		if (message.getMessageType().equals(MessageType.CLIENT_TO_SERVER)) {
+			KVMessageProcessor kvMessageProcessor = new KVMessageProcessor(server);
+			return kvMessageProcessor.processMessage((KVMessageItem) message);
+		} else if (message.getMessageType().equals(MessageType.ECS_TO_SERVER)) {
+			ECSMessageProcessor ecsMessageProcessor = new ECSMessageProcessor(server);
+			return ecsMessageProcessor.processMessage((ECSMessageItem) message);
+		} else if (message.getMessageType().equals(MessageType.SERVER_TO_SERVER)) {
+			ServerToServerMessageProcessor serverToServerMessageProcessor = new ServerToServerMessageProcessor(server);
+			return serverToServerMessageProcessor.processMessage((PingMessageItem) message);
 		} else {
-			logger.error(SERVER_NAME+"Unnown message status, can not be proceeded.");
+			logger.error("Unknown message type: " + message.getMessageType().toString());
 			return null;
 		}
-	}
-	
-	private KVServerItem findResponsibleServer(byte[] keyHash) {
-		for (KVServerItem server: server.getMetaDataTable()) {
-			if (ByteArrayMath.isValueBetweenTwoOthers(keyHash, server.getStartIndex(), server.getEndIndex())) {
-				return server;
-			}
-		}
-		return null;
 	}
 }

@@ -1,4 +1,4 @@
-package app_kvEcs.logic;
+package app_kvServer;
 
 import java.util.LinkedList;
 import java.util.List;

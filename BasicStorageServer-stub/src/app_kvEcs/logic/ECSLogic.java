@@ -4,66 +4,65 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import logger.LogSetup;
-
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import app_kvServer.ServerSetStatus;
 import common.logic.Communicator;
 import common.logic.KVServerItem;
 import common.logic.MetaDataTableController;
-import common.messages.ECSMessage;
 import common.messages.ECSMessage.EcsStatusType;
-import common.messages.ConnectionType;
 import common.messages.ECSMessageItem;
-import common.messages.ECSMessageMarshaller;
 
 public class ECSLogic {
 	
 	private final int MAX_WAITING_TIME = 10000;
+	private final String ECS_IP = "localhost";
+	private final String ECS_PORT = "60000";
 	
 	private Logger logger;
 	private Repository repository;
 	private MetaDataTableController metaDataTableController;
-	private Communicator<ECSMessage> communicator;
+	private Communicator communicator;
 	private ServerSetStatus serverSetStatus;
+	private boolean isPerformingOperation;
 
 	public ECSLogic(Repository repository) {
 		this.repository = repository;
-		try {
-			new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/ecs/ecs.log", Level.ALL);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		logger = Logger.getRootLogger();	
-		communicator = new Communicator<ECSMessage>(new ECSMessageMarshaller(), ConnectionType.ECS);
+		communicator = new Communicator();
+		EcsServer ecsServer = new EcsServer(this);
+		new Thread(ecsServer).start();
 	}
 	
 	public void initService(int numberOfNodes, int cacheSize, String displacementStrategy) {
-		metaDataTableController = new MetaDataTableController(repository.getAvailableServers());
-		serverSetStatus = new ServerSetStatus(repository.getAvailableServers());
+		blockEcsForChanges();
+		if (metaDataTableController == null) {
+			metaDataTableController = new MetaDataTableController(repository.getAvailableServers());
+			serverSetStatus = new ServerSetStatus(repository.getAvailableServers());
+		}	
 		List<KVServerItem> metaDataTable = metaDataTableController.initializeTable(numberOfNodes);
 		for (int i = 0; i < numberOfNodes; i++) {
 			initializeServer(cacheSize, displacementStrategy, metaDataTable.get(i));
 		}
-		
+		releaseEcsBlock();
 	}
 	
 	private void initializeServer(int cacheSize, String displacementStrategy, KVServerItem server) {
-		/*String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
+		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
 				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy, server.getName())};		
 		try {
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			logger.error("Server with IP: " + server.getIp() + " and Port: " + server.getPort() + " could not be launched."+e.getMessage());
-		} */
+		} 
 		if (hasReplied(server)) {
 			serverSetStatus.moveFromAvailableToInitialized(server);
 			sendIndices(server);
+			sendEcsMetadata(server);
 			sendMetaDataTable(server);
 		}
 	}
-	
+
 	private boolean hasReplied(KVServerItem server) {
 		int waitingTime = 0;
 		while (!communicator.checkStarted(server)) {
@@ -80,7 +79,7 @@ public class ECSLogic {
 		};
 		return true;
 	}
-
+	
 	private String getServerConfiguration(String port, int cacheSize, String displacementStrategy, String name) {
 		return port + " " + cacheSize + " " +displacementStrategy+" "+name;
 	}
@@ -98,15 +97,25 @@ public class ECSLogic {
 		ECSMessageItem metaDataTableMessage = new ECSMessageItem(EcsStatusType.META_DATA_TABLE, metaDataTableController.getMetaDataTable());
 		logger.info("Try to send metaDataTable to server with name: "+server.getName());
 		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(server, metaDataTableMessage);
-		logger.info("Server "+server.getName() +" replied: "+reply.getStatus().toString());
+		logger.info("Server replied with: " + reply.getStatus().toString());
+	}
+	
+	private void sendEcsMetadata(KVServerItem server) {
+		KVServerItem ecsMetaData = new KVServerItem("ECS", ECS_IP, ECS_PORT);
+		ecsMetaData.setStartIndex(new byte[]{0});
+		ecsMetaData.setEndIndex(new byte[]{0});
+		ECSMessageItem message = new ECSMessageItem(EcsStatusType.ECS_METADATA, ecsMetaData);
+		communicator.sendMessage(server, message);
 	}
 	
 	public void start() {
+		blockEcsForChanges();
 		List<KVServerItem> initializedServers = serverSetStatus.getInitializedServers();
 		for (KVServerItem server: initializedServers) {
 			startServer(server);
 		}
 		serverSetStatus.moveAllFromInitializedToWorking();
+		releaseEcsBlock();
 	}
 	
 	private void startServer(KVServerItem server) {
@@ -117,6 +126,7 @@ public class ECSLogic {
 	}
 	
 	public void stop() {
+		blockEcsForChanges();
 		List<KVServerItem> workingServers = serverSetStatus.getWorkingServers();
 		for (KVServerItem server: workingServers) {
 			ECSMessageItem message = new ECSMessageItem(EcsStatusType.STOP);
@@ -124,49 +134,49 @@ public class ECSLogic {
 			logger.info("Stopping server "+server.getName()+". Reply: "+reply.getStatus().toString());
 		}
 		serverSetStatus.moveAllFromWorkingToInitialized();
+		releaseEcsBlock();
 	}
 	
 	public void shutDown() {
-		List<KVServerItem> initializedServers = serverSetStatus.getInitializedServers();
-		for (KVServerItem server: initializedServers) {
+		blockEcsForChanges();
+		List<KVServerItem> workingServers = serverSetStatus.getWorkingServers();
+		for (KVServerItem server: workingServers) {
 			shutDownServer(server);
 		}
+		serverSetStatus.moveAllFromWorkingToInitialized();
 		serverSetStatus.moveAllFromInitializedToAvailable();
+		releaseEcsBlock();
 	}
 	
 	private void shutDownServer(KVServerItem server) {
 		ECSMessageItem message = new ECSMessageItem(EcsStatusType.SHUT_DOWN);
-		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(server, message);
-		logger.info("Shutting server "+server.getName()+" down. Reply: "+reply.getStatus().toString());
+		communicator.sendMessage(server, message);
+		logger.info("Shutting server "+server.getName()+" down.");
+		metaDataTableController.removeServerFromMetaData(server);
 	}
 	
 	public void addNode(int cacheSize, String displacementStrategy) {
+		blockEcsForChanges();
 		KVServerItem newServer = serverSetStatus.getAvailableServers().get(0);
 		KVServerItem serverToUpdate = metaDataTableController.addServerToMetaData(newServer);
 		initializeServer(cacheSize, displacementStrategy, newServer);
 		serverSetStatus.moveFromAvailableToInitialized(newServer);
 		startServer(newServer);
-		serverSetStatus.moveFromInitializedToWorking(newServer);
-		updateStartIndex(serverToUpdate, newServer);
 		updateMetaDataTableOfWorkingServers();
+		serverSetStatus.moveFromInitializedToWorking(newServer);
+		updateStartIndex(serverToUpdate);
+		releaseEcsBlock();
 	}
 	
-	private void updateMetaDataTableOfWorkingServers() {
-		for (KVServerItem server: serverSetStatus.getWorkingServers()) {
-			sendMetaDataTable(server);
-		}
-	}
-
-	private void updateStartIndex(KVServerItem dataTransferFrom, KVServerItem dataTransferTo) {
+	private void updateStartIndex(KVServerItem dataTransferFrom) {
 		ECSMessageItem message = new ECSMessageItem(EcsStatusType.UPDATE_START_INDEX, dataTransferFrom.getStartIndex());
 		logger.info("Try to update start index of server with name: "+dataTransferFrom.getName()+", ip: "+dataTransferFrom.getIp()+", port: "+dataTransferFrom.getPort());
 		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(dataTransferFrom, message);
 		logger.info("Server to update replied with: " + reply.getStatus().toString());
-		ECSMessageItem transferDataReply = (ECSMessageItem) communicator.sendMessage(dataTransferTo, reply);
-		logger.info("New server replied with: " + transferDataReply.getStatus().toString());
 	}
 	
 	public void removeNode() {
+		blockEcsForChanges();
 		KVServerItem serverToRemove;
 		if (serverSetStatus.getWorkingServers().size() > 0) {
 			serverToRemove = serverSetStatus.getWorkingServers().get(0);
@@ -177,27 +187,44 @@ public class ECSLogic {
 		} else {
 			logger.warn("Server could not be removed. No servers to remove");
 		}
-
+		releaseEcsBlock();
 	}
 	
 	private void removeServer(KVServerItem serverToRemove) {
-		KVServerItem serverToTransferData = metaDataTableController.removeServerFromMetaData(serverToRemove);
+		metaDataTableController.removeServerFromMetaData(serverToRemove);
 		serverToRemove.setStartIndex(serverToRemove.getEndIndex());
-		updateStartIndex(serverToRemove, serverToTransferData);
-		ECSMessage stopMessage = new ECSMessageItem(EcsStatusType.SHUT_DOWN);
-		communicator.sendMessage(serverToRemove, stopMessage);
+		ECSMessageItem shutDownMessage = new ECSMessageItem(EcsStatusType.SHUT_DOWN);
+		communicator.sendMessage(serverToRemove, shutDownMessage);
 		serverSetStatus.moveFromWorkingToInitialized(serverToRemove);
 		serverSetStatus.moveFromInitializedToAvailable(serverToRemove);
 		updateMetaDataTableOfWorkingServers();
 	}
 	
-	public static void main(String[] args) throws IOException, InterruptedException {
-		Repository repository = new Repository("ecs.config");
-		ECSLogic ecsLogic = new ECSLogic(repository);
-		//TODO!!! SERVER ANZAHL!
-		ecsLogic.initService(15, 15, "FIFO");
-		ecsLogic.start();
-	//	ecsLogic.addNode(10, "LFU");
-	//	ecsLogic.removeNode();
+	public void removeFaultyServer(KVServerItem serverToRemove) {
+		while (!isPerformingOperation) {
+			metaDataTableController.removeServerFromMetaData(serverToRemove);
+			serverSetStatus.moveFromWorkingToInitialized(serverToRemove);
+			serverSetStatus.moveFromInitializedToAvailable(serverToRemove);
+			break;
+		}
+	}
+	
+	
+	private void updateMetaDataTableOfWorkingServers() {
+		for (KVServerItem server: serverSetStatus.getWorkingServers()) {
+			sendMetaDataTable(server);
+		}
+	}
+	
+	public MetaDataTableController getMetaDataTableController() {
+		return this.metaDataTableController;
+	}
+	
+	private void blockEcsForChanges() {
+		this.isPerformingOperation = true;
+	}
+	
+	private void releaseEcsBlock() {
+		this.isPerformingOperation = false;
 	}
 }

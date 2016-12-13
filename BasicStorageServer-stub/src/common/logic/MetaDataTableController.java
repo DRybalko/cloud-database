@@ -61,7 +61,7 @@ public class MetaDataTableController {
 	}
 	
 	private KVServerItem checkServerInTable(KVServerItem server) {
-		KVServerItem foundServer = hasServer(server);
+		KVServerItem foundServer = findServerInMetaDataTable(server);
 		if (foundServer != null) {
 			foundServer.setStartIndex(server.getStartIndex());
 			return foundServer;
@@ -69,7 +69,12 @@ public class MetaDataTableController {
 		return null;
 	}
 	
-	private KVServerItem hasServer(KVServerItem server) {
+	/**
+	 * This method looks for the KVServer with same name, ip and port in metadata table
+	 * @param server item to find in metadata table
+	 * @return found KVServerItem or null
+	 */
+	public KVServerItem findServerInMetaDataTable(KVServerItem server) {
 		for (KVServerItem serverItem: metaDataTable) {
 			if (serverItem.getName().equals(server.getName()) 
 					&& serverItem.getIp().equals(server.getIp())

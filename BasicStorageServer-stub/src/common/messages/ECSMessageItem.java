@@ -5,13 +5,14 @@ import java.util.Map;
 
 import common.logic.KVServerItem;
 
-public class ECSMessageItem implements ECSMessage{
+public class ECSMessageItem extends Message implements ECSMessage{
 
-	private EcsStatusType status;
 	private byte[] startIndex;
 	private byte[] endIndex;
+	private EcsStatusType status;
 	private List<KVServerItem> metaDataTable;
 	private Map<String, String> keyValuesForDataTransfer;
+	private KVServerItem serverItem;
 	
 	public ECSMessageItem(EcsStatusType status) {
 		this.status = status;
@@ -37,13 +38,10 @@ public class ECSMessageItem implements ECSMessage{
 		this.startIndex = startIndex;
 		this.endIndex = endIndex;
 	}
-
-	public EcsStatusType getStatus() {
-		return status;
-	}
-
-	public void setStatus(EcsStatusType status) {
+	
+	public ECSMessageItem(EcsStatusType status, KVServerItem serverItem) {
 		this.status = status;
+		this.serverItem = serverItem;
 	}
 
 	public byte[] getStartIndex() {
@@ -77,6 +75,22 @@ public class ECSMessageItem implements ECSMessage{
 	public void setKeyValuesForDataTransfer(
 			Map<String, String> keyValuesForDataTransfer) {
 		this.keyValuesForDataTransfer = keyValuesForDataTransfer;
-	}	
+	}
+
+	public EcsStatusType getStatus() {
+		return status;
+	}
+
+	public void setStatus(EcsStatusType status) {
+		this.status = status;
+	}
+
+	public KVServerItem getServerItem() {
+		return serverItem;
+	}
+
+	public void setServerItem(KVServerItem serverItem) {
+		this.serverItem = serverItem;
+	}
 	
 }

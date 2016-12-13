@@ -9,23 +9,21 @@ import org.junit.Test;
 import common.logic.KVServerItem;
 import common.messages.ECSMessage.EcsStatusType;
 import common.messages.ECSMessageItem;
-import common.messages.ECSMessageMarshaller;
 import common.messages.KVMessage;
 import common.messages.KVMessageItem;
-import common.messages.KVMessageMarshaller;
 import common.messages.KVMessage.KvStatusType;
+import common.messages.Marshaller;
 import junit.framework.TestCase;
 
 public class AdditionalTest extends TestCase {
 	
-	KVMessageMarshaller kVMessageMarshaller = new KVMessageMarshaller();
-	ECSMessageMarshaller ecsMessageMarshaller = new ECSMessageMarshaller();
+	Marshaller marshaller = new Marshaller();
 
 	@Test
 	public void testMarshalAndUnmarshalGetMessage() {
-		KVMessage message = new KVMessageItem(KvStatusType.GET, "12345");
-		byte[] marshaledMessage = kVMessageMarshaller.marshal(message);
-		KVMessage unmarshaledMessage = kVMessageMarshaller.unmarshal(marshaledMessage);
+		KVMessageItem message = new KVMessageItem(KvStatusType.GET, "12345");
+		byte[] marshaledMessage = marshaller.marshal(message);
+		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.GET));
 		assertTrue(unmarshaledMessage.getKey().equals("12345"));
 		assertNull(unmarshaledMessage.getValue());
@@ -33,9 +31,9 @@ public class AdditionalTest extends TestCase {
 	
 	@Test
 	public void testMarshalAndUnmarshalGetSuccessMessage() {
-		KVMessage message = new KVMessageItem(KvStatusType.GET_SUCCESS, "foundValue");
-		byte[] marshaledMessage = kVMessageMarshaller.marshal(message);
-		KVMessage unmarshaledMessage = kVMessageMarshaller.unmarshal(marshaledMessage);
+		KVMessageItem message = new KVMessageItem(KvStatusType.GET_SUCCESS, "foundValue");
+		byte[] marshaledMessage = marshaller.marshal(message);
+		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.GET_SUCCESS));
 		assertNull(unmarshaledMessage.getKey());
 		assertTrue(unmarshaledMessage.getValue().equals("foundValue"));
@@ -43,9 +41,9 @@ public class AdditionalTest extends TestCase {
 	
 	@Test
 	public void testMarshalAndUnmarshalPutMessage() {
-		KVMessage message = new KVMessageItem(KvStatusType.PUT, "123", "value");
-		byte[] marshaledMessage = kVMessageMarshaller.marshal(message);
-		KVMessage unmarshaledMessage = kVMessageMarshaller.unmarshal(marshaledMessage);
+		KVMessageItem message = new KVMessageItem(KvStatusType.PUT, "123", "value");
+		byte[] marshaledMessage = marshaller.marshal(message);
+		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.PUT));
 		assertTrue(unmarshaledMessage.getKey().equals("123"));
 		assertTrue(unmarshaledMessage.getValue().equals("value"));
@@ -53,9 +51,9 @@ public class AdditionalTest extends TestCase {
 	
 	@Test
 	public void testMarshalAndUnmarshalPutSuccessMessage() {
-		KVMessage message = new KVMessageItem(KvStatusType.PUT_SUCCESS);
-		byte[] marshaledMessage = kVMessageMarshaller.marshal(message);
-		KVMessage unmarshaledMessage = kVMessageMarshaller.unmarshal(marshaledMessage);
+		KVMessageItem message = new KVMessageItem(KvStatusType.PUT_SUCCESS);
+		byte[] marshaledMessage = marshaller.marshal(message);
+		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.PUT_SUCCESS));
 		assertNull(unmarshaledMessage.getKey());
 		assertNull(unmarshaledMessage.getValue());
@@ -108,7 +106,7 @@ public class AdditionalTest extends TestCase {
 	}
 	
 	private ECSMessageItem marshalAndUnmarshalMessage(ECSMessageItem message) {
-		byte[] marshaledMessage = ecsMessageMarshaller.marshal(message);
-		return ecsMessageMarshaller.unmarshal(marshaledMessage);
+		byte[] marshaledMessage = marshaller.marshal(message);
+		return (ECSMessageItem) marshaller.unmarshal(marshaledMessage);
 	}
 }

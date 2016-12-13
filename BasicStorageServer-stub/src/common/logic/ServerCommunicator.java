@@ -1,4 +1,4 @@
-package app_kvServer;
+package common.logic;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,23 +11,24 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import common.messages.Marshaller;
+import common.messages.Message;
 
-public class ServerCommunicator<T>{
+public class ServerCommunicator{
 	
-	private int MAX_MESSAGE_SIZE = 128000;
+	private int MAX_MESSAGE_SIZE = 5*128000;
 	
 	private InputStream input;
 	private OutputStream output;
 	private Socket socket;
 	private Logger logger;
-	private Marshaller<T> marshaller;
+	private Marshaller marshaller;
 	
-	public ServerCommunicator(Socket socket, Marshaller<T> marshaller) throws IOException {
+	public ServerCommunicator(Socket socket) throws IOException {
 		this.input = socket.getInputStream();
 		this.output = socket.getOutputStream();
 		this.logger = Logger.getRootLogger();
 		this.socket = socket;
-		this.marshaller = marshaller;
+		this.marshaller = new Marshaller();
 	}
 
 	/**
@@ -35,7 +36,7 @@ public class ServerCommunicator<T>{
 	 * @param msg the message that is to be sent.
 	 * @throws IOException some I/O error regarding the output stream 
 	 */
-	public void sendMessage(T message) throws IOException {
+	public void sendMessage(Message message) throws IOException {
 		logger.info("Sending message ...");
 		byte[] msgBytes = marshaller.marshal(message);
 		output.write(msgBytes, 0, msgBytes.length);
@@ -45,7 +46,7 @@ public class ServerCommunicator<T>{
 				+ socket.getPort());
 	}
 	
-	public T receiveMessage() throws IOException {
+	public Message receiveMessage() throws IOException {
 		logger.info("Communicator starts receiving message");
 		List<Byte> readMessage = new ArrayList<>();
 		readMessage.add((byte) input.read());
@@ -54,7 +55,7 @@ public class ServerCommunicator<T>{
 		}
 		byte[] receivedMessage = convertToByteArray(readMessage);
 
-		T msg = (T) marshaller.unmarshal(receivedMessage);
+		Message msg = marshaller.unmarshal(receivedMessage);
 		logger.info("RECEIVE from \t<" 
 				+ socket.getInetAddress().getHostAddress() + ":" 
 				+ socket.getPort());

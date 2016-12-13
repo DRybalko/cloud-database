@@ -15,14 +15,13 @@ public interface ECSMessage {
 		META_DATA_TABLE,
 		SERVER_START_END_INDEX,
 		REQUEST_ACCEPTED,
-		DATA_TRANSFER,
-		ERROR
-	}	
-
-	/**
-	 * @return a status string that is used to identify request types
-	 *  associated to the message.
-	 */
+		ECS_METADATA,
+		FAULTY_SERVER,
+		REALLOCATE_DATA,
+		REMOVE_FAULTY_SERVER,
+		SERVER_STOPPED
+	}
+	
 	public EcsStatusType getStatus();
 	
 	public byte[] getStartIndex();
@@ -32,4 +31,6 @@ public interface ECSMessage {
 	public List<KVServerItem> getMetaDataTable();
 	
 	public Map<String, String> getKeyValuesForDataTransfer();
+	
+	public KVServerItem getServerItem();
 }

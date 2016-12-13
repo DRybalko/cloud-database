@@ -1,15 +1,10 @@
 package app_kvServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import app_kvServer.ClientConnection;
 import app_kvServer.KVServer;
@@ -19,16 +14,7 @@ import logger.LogSetup;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import common.logic.ByteArrayMath;
-import common.logic.HashGenerator;
 import common.logic.KVServerItem;
-import common.messages.ConnectionType;
-import common.messages.ECSMessage.EcsStatusType;
-import common.messages.ECSMessageItem;
-import common.messages.KVMessageItem;
-import common.messages.KVMessageMarshaller;
-import common.messages.KVMessage.KvStatusType;
-
 
 /**
  * Main class for the KVServer. Holds the variables needed for
@@ -41,18 +27,13 @@ import common.messages.KVMessage.KvStatusType;
 public class KVServer {
 
 	private ServerSocket serverSocket;
-	private String serverName;
 	private Logger logger;
-	private int port;
-	private boolean running;
 	private PersistenceLogic persistenceLogic;
-	private boolean writeLock;
-	private boolean acceptingRequests;
-	private boolean stopped;
-	private byte[] startIndex;
-	private byte[] endIndex;
-	private List<String> keys;
 	private List<KVServerItem> metaDataTable;
+	private ReplicaCoordinator replicaCoordinator;
+	private FailureDetectorService failureDetector;
+	private KVServerItem ecsMetaData;
+	private ServerStatusInformation serverStatusInformation;
 
 	/**
 	 * Start KV Server at given port
@@ -86,13 +67,9 @@ public class KVServer {
 	}
 
 	public KVServer(int port, int cacheSize, String strategy, String name) {
-		this.port = port;
+		this.serverStatusInformation = new ServerStatusInformation(port, name);
 		this.persistenceLogic = new PersistenceLogic(cacheSize, strategy);
-		this.acceptingRequests = false;
-		this.writeLock = false;
 		this.logger = Logger.getRootLogger();
-		this.keys = new ArrayList<>();
-		this.serverName = name;
 	}
 
 	/**
@@ -100,30 +77,29 @@ public class KVServer {
 	 * Loops until the the server should be closed.
 	 */
 	public void run() {
-		running = initializeServer();
-		stopped = false;
+		serverStatusInformation.setRunning(initializeServer());
 		if(serverSocket != null) {
-			while(this.running) {
+			while(serverStatusInformation.isRunning()) {
 				try {
 					listen();
 				} catch (IOException e) {
-					logger.error(serverName + ":Error! " + "Unable to establish connection. \n", e);
+					logger.error(serverStatusInformation.getServerName() + ":Error! " + "Unable to establish connection. \n", e);
 				}
 			}
 		}
-		logger.info(serverName + ":Server stopped.");
+		logger.info(serverStatusInformation.getServerName() + ":Server stopped.");
 	}
 
 	private boolean initializeServer() {
-		logger.info(serverName + ":Initialize server ...");
+		logger.info("Initialize server ...");
 		try {
-			serverSocket = new ServerSocket(port);
-			logger.info(serverName + ":Server listening on port: " + serverSocket.getLocalPort());    
+			serverSocket = new ServerSocket(serverStatusInformation.getPort());
+			logger.info("Server listening on port: " + serverSocket.getLocalPort());    
 			return true;
 		} catch (IOException e) {
-			logger.error(serverName + ":Error! Cannot open server socket:");
+			logger.error("Error! Cannot open server socket:");
 			if(e instanceof BindException){
-				logger.error(serverName + ":Port " + port + " is already bound!");
+				logger.error("Port " + serverStatusInformation.getPort() + " is already bound!");
 			}
 			return false;
 		}
@@ -131,150 +107,137 @@ public class KVServer {
 
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();
-		String messageHeader = getMessageHeader(client);	
-		//Message Header is needed to proceed communication with ECS and Client in different ways. Can have values ECS or KV_MESSAGE
-		logger.info("Header: "+messageHeader + "-");
-		if (messageHeader.equals(ConnectionType.ECS.toString())) {
-			logger.info(serverName + ":Connection to ECS established");
-			EcsConnection connection = new EcsConnection(client, this);
-			new Thread(connection).start();
-		} else if (messageHeader.equals(ConnectionType.KV_MESSAGE.toString())){
-			ClientConnection connection = new ClientConnection(client, this);
-			new Thread(connection).start();
-		}	
-		logger.info(serverName + ":Connected to " 
+		ClientConnection connection = new ClientConnection(client, this);
+		new Thread(connection).start();
+		logger.info(serverStatusInformation.getServerName() + ":Connected to " 
 				+ client.getInetAddress().getHostName() 
 				+  " on port " + client.getPort());
 	}
-
-	/**
-	 * 
-	 * @param client with InputStream
-	 * @return message header. Can be ECS or KV_CLIENT. Used to differentiate between two
-	 * separate communication channels. 
-	 * @throws IOException
-	 */
-	private String getMessageHeader(Socket client) throws IOException {
-		InputStream input = client.getInputStream();
-		StringBuilder sb =  new StringBuilder();
-		byte symbol = (byte) input.read();
-		sb.append((char) symbol);
-		logger.info(serverName + ":Checking input stream ...");
-		while (input.available() > 0) {
-			if (symbol != (byte) 31) {
-				symbol = (byte) input.read();
-				sb.append((char) symbol);
-				if (sb.toString().equals("ECS") || sb.toString().equals("KV_MESSAGE")) break;
-			} else {
-				break;
-			}
-		}
-		input.read();
-		return sb.toString();
-	}
 	
 	public void start() {
-		acceptingRequests = true;
+		serverStatusInformation.setAcceptingClientRequests(true);
+		new Thread(failureDetector).start();
 	}
 
 	public void stop() {
-		acceptingRequests = false;
+		serverStatusInformation.setAcceptingClientRequests(false);
 	}
 
 	public void shutDown() {
 		logger.info("Stopping server, closing socket...");
-		running = false;
-		try {
+		moveData(serverStatusInformation.getStartIndex(), serverStatusInformation.getEndIndex(), findNextServer());
+		this.replicaCoordinator.deleteAllReplications();
+		try {		
+			serverStatusInformation.setRunning(false);
 			this.serverSocket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.info("Server does not accept requests anymore");
 		}
 		logger.info("Server shut down");
 	}
+	
+	private KVServerItem findNextServer() {
+		ListIterator<KVServerItem> iterator = metaDataTable.listIterator();
+		while (iterator.hasNext()) {
+			KVServerItem server = iterator.next();
+			if (Arrays.equals(server.getStartIndex(), serverStatusInformation.getStartIndex()) 
+					&& Arrays.equals(server.getEndIndex(), server.getEndIndex())) {
+				if (iterator.hasNext()) return iterator.next();
+				else return metaDataTable.get(0);
+			}
+		}
+		return null;
+	}
 
 	public void lockWrite() {
-		writeLock = true;
+		serverStatusInformation.setWriteLock(true);
 	}
 
 	public void unLockWrite() {
-		writeLock = false;
+		serverStatusInformation.setWriteLock(false);
 	}
 
-	public ECSMessageItem moveData(byte[] startIndex, byte[] endIndex) {
-		Map<String, String> keyValuesForDataTransfer = new HashMap<>();
-		for (String key: keys) {
-			if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key), startIndex, endIndex)) {
-				keyValuesForDataTransfer.put(key, persistenceLogic.get(key).getValue());
-			}
-		}
-		return new ECSMessageItem(EcsStatusType.DATA_TRANSFER, keyValuesForDataTransfer);
+	public void updateStartIndex(byte[] newStartIndex) {
+		moveData(serverStatusInformation.getStartIndex(), newStartIndex, findPreviousServer());
+		serverStatusInformation.setStartIndex(newStartIndex);
 	}
-
-	public ECSMessageItem updateStartIndex(byte[] newStartIndex) {
-		return moveData(this.startIndex, newStartIndex);
+	
+	public KVServerItem findPreviousServer() {
+		int thisServerIndex = metaDataTable.indexOf(serverStatusInformation.getThisKvServerItem());
+		if (thisServerIndex == 0) return metaDataTable.get(metaDataTable.size() -1);
+		else return metaDataTable.get(thisServerIndex - 1);
+	} 
+	
+	public void moveData(byte[] startIndex, byte[] endIndex, KVServerItem serverToMoveDataTo) {
+		DataTransferer dataTransferer = new DataTransferer(this, startIndex, endIndex, serverToMoveDataTo);
+		new Thread(dataTransferer).start();
 	}
 	
 	public PersistenceLogic getPersistenceLogic() {
 		return persistenceLogic;
 	}
-	
-	public boolean isAcceptingRequests() {
-		return acceptingRequests;
-	}
 
 	public void setAcceptingRequests(boolean acceptingRequests) {
-		this.acceptingRequests = acceptingRequests;
+		serverStatusInformation.setAcceptingClientRequests(acceptingRequests);
 	}
 
 	public void setStartIndex(byte[] startIndex) {
-		logger.info(serverName + ":Server got start index " + Arrays.toString(startIndex));
-		this.startIndex = startIndex;
+		logger.info(serverStatusInformation.getServerName() + ":Server got start index " + Arrays.toString(startIndex));
+		serverStatusInformation.setStartIndex(startIndex);
 	}
 
 	public void setEndIndex(byte[] endIndex) {
-		logger.info(serverName + ":Server got end index " + Arrays.toString(endIndex));
-		this.endIndex = endIndex;
+		logger.info(serverStatusInformation.getServerName() + ":Server got end index " + Arrays.toString(endIndex));
+		serverStatusInformation.setEndIndex(endIndex);
 	} 
 	
 	public void setMetaDataTable(List<KVServerItem> metaDataTable) {
+		logger.debug("Received metadata table");
 		this.metaDataTable = metaDataTable;
-	}
-
-	public byte[] getStartIndex() {
-		return startIndex;
-	}
-
-	public byte[] getEndIndex() {
-		return endIndex;
-	}
-
-	public String getServerName() {
-		return serverName;
-	}
-
-	public void setServerName(String serverName) {
-		this.serverName = serverName;
+		serverStatusInformation.setThisKvServerItem(findServerInMetaDataTable());
+		if (this.replicaCoordinator == null) this.replicaCoordinator = new ReplicaCoordinator(this);
+		else this.replicaCoordinator.updateReplicas();
+		if (this.failureDetector == null) {
+			this.failureDetector = new FailureDetectorService(this);
+		}
+		else this.failureDetector.onMetaDataTableChange();
 	}
 	
+	private KVServerItem findServerInMetaDataTable() {
+		for (KVServerItem serverItem: metaDataTable) {
+			if (serverItem.getName().equals(serverStatusInformation.getServerName()) && Arrays.equals(serverStatusInformation.getEndIndex(), serverItem.getEndIndex()))
+				return serverItem;
+		}
+		return null;
+	}
+
 	public List<KVServerItem> getMetaDataTable() {
 		return this.metaDataTable;
 	}
 	
 	public void addKey(String key) {
-		this.keys.add(key);
+		serverStatusInformation.addKey(key);
 	}
 	
 	public void deleteKey(String key) {
-		for (String keyElement: keys) {
-			if (keyElement.equals(key)) keys.remove(keyElement);
+		for (String keyElement: serverStatusInformation.getKeys()) {
+			if (keyElement.equals(key)) serverStatusInformation.removeKey(keyElement);
 		}	
 	}
 	
-	public boolean isRunning() {
-		return this.running;
+	public ReplicaCoordinator getReplicaCoordinator() {
+		return this.replicaCoordinator;
 	}
 	
-	public List<String> getKeys() {
-		return keys;
+	public ServerStatusInformation getServerStatusInformation() {
+		return this.serverStatusInformation;
+	}
+
+	public KVServerItem getEcsMetaData() {
+		return ecsMetaData;
+	}
+	
+	public void setEcsMetaData(KVServerItem ecsMetaData) {
+		this.ecsMetaData = ecsMetaData;
 	}
 }
