@@ -19,8 +19,6 @@ import org.apache.log4j.Logger;
  *  @see Properties
  *
  */
-
-
 public class StorageCommunicator {
 	
 	private final String FILE_PATH = "storage/storage.txt";

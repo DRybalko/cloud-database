@@ -1,5 +1,6 @@
 package common.logic;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,11 +77,7 @@ public class MetaDataTableController {
 	 */
 	public KVServerItem findServerInMetaDataTable(KVServerItem server) {
 		for (KVServerItem serverItem: metaDataTable) {
-			if (serverItem.getName().equals(server.getName()) 
-					&& serverItem.getIp().equals(server.getIp())
-					&& serverItem.getPort().equals(server.getPort())) {
-				return serverItem;
-			}
+			if (serverItem.equals(server)) return serverItem;
 		}
 		return null;	
 	}
@@ -135,39 +132,42 @@ public class MetaDataTableController {
 	 * Method to remove server from meta data table 
 	 * @param server to be removed
 	 * @return neighbor server, whose start index must be updated
-	 */
-	public KVServerItem removeServerFromMetaData(KVServerItem server) {
-		KVServerItem neighborServer = null;
-		int serverToRemoveIndex = metaDataTable.indexOf(server);
-		ListIterator<KVServerItem> iterator = metaDataTable.listIterator(serverToRemoveIndex);
-		if (metaDataTable.size() == 2) {
-			if (iterator.hasNext()) {
-				neighborServer = iterator.next();
-			} else {
-				neighborServer = iterator.previous();
-			}
-			neighborServer.setStartIndex(ByteArrayMath.increment(neighborServer.getEndIndex()));
-		} else if (metaDataTable.size() > 2){
-			if (serverToRemoveIndex == 0) {
-				neighborServer = iterator.next();
-				neighborServer.setStartIndex(ByteArrayMath.increment(metaDataTable.getLast().getEndIndex()));
-			} else if (serverToRemoveIndex == metaDataTable.size() - 1) {
-				KVServerItem nextToLast = iterator.previous();
-				neighborServer = metaDataTable.getFirst();
-				neighborServer.setStartIndex(ByteArrayMath.increment(nextToLast.getEndIndex()));
-			} else {
-				KVServerItem previousServer = iterator.previous();
-				iterator.next();
-				neighborServer = iterator.next();
-				neighborServer.setStartIndex(ByteArrayMath.increment(previousServer.getEndIndex()));
-				
-			}
+	 */	
+	public KVServerItem removeServerFromMetaData(KVServerItem serverItem) {
+		int serverToRemoveIndex = metaDataTable.indexOf(serverItem);
+		KVServerItem nextServer;
+		if (metaDataTable.size() == 1) {
+			nextServer = null;
+		} else if (metaDataTable.size() == 2) {
+			nextServer = removeServerFromTableWithOneElement(serverToRemoveIndex);
+		} else {
+			nextServer = removeServerFromTableWithMoreThanTwoElements(serverToRemoveIndex);
 		}
-		metaDataTable.remove(server);
-		return neighborServer;
+		metaDataTable.remove(serverItem);
+		return nextServer;
+	}
+
+	private KVServerItem removeServerFromTableWithOneElement(
+			int serverToRemoveIndex) {
+		KVServerItem nextServer;
+		int nextServerIndex = (serverToRemoveIndex + 1) % metaDataTable.size();
+		nextServer = metaDataTable.get(nextServerIndex);
+		nextServer.setStartIndex(ByteArrayMath.increment(nextServer.getEndIndex()));
+		return nextServer;
+	}
+
+	private KVServerItem removeServerFromTableWithMoreThanTwoElements(int serverToRemoveIndex) {
+		KVServerItem nextServer;
+		KVServerItem previousServer;
+		if (serverToRemoveIndex == 0) previousServer = metaDataTable.getLast();
+		else previousServer = metaDataTable.get(serverToRemoveIndex - 1);
+		int nextServerIndex = (serverToRemoveIndex + 1) % metaDataTable.size();
+		nextServer = metaDataTable.get(nextServerIndex);
+		nextServer.setStartIndex(ByteArrayMath.increment(previousServer.getEndIndex()));
+		return nextServer;
 	}
 	
-
+	
 	public LinkedList<KVServerItem> getMetaDataTable() {
 		return this.metaDataTable;
 	}
@@ -185,5 +185,5 @@ public class MetaDataTableController {
 		}
 		return null;
 	}
-
+	
 }

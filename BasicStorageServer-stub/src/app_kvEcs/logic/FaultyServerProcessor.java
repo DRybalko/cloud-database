@@ -12,7 +12,7 @@ import common.messages.ECSMessage.EcsStatusType;
 import common.messages.ECSMessageItem;
 import common.messages.Message;
 
-public class ClientConnection {
+public class FaultyServerProcessor {
 
 	private static final int CACHE_SIZE = 30;
 	private static final String DISPLACEMENT_STRATEGY = "FIFO";
@@ -22,7 +22,7 @@ public class ClientConnection {
 	private ServerCommunicator communicator;
 	private Socket clientSocket;
 	
-	public ClientConnection(Socket clientSocket, ECSLogic ecsLogic) {
+	public FaultyServerProcessor(Socket clientSocket, ECSLogic ecsLogic) {
 		this.ecsLogic = ecsLogic;
 		this.logger = Logger.getRootLogger();
 		this.clientSocket = clientSocket;
@@ -71,6 +71,7 @@ public class ClientConnection {
 		} else {
 			replyMessage = new ECSMessageItem(EcsStatusType.SERVER_STOPPED);
 		}
+		logger.info("Data reallocated and server started");
 		return replyMessage;
 	}
 

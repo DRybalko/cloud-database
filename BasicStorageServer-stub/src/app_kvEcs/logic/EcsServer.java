@@ -52,7 +52,7 @@ public class EcsServer implements Runnable {
 
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();
-		ClientConnection connection = new ClientConnection(client, ecsLogic);
+		FaultyServerProcessor connection = new FaultyServerProcessor(client, ecsLogic);
 		connection.processConnection();
 	}
 

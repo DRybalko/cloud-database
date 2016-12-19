@@ -61,7 +61,7 @@ public class KVStore implements KVCommInterface {
 		KVServerItem responsibleServer = metaDataTableController.findResponsibleServer(hashedTuple);
 		KVMessageItem reply = (KVMessageItem) communicator.sendMessage(responsibleServer, kvMessage);
 		while (reply == null && !metaDataTableController.getMetaDataTable().isEmpty()) {
-			responsibleServer = deleteServerAndGetNext(responsibleServer);
+			responsibleServer = metaDataTableController.removeServerFromMetaData(responsibleServer);
 			reply = (KVMessageItem) communicator.sendMessage(responsibleServer, kvMessage);
 		}
 		if (isServerNotResponsible(reply)) {
@@ -70,10 +70,7 @@ public class KVStore implements KVCommInterface {
 		}
 		return reply;
 	}
-	
-	private KVServerItem deleteServerAndGetNext(KVServerItem serverToRemove) {
-		return metaDataTableController.removeServerFromMetaData(serverToRemove);
-	}
+
 	private boolean isServerNotResponsible(KVMessage message) {
 		return message.getStatus().equals(KvStatusType.SERVER_NOT_RESPONSIBLE);
 	}

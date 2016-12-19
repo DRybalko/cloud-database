@@ -38,37 +38,56 @@ public class PersistenceLogic {
 	public synchronized KVMessage put(String key, String value) {
 		if (cache.contains(key)) { 
 			if (value.trim().equals("null")) {
-				logger.debug(CLASS_NAME + " Delete value from cache with key: "+key);
-				cache.deleteValueFor(key);
-				storageCommunicator.deleteFromStorage(key);
-				return new KVMessageItem(KvStatusType.DELETE_SUCCESS);
+				return deleteKvPairFromCache(key);
 			}
-			logger.debug(CLASS_NAME + " Update key "+key+" with value "+value);
-			cache.updateElement(key, value); 
-			if (storageCommunicator.readValueFor(key) != null) {
-				storageCommunicator.put(key, value);
-			}
-			return new KVMessageItem(KvStatusType.PUT_UPDATE, value);
+			return updateKvPairInCache(key, value);
 		}
 		else {
-			if (value == null) {
-				logger.debug(CLASS_NAME + " Value is null, can not be updated.");
-				return new KVMessageItem(KvStatusType.DELETE_ERROR);
-			}
-			if (value.trim().equals("null")) {
-				if (storageCommunicator.deleteFromStorage(key)) {
-					return new KVMessageItem(KvStatusType.DELETE_SUCCESS);
-				} else {
-					return new KVMessageItem(KvStatusType.DELETE_ERROR);
-				}
-			}
-			if (storageCommunicator.readValueFor(key) != null) {
-				putElementToCache(key, value);
-				return new KVMessageItem(KvStatusType.PUT_UPDATE);
-			}
-			putElementToCache(key, value);
-			return new KVMessageItem(KvStatusType.PUT_SUCCESS);
+			return checkKvPairInStorage(key, value);
 		}
+	}
+
+	private KVMessage checkKvPairInStorage(String key, String value) {
+		KVMessage responseMessage;
+		if (value == null) {
+			logger.debug(CLASS_NAME + " Value is null, can not be updated.");
+			responseMessage = new KVMessageItem(KvStatusType.DELETE_ERROR);
+		} else if (value.trim().equals("null")) {
+			responseMessage = deleteKvPairFromStorage(key);
+		} else if (storageCommunicator.readValueFor(key) != null) {
+			putElementToCache(key, value);
+			responseMessage = new KVMessageItem(KvStatusType.PUT_UPDATE);
+		} else {
+			putElementToCache(key, value);
+			responseMessage = new KVMessageItem(KvStatusType.PUT_SUCCESS);
+		}
+		return responseMessage;
+	}
+
+	private KVMessage deleteKvPairFromStorage(String key) {
+		KVMessageItem responseMessage;
+		if (storageCommunicator.deleteFromStorage(key)) {
+			responseMessage = new KVMessageItem(KvStatusType.DELETE_SUCCESS);
+		} else {
+			responseMessage = new KVMessageItem(KvStatusType.DELETE_ERROR);
+		}
+		return responseMessage;
+	}
+
+	private KVMessage updateKvPairInCache(String key, String value) {
+		logger.debug(CLASS_NAME + " Update key "+key+" with value "+value);
+		cache.updateElement(key, value); 
+		if (storageCommunicator.readValueFor(key) != null) {
+			storageCommunicator.put(key, value);
+		}
+		return new KVMessageItem(KvStatusType.PUT_UPDATE, value);
+	}
+
+	private KVMessage deleteKvPairFromCache(String key) {
+		logger.debug(CLASS_NAME + " Delete value from cache with key: "+key);
+		cache.deleteValueFor(key);
+		storageCommunicator.deleteFromStorage(key);
+		return new KVMessageItem(KvStatusType.DELETE_SUCCESS);
 	}
 	
 	private void putElementToCache(String key, String value) {

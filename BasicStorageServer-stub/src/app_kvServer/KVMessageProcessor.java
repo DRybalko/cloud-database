@@ -20,26 +20,30 @@ public class KVMessageProcessor {
 	}
 	
 	public KVMessageItem processMessage(KVMessageItem message) {
-		
-			if (message.getStatus().equals(KvStatusType.GET)) {
-				KVMessageItem getResult = (KVMessageItem) server.getPersistenceLogic().get(message.getKey());
-				return getResult;
-			} else if (message.getStatus().equals(KvStatusType.PUT)) {
-				if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(message.getKey()),
-						server.getServerStatusInformation().getStartIndex(), server.getServerStatusInformation().getEndIndex())) {	
-					addKeyToKeyList(message);
-					sendReplication(message);
-					return (KVMessageItem) server.getPersistenceLogic().put(message.getKey(), message.getValue());
-				} else {
-					return sendNotResponsibleMessage(message);
-				}
-			} else if (message.getStatus().equals(KvStatusType.PUT_REPLICATION))  {
-				addKeyToKeyList(message);
-				return (KVMessageItem) server.getPersistenceLogic().put(message.getKey(), message.getValue());
-			} else {
-				logger.error("Unnown message status, can not be proceeded.");
-				return null;
-			}
+		KVMessageItem replyMessage;
+		if (message.getStatus().equals(KvStatusType.GET)) {
+			replyMessage = (KVMessageItem) server.getPersistenceLogic().get(message.getKey());
+		} else if (message.getStatus().equals(KvStatusType.PUT)) {
+			replyMessage = processPutMessage(message);
+		} else if (message.getStatus().equals(KvStatusType.PUT_REPLICATION))  {
+			addKeyToKeyList(message);
+			replyMessage = (KVMessageItem) server.getPersistenceLogic().put(message.getKey(), message.getValue());
+		} else {
+			logger.error("Unnown message status, can not be proceeded.");
+			replyMessage = new KVMessageItem(KvStatusType.ERROR);
+		}
+		return replyMessage;
+	}
+
+	private KVMessageItem processPutMessage(KVMessageItem message) {
+		if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(message.getKey()),
+				server.getServerStatusInformation().getStartIndex(), server.getServerStatusInformation().getEndIndex())) {	
+			addKeyToKeyList(message);
+			sendReplication(message);
+			return (KVMessageItem) server.getPersistenceLogic().put(message.getKey(), message.getValue());
+		} else {
+			return sendNotResponsibleMessage(message);
+		}
 	}
 	
 	private void sendReplication(KVMessageItem message) {
@@ -58,11 +62,11 @@ public class KVMessageProcessor {
 		logger.debug("Check if received message is put");
 		if ((receivedMessage.getStatus().equals(KvStatusType.PUT) || receivedMessage.getStatus().equals(KvStatusType.PUT_REPLICATION)) 
 				&& !receivedMessage.getValue().equals("null")) {
-			logger.debug("Message is put");
+			logger.debug("PUT message");
 			server.addKey(receivedMessage.getKey());
 		} else if ((receivedMessage.getStatus().equals(KvStatusType.PUT) || receivedMessage.getStatus().equals(KvStatusType.PUT_REPLICATION))
 				&& receivedMessage.getValue().equals("null")) {
-			logger.debug("Message is delete");
+			logger.debug("DELETE message");
 			server.deleteKey(receivedMessage.getKey());
 		}
 	}

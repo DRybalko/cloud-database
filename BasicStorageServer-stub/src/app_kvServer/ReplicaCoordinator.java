@@ -26,33 +26,28 @@ public class ReplicaCoordinator {
 	}
 	
 	private List<KVServerItem> findServersForReplication() {
-		if (server.getMetaDataTable().size() == 2) {
-			return addSingleServerToReplicas();
-		} else if (server.getMetaDataTable().size() >= 3) {
-			return addTwoServersToReplicas();
-		} return Collections.emptyList();
+		return findNextServersInMetaDataTable(server.getMetaDataTable(), 
+				server.getServerStatusInformation().getThisKvServerItem(), 2);
 	}
 	
-	private List<KVServerItem> addSingleServerToReplicas() {
-		List<KVServerItem> replicasList = new ArrayList<>();
-		List<KVServerItem> metaDataTable = server.getMetaDataTable();
-		if (metaDataTable.indexOf(server.getServerStatusInformation().getThisKvServerItem()) == 0) {
-			replicasList.add(metaDataTable.get(1));
-		} else {
-			replicasList.add(metaDataTable.get(0));
+	/**
+	 * Method that finds servers, that follow given server in metaDataTable (have higher end index).
+	 * 
+	 * @param serverItem for which following servers must be found
+	 * @param numberOfServersToAdd number of servers to find
+	 * @return list of KVServerItems that follow the given server
+	 */
+	private List<KVServerItem> findNextServersInMetaDataTable(List<KVServerItem> metaDataTable, KVServerItem serverItem, int numberOfServersToAdd) {
+		List<KVServerItem> nextServers = new ArrayList<>();
+		int indexOfServerItem = metaDataTable.indexOf(serverItem);
+		if (numberOfServersToAdd > metaDataTable.size()) numberOfServersToAdd = metaDataTable.size();
+		for (int i = 1; i <= numberOfServersToAdd; i++) {
+			int indexOfNextServer = (indexOfServerItem + i) % metaDataTable.size();
+			KVServerItem nextServer = metaDataTable.get(indexOfNextServer);
+			if (nextServer.equals(serverItem)) break;
+			nextServers.add(nextServer);
 		}
-		return replicasList;
-	}
-
-	private List<KVServerItem> addTwoServersToReplicas() {
-		List<KVServerItem> replicasList = new ArrayList<>();
-		List<KVServerItem> metaDataTable = server.getMetaDataTable();
-		int thisServerIndexInMetaDataTable = metaDataTable.indexOf(server.getServerStatusInformation().getThisKvServerItem());
-		int nextServerIndex = (thisServerIndexInMetaDataTable + 1) % metaDataTable.size();
-		replicasList.add(metaDataTable.get(nextServerIndex));
-		int secondNextServerIndex = (thisServerIndexInMetaDataTable + 2) % metaDataTable.size();
-		replicasList.add(metaDataTable.get(secondNextServerIndex));
-		return replicasList;
+		return nextServers;
 	}
 	
 	public void put(KVMessageItem message) {

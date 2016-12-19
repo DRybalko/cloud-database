@@ -18,6 +18,7 @@ public class ECSLogic {
 	private final int MAX_WAITING_TIME = 10000;
 	private final String ECS_IP = "localhost";
 	private final String ECS_PORT = "60000";
+	private final String SERVER_JAR_PATH = "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar";
 	
 	private Logger logger;
 	private Repository repository;
@@ -48,7 +49,7 @@ public class ECSLogic {
 	}
 	
 	private void initializeServer(int cacheSize, String displacementStrategy, KVServerItem server) {
-		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar",
+		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", SERVER_JAR_PATH,
 				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy, server.getName())};		
 		try {
 			Runtime.getRuntime().exec(cmd);
