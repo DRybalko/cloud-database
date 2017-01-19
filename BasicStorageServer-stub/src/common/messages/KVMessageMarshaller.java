@@ -1,8 +1,11 @@
 package common.messages;
 
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import common.logic.KVServerItem;
+import common.logic.Value;
 import common.messages.KVMessage.KvStatusType;
 import common.messages.Message.MessageType;
 
@@ -47,14 +50,14 @@ public class KVMessageMarshaller {
 		KVMessageItem message = new KVMessageItem(type);
 		message.setMessageType(MessageType.CLIENT_TO_SERVER);
 		if (type.equals(KvStatusType.GET_SUCCESS)) {
-			message.setValue(messageTokens[1]);
+			message.setValue(new Value(messageTokens[1]));
 		} else if (type.equals(KvStatusType.GET)) {
 			message.setKey(messageTokens[1]);
 		} else if(type.equals(KvStatusType.PUT) || type.equals(KvStatusType.PUT_REPLICATION)) {
 			message.setKey(messageTokens[1]);
-			message.setValue(messageTokens[2]);
+			message.setValue(new Value(messageTokens[2]));
 		} else if (type.equals(KvStatusType.PUT_UPDATE)) {
-			message.setValue(messageTokens[1]);
+			message.getValue().setValue(messageTokens[1]);
 		} else if (type.equals(KvStatusType.SERVER_NOT_RESPONSIBLE)){
 			message.setServer(convertStringToMetaDataTableServer(messageTokens[1]));
 		}

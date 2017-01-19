@@ -3,6 +3,7 @@ package app_kvServer.cache;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import common.logic.Value;
 import app_kvServer.KVTuple;
 
 /**
@@ -24,7 +25,7 @@ public class FifoCacheStrategy implements CacheStrategy {
 		kvPairs = new HashMap<>();		
 	}
 
-	public void addElement(String key, String value) {
+	public void addElement(String key, Value value) {
 		KVTuple tupleToAdd = new KVTuple(key, value);
 		kvPairs.put(key, tupleToAdd);
 		queue.add(tupleToAdd);
@@ -36,7 +37,7 @@ public class FifoCacheStrategy implements CacheStrategy {
 		return tuple;
 	}
 
-	public String getValueFor(String key) {
+	public Value getValueFor(String key) {
 		return kvPairs.get(key).getValue();
 	}
 
@@ -44,7 +45,7 @@ public class FifoCacheStrategy implements CacheStrategy {
 		return kvPairs.containsKey(key);
 	}
 
-	public void updateElement(String key, String value) {
+	public void updateElement(String key, Value value) {
 		KVTuple tupleToUpdate = kvPairs.get(key);
 		tupleToUpdate.setValue(value);
 	}

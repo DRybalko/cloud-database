@@ -10,6 +10,8 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import common.logic.Value;
+
 /**
  * 
  * This class provides the storage logic that persists data
@@ -38,7 +40,7 @@ public class StorageCommunicator {
 		storage = new Properties();	
 	}
 	
-	public void put(String key, String value) {
+	public void put(String key, Value value) {
 		storage.put(key, value);
 		writeToFile();
 		

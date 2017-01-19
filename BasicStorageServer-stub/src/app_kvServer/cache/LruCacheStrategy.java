@@ -3,6 +3,8 @@ package app_kvServer.cache;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import common.logic.Value;
+
 import app_kvServer.KVTuple;
 
 /**
@@ -24,13 +26,13 @@ public class LruCacheStrategy implements CacheStrategy {
 		queue = new LinkedList<>();
 		kvPairs = new HashMap<>();
 	}
-	public void addElement(String key, String value) {
+	public void addElement(String key, Value value) {
 		KVTuple tupleToSave = new KVTuple(key, value);
 		kvPairs.put(key, tupleToSave);
 		queue.addFirst(tupleToSave);
 	}
 
-	public String getValueFor(String key) {
+	public Value getValueFor(String key) {
 		KVTuple foundKvTuple = kvPairs.get(key);
 		queue.remove(foundKvTuple);	
 		queue.addFirst(foundKvTuple);
@@ -41,7 +43,7 @@ public class LruCacheStrategy implements CacheStrategy {
 		return kvPairs.containsKey(key);
 	}
 
-	public void updateElement(String key, String value) {
+	public void updateElement(String key, Value value) {
 		KVTuple tuple = kvPairs.get(key);
 		tuple.setValue(value);
 		queue.remove(tuple);

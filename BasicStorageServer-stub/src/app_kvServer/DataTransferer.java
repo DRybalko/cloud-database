@@ -6,6 +6,7 @@ import common.logic.ByteArrayMath;
 import common.logic.Communicator;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
+import common.logic.Value;
 import common.messages.KVMessage.KvStatusType;
 import common.messages.KVMessageItem;
 
@@ -29,7 +30,7 @@ public class DataTransferer implements Runnable {
 		Communicator communicator = new Communicator();
 		for (String key: server.getServerStatusInformation().getKeys()) {
 			if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key), startIndex, endIndex)) {
-				String value = server.getPersistenceLogic().get(key).getValue();
+				Value value = server.getPersistenceLogic().get(key).getValue();
 				KVMessageItem kvMessage = new KVMessageItem(KvStatusType.PUT, key, value);
 				logger.info("Sending " + kvMessage.getKey() + ": " + kvMessage.getValue() +
 						" to server " + serverForNewData.getName());

@@ -1,6 +1,7 @@
 package common.messages;
 
 import common.logic.KVServerItem;
+import common.logic.Value;
 
 public interface KVMessage {
 	
@@ -32,7 +33,7 @@ public interface KVMessage {
 	 * @return the value that is associated with this message, 
 	 * 		null if not value is associated.
 	 */
-	public String getValue();
+	public Value getValue();
 	
 	/**
 	 * @return a server item with corresponding start and end index
