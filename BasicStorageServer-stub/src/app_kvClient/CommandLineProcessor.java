@@ -168,7 +168,7 @@ public class CommandLineProcessor {
 		} else {
 			errorMessage();
 		}
-	}
+	} 
 	
 	private static void get() {
 		if (input.length >= 2) {
