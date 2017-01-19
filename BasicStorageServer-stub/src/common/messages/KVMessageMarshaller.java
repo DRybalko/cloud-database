@@ -44,7 +44,7 @@ public class KVMessageMarshaller {
 	public static KVMessageItem unmarshal(String[] messageTokens) {		
 		KvStatusType type = KvStatusType.valueOf(messageTokens[0]);
 		return createMessage(messageTokens, type);
-	}
+	} 
 
 	private static KVMessageItem createMessage(String[] messageTokens, KvStatusType type){
 		KVMessageItem message = new KVMessageItem(type);
