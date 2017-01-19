@@ -99,6 +99,8 @@ public class CommandLineProcessor {
 						break;
 		case "quit": quit();
 						break;
+		case "permissionchange" : permissionChange();
+						break;
 		default: errorMessage();
 		}
 	}
@@ -187,6 +189,35 @@ public class CommandLineProcessor {
 			}
 		} else {
 			errorMessage();
+		}
+	}
+	
+	private static void permissionChange(){
+		if(permission == 3){
+			try {
+				KVMessage message = kvStore.get(input[1]);
+				System.out.println(LINE_START + "Please enter new permission level: ");
+				System.out.print(LINE_START);
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				String role = br.readLine();
+				int p = 0;
+				
+				switch(role){
+				case "admin" : p = 3;
+					break;
+				case "trainer" : p = 2;
+					break;
+				case "user" : p = 1;
+					break;
+				default : p = 0;
+				}				
+				message.getValue().setPermission(p);
+				System.out.println(message.toString());
+				
+			} catch (Exception e) {
+				logger.info("Permission change failed. " + e.getMessage());
+			}
 		}
 	}
 
