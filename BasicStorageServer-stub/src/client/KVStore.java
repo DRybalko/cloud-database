@@ -1,6 +1,8 @@
 package client;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,6 +10,7 @@ import common.logic.Communicator;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
 import common.logic.MetaDataTableController;
+import common.logic.Value;
 import common.messages.*;
 import common.messages.KVMessage.KvStatusType;
 
@@ -45,7 +48,7 @@ public class KVStore implements KVCommInterface {
 		communicator.disconnect();
 	}
 
-	public KVMessage put(String key, String value) throws Exception {
+	public KVMessage put(String key, Value value) throws Exception {
 		if (communicator == null) throw new Exception("No connection!");
 		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.PUT, key, value);
 		return sendMessage(kvMessage);

@@ -1,5 +1,7 @@
 package app_kvServer.cache;
 
+import common.logic.Value;
+
 import app_kvServer.KVTuple;
 
 /**
@@ -11,11 +13,11 @@ public interface CacheStrategy {
 	
 	public boolean contains(String key);
 	
-	public void addElement(String key, String value);
+	public void addElement(String key, Value value);
 	
-	public String getValueFor(String key);
+	public Value getValueFor(String key);
 
-	public void updateElement(String key, String value);
+	public void updateElement(String key, Value value);
 	
 	public KVTuple deleteElement();
 	

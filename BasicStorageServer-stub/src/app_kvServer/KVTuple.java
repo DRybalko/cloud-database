@@ -1,5 +1,7 @@
 package app_kvServer;
 
+import common.logic.Value;
+
 /**
  * This class provides a tuple (<key>,<value>) structure. 
  *
@@ -8,9 +10,9 @@ package app_kvServer;
 public class KVTuple {
 
 	private String key;
-	private String value;
+	private Value value;
 	
-	public KVTuple(String key, String value) {
+	public KVTuple(String key, Value value) {
 		this.key = key;
 		this.value = value;
 	}
@@ -23,11 +25,11 @@ public class KVTuple {
 		this.key = key;
 	}
 
-	public String getValue() {
+	public Value getValue() {
 		return value;
 	}
 
-	public void setValue(String value) {
+	public void setValue(Value value) {
 		this.value = value;
 	}
 	

@@ -1,6 +1,7 @@
 package common.messages;
 
 import common.logic.KVServerItem;
+import common.logic.Value;
 
 /**
  * The class KVMessageItem provides three different constructors 
@@ -12,7 +13,7 @@ import common.logic.KVServerItem;
 public class KVMessageItem extends Message implements KVMessage{
 
 	private String key;
-	private String value;
+	Value value;
 	private KvStatusType status;
 	private KVServerItem server;
 	
@@ -20,19 +21,23 @@ public class KVMessageItem extends Message implements KVMessage{
 		this.status = type;
 	}
 	
-	public KVMessageItem(KvStatusType type, String key, String value){
+	public KVMessageItem(KvStatusType type, String key, Value value){
 		this.key = key;
 		this.value = value;
 		this.status = type;
 	}
 
-	public KVMessageItem(KvStatusType type, String keyOrValue){
+	public KVMessageItem(KvStatusType type, Value value){
+		this.status = type;
+		if (type.equals(KvStatusType.GET_SUCCESS) ||
+				type.equals(KvStatusType.PUT_UPDATE))
+		this.value = value;
+	}
+	
+	public KVMessageItem(KvStatusType type, String key){
 		this.status = type;
 		if (type.equals(KvStatusType.GET)) {
-			this.key = keyOrValue;
-		} else if (type.equals(KvStatusType.GET_SUCCESS) ||
-				type.equals(KvStatusType.PUT_UPDATE)) {
-			this.value = keyOrValue;
+			this.key = key;
 		}				
 	}
 
@@ -42,7 +47,7 @@ public class KVMessageItem extends Message implements KVMessage{
 		if (this.status.equals(KvStatusType.GET_ERROR)) {
 			message = "Get operation failed.";
 		} else if (this.status.equals(KvStatusType.GET_SUCCESS)) {
-			message = "Returned value is: " + this.getValue();
+			message = "Returned value is: " + this.getValue().getValue();
 		} else if (this.status.equals(KvStatusType.PUT_SUCCESS)) {
 			message = "Put operation was successful.";
 		} else if (this.status.equals(KvStatusType.PUT_UPDATE)) {
@@ -67,11 +72,11 @@ public class KVMessageItem extends Message implements KVMessage{
 		return key;	
 	}
 
-	public String getValue() {
+	public Value getValue() {
 		return value;
 	}
 
-	public void setValue(String value){
+	public void setValue(Value value){
 		this.value = value;
 	}
 

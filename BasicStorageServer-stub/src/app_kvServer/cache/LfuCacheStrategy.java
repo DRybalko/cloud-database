@@ -3,6 +3,8 @@ package app_kvServer.cache;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
+import common.logic.Value;
+
 import app_kvServer.KVTuple;
 
 /**
@@ -24,13 +26,13 @@ public class LfuCacheStrategy implements CacheStrategy {
 		queue = new PriorityQueue<LfuQueueNode>(new LfuQueueNodeComparator());
 	}
 
-	public void addElement(String key, String value) {
+	public void addElement(String key, Value value) {
 		LfuQueueNode newNode = new LfuQueueNode(new KVTuple(key, value));
 		kvPairs.put(key, newNode);
 		queue.add(newNode);
 	}
 	
-	public String getValueFor(String key) {
+	public Value getValueFor(String key) {
 		LfuQueueNode node = kvPairs.get(key);
 		queue.remove(node);
 		node.setFreqeuncy(node.getFreqeuncy() + 1);
@@ -42,7 +44,7 @@ public class LfuCacheStrategy implements CacheStrategy {
 		return kvPairs.containsKey(key);
 	}
 
-	public void updateElement(String key, String value) {
+	public void updateElement(String key, Value value) {
 		LfuQueueNode node = kvPairs.get(key);
 		queue.remove(node);
 		node.setFreqeuncy(node.getFreqeuncy() + 1);

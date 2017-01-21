@@ -3,9 +3,12 @@ package app_kvClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import org.apache.log4j.*;
 
+import common.logic.Value;
 import common.messages.KVMessage;
 import client.KVCommInterface;
 import client.KVStore;
@@ -28,6 +31,8 @@ public class CommandLineProcessor {
 	private static KVCommInterface kvStore;
 	private static Logger logger = Logger.getRootLogger();
 	private static boolean quit;
+	private static int permission;
+	private static int vPermission;
 
 	private static final String LINE_START = "EchoClient> ";
 	private static final String HELP_MESSAGE = "Welcome to EchoClient!\r\n\r\n"
@@ -48,12 +53,31 @@ public class CommandLineProcessor {
 	}
 	
 	private static void readInputLine(BufferedReader br) {
-		System.out.print(LINE_START);
+		System.out.print(LINE_START);	
+
 		try {
 			String inputLine = br.readLine();
 			input = inputLine.split(" ");
 			parseInput();
 		} catch (IOException e) {
+			logger.error("Error caused by wrong console input");
+		}
+	}
+	private static void logIn (){
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		System.out.print(LINE_START + "log in as: ");
+		try {
+			String role = br.readLine();
+			switch(role){
+			case "admin" : permission = 3;
+			break;
+			case "trainer" : permission = 2;
+			break;
+			case "user" : permission = 1;
+			break;
+			default : permission = 0;
+			}
+		} catch (IOException e1) {
 			logger.error("Error caused by wrong console input");
 		}
 	}
@@ -75,11 +99,14 @@ public class CommandLineProcessor {
 						break;
 		case "quit": quit();
 						break;
+		case "permissionchange" : permissionChange();
+						break;
 		default: errorMessage();
 		}
 	}
 
 	private static void connect() {
+		logIn();
 		kvStore = new KVStore();
 		try {
 			kvStore.connect();
@@ -114,26 +141,83 @@ public class CommandLineProcessor {
 					stringBuilder.append(input[i]);
 					stringBuilder.append(" ");
 				}
-				KVMessage message = kvStore.put(input[1], stringBuilder.toString());
+				System.out.println(LINE_START + "Please specify permission level: ");
+				System.out.print(LINE_START);
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				String role = br.readLine();
+				
+				switch(role){
+				case "admin" : vPermission = 3;
+					break;
+				case "trainer" : vPermission = 2;
+					break;
+				case "user" : vPermission = 1;
+					break;
+				default : vPermission = 0;
+				}
+			
+				Value value  = new Value(vPermission, 
+						new SimpleDateFormat("yyyy/MM/dd_HH/mm/ss/SS").format(Calendar.getInstance().getTime()),
+						stringBuilder.toString());
+				
+				KVMessage message = kvStore.put(input[1], value);
 				System.out.println(message.toString());
+				
 			} catch (Exception e) {
 				logger.info("Put failed. "+e.getMessage());
 			}
 		} else {
 			errorMessage();
 		}
-	}
+	} 
 	
 	private static void get() {
 		if (input.length >= 2) {
 			try {
 				KVMessage message = kvStore.get(input[1]);
-				System.out.println(message.toString());
+				System.out.println(permission);
+				System.out.println(message.getValue().toString());
+				System.out.println(message.getValue().getPermission());
+				if(message.getValue().getPermission() < permission){
+					System.out.println(message.toString());
+				}else{
+					System.out.println("You do not have permission to access this key.");
+				}
 			} catch (Exception e) {
 				logger.info("Get failed. " + e.getMessage());
 			}
 		} else {
 			errorMessage();
+		}
+	}
+	
+	private static void permissionChange(){
+		if(permission == 3){
+			try {
+				KVMessage message = kvStore.get(input[1]);
+				System.out.println(LINE_START + "Please enter new permission level: ");
+				System.out.print(LINE_START);
+				
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				String role = br.readLine();
+				int p = 0;
+				
+				switch(role){
+				case "admin" : p = 3;
+					break;
+				case "trainer" : p = 2;
+					break;
+				case "user" : p = 1;
+					break;
+				default : p = 0;
+				}				
+				message.getValue().setPermission(p);
+				System.out.println(message.toString());
+				
+			} catch (Exception e) {
+				logger.info("Permission change failed. " + e.getMessage());
+			}
 		}
 	}
 

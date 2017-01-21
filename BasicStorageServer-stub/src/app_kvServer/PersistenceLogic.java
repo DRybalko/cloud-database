@@ -1,7 +1,11 @@
 package app_kvServer;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import org.apache.log4j.Logger;
 
+import common.logic.Value;
 import common.messages.KVMessage;
 import common.messages.KVMessage.KvStatusType;
 import common.messages.KVMessageItem;
@@ -35,9 +39,9 @@ public class PersistenceLogic {
 		} else return null;
 	}
 	
-	public synchronized KVMessage put(String key, String value) {
+	public synchronized KVMessage put(String key, Value value) {
 		if (cache.contains(key)) { 
-			if (value.trim().equals("null")) {
+			if (value.getValue().trim().equals("null")) {
 				return deleteKvPairFromCache(key);
 			}
 			return updateKvPairInCache(key, value);
@@ -47,12 +51,12 @@ public class PersistenceLogic {
 		}
 	}
 
-	private KVMessage checkKvPairInStorage(String key, String value) {
+	private KVMessage checkKvPairInStorage(String key, Value value) {
 		KVMessage responseMessage;
 		if (value == null) {
 			logger.debug(CLASS_NAME + " Value is null, can not be updated.");
 			responseMessage = new KVMessageItem(KvStatusType.DELETE_ERROR);
-		} else if (value.trim().equals("null")) {
+		} else if (value.getValue().trim().equals("null")) {
 			responseMessage = deleteKvPairFromStorage(key);
 		} else if (storageCommunicator.readValueFor(key) != null) {
 			putElementToCache(key, value);
@@ -74,7 +78,7 @@ public class PersistenceLogic {
 		return responseMessage;
 	}
 
-	private KVMessage updateKvPairInCache(String key, String value) {
+	private KVMessage updateKvPairInCache(String key, Value value) {
 		logger.debug(CLASS_NAME + " Update key "+key+" with value "+value);
 		cache.updateElement(key, value); 
 		if (storageCommunicator.readValueFor(key) != null) {
@@ -90,7 +94,7 @@ public class PersistenceLogic {
 		return new KVMessageItem(KvStatusType.DELETE_SUCCESS);
 	}
 	
-	private void putElementToCache(String key, String value) {
+	private void putElementToCache(String key, Value value) {
 		if (cache.size() == cacheSize) {
 			logger.debug(Thread.currentThread() + "Cache size equals maximum cache size.");
 			KVTuple tuple = cache.deleteElement();
@@ -122,7 +126,7 @@ public class PersistenceLogic {
 	
 	private KVTuple lookUpElementOnDisk(String key) {
 		logger.debug(Thread.currentThread() + "Look for key " + key + " on disk");
-		String value = storageCommunicator.readValueFor(key);
+		Value value = new Value(storageCommunicator.readValueFor(key));
 		return new KVTuple(key, value);
 	}
 	

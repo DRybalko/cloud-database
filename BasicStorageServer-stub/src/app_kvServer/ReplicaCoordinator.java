@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import common.logic.Communicator;
 import common.logic.KVServerItem;
+import common.logic.Value;
 import common.messages.KVMessage;
 import common.messages.KVMessageItem;
 import common.messages.KVMessage.KvStatusType;
@@ -96,7 +97,7 @@ public class ReplicaCoordinator {
 	private void deleteReplicationFromServer(KVServerItem serverItem) {
 		if (communicator.checkStarted(serverItem)) {
 			for (String key: server.getServerStatusInformation().getKeys()) {
-				KVMessageItem deleteMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, "null");
+				KVMessageItem deleteMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, new Value("null"));
 				communicator.sendMessage(serverItem, deleteMessage);
 			}
 		}

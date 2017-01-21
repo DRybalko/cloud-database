@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import client.KVStore;
 import junit.framework.TestCase;
+import common.logic.Value;
 import common.messages.KVMessage;
 import common.messages.KVMessage.KvStatusType;
 
@@ -31,7 +32,7 @@ public class InteractionTest extends TestCase {
 		Exception ex = null;
 
 		try {
-			response = kvClient.put(key, value);
+			response = kvClient.put(key, new Value(value));
 		} catch (Exception e) {
 			ex = e;
 		}
@@ -47,7 +48,7 @@ public class InteractionTest extends TestCase {
 		Exception ex = null;
 
 		try {
-			kvClient.put(key, value);
+			kvClient.put(key, new Value(value));
 		} catch (Exception e) {
 			ex = e;
 		}
@@ -65,8 +66,8 @@ public class InteractionTest extends TestCase {
 		Exception ex = null;
 
 		try {
-			kvClient.put(key, initialValue);
-			response = kvClient.put(key, updatedValue);
+			kvClient.put(key, new Value(initialValue));
+			response = kvClient.put(key, new Value(updatedValue));
 			
 		} catch (Exception e) {
 			ex = e;
@@ -85,8 +86,8 @@ public class InteractionTest extends TestCase {
 		Exception ex = null;
 
 		try {
-			kvClient.put(key, value);
-			response = kvClient.put(key, "null");
+			kvClient.put(key, new Value(value));
+			response = kvClient.put(key, new Value("null"));
 			
 		} catch (Exception e) {
 			ex = e;
@@ -103,7 +104,7 @@ public class InteractionTest extends TestCase {
 		Exception ex = null;
 
 			try {
-				kvClient.put(key, value);
+				kvClient.put(key, new Value(value));
 				response = kvClient.get(key);
 			} catch (Exception e) {
 				ex = e;
@@ -135,7 +136,7 @@ public class InteractionTest extends TestCase {
 		KVMessage response = null;
 		
 		try {
-			response = kvClient.put(key, value);
+			response = kvClient.put(key, new Value(value));
 		} catch (Exception e) {
 			ex = e;
 		}

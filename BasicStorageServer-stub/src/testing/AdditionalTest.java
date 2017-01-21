@@ -1,12 +1,15 @@
 package testing;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Test;
 
 import common.logic.KVServerItem;
+import common.logic.Value;
 import common.messages.ECSMessage.EcsStatusType;
 import common.messages.ECSMessageItem;
 import common.messages.KVMessage;
@@ -41,7 +44,8 @@ public class AdditionalTest extends TestCase {
 	
 	@Test
 	public void testMarshalAndUnmarshalPutMessage() {
-		KVMessageItem message = new KVMessageItem(KvStatusType.PUT, "123", "value");
+		KVMessageItem message = new KVMessageItem(KvStatusType.PUT, "123", new Value(1, 
+				new SimpleDateFormat("yyyy/MM/dd_HH/mm/ss/SS").format(Calendar.getInstance().getTime()), "value"));
 		byte[] marshaledMessage = marshaller.marshal(message);
 		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.PUT));
