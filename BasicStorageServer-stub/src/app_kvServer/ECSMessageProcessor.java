@@ -2,9 +2,13 @@ package app_kvServer;
 
 import org.apache.log4j.Logger;
 
-import common.messages.ECSMessageItem;
-import common.messages.ECSMessage.EcsStatusType;
+import common.messages.ecsToServerMessage.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
 
+/**
+ * Messages, that are received from ECS are processed in this class. First the message status type
+ * is identified. After that the corresponding server method is called.
+ */
 public class ECSMessageProcessor {
 
 	private KVServer server;

@@ -1,5 +1,6 @@
 package testing;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,11 +8,12 @@ import java.util.List;
 import org.junit.Test;
 
 import common.logic.KVServerItem;
-import common.messages.ECSMessage.EcsStatusType;
-import common.messages.ECSMessageItem;
-import common.messages.KVMessage;
-import common.messages.KVMessageItem;
-import common.messages.KVMessage.KvStatusType;
+import common.logic.Value;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessageItem;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
+import common.messages.ecsToServerMessage.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
 import common.messages.Marshaller;
 import junit.framework.TestCase;
 
@@ -21,32 +23,40 @@ public class AdditionalTest extends TestCase {
 
 	@Test
 	public void testMarshalAndUnmarshalGetMessage() {
-		KVMessageItem message = new KVMessageItem(KvStatusType.GET, "12345");
+		KVMessageItem message = new KVMessageItem(KvStatusType.GET, "12345", 1);
 		byte[] marshaledMessage = marshaller.marshal(message);
 		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.GET));
 		assertTrue(unmarshaledMessage.getKey().equals("12345"));
+		assertTrue(unmarshaledMessage.getVersion() == 1);
 		assertNull(unmarshaledMessage.getValue());
 	}
 	
 	@Test
 	public void testMarshalAndUnmarshalGetSuccessMessage() {
-		KVMessageItem message = new KVMessageItem(KvStatusType.GET_SUCCESS, "foundValue");
+		Value value = new Value(1, LocalDateTime.of(2017, 01, 01, 12, 13), "foundValue");
+		KVMessageItem message = new KVMessageItem(KvStatusType.GET_SUCCESS);
+		message.setValue(value);;
 		byte[] marshaledMessage = marshaller.marshal(message);
 		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.GET_SUCCESS));
 		assertNull(unmarshaledMessage.getKey());
-		assertTrue(unmarshaledMessage.getValue().equals("foundValue"));
+		assertTrue(unmarshaledMessage.getValue().getValue().equals("foundValue"));
+		assertTrue(unmarshaledMessage.getValue().getPermission() == 1);
+		assertTrue(unmarshaledMessage.getValue().getTimestamp().equals(LocalDateTime.of(2017, 01, 01, 12, 13)));
 	}
 	
 	@Test
 	public void testMarshalAndUnmarshalPutMessage() {
-		KVMessageItem message = new KVMessageItem(KvStatusType.PUT, "123", "value");
+		Value value = new Value(1, LocalDateTime.of(2017, 01, 01, 12, 13), "put value");
+		KVMessageItem message = new KVMessageItem(KvStatusType.PUT, "123", value);
 		byte[] marshaledMessage = marshaller.marshal(message);
 		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);
 		assertTrue(unmarshaledMessage.getStatus().equals(KvStatusType.PUT));
 		assertTrue(unmarshaledMessage.getKey().equals("123"));
-		assertTrue(unmarshaledMessage.getValue().equals("value"));
+		assertTrue(unmarshaledMessage.getValue().getValue().equals("put value"));
+		assertTrue(unmarshaledMessage.getValue().getPermission() == 1);
+		assertTrue(unmarshaledMessage.getValue().getTimestamp().equals(LocalDateTime.of(2017, 01, 01, 12, 13)));
 	}
 	
 	@Test

@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
  */
 public class StorageCommunicator {
 	
-	private final String FILE_PATH = "storage/storage.txt";
+	private final String FILE_PATH = "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/storage/storage.txt";
 	
 	private Logger logger;
 	

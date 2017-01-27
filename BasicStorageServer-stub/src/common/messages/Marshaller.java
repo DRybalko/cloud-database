@@ -4,6 +4,12 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import common.messages.Message.MessageType;
+import common.messages.clientToServerMessage.KVMessageItem;
+import common.messages.clientToServerMessage.KVMessageMarshaller;
+import common.messages.ecsToServerMessage.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessageMarshaller;
+import common.messages.serverToServerMessage.ServerToServerMessageItem;
+import common.messages.serverToServerMessage.ServerToServerMessageMarshaller;
 
 public class Marshaller {
 	
@@ -18,7 +24,7 @@ public class Marshaller {
 		} else if (messageTokens[0].equals(MessageType.ECS_TO_SERVER.toString())) {
 			return ECSMessageMarshaller.unmarshal(messageDataLoad);
 		} else if (messageTokens[0].equals(MessageType.SERVER_TO_SERVER.toString())) {
-			return PingMessageMarshaller.unmarshal(messageDataLoad);
+			return ServerToServerMessageMarshaller.unmarshal(messageDataLoad);
 		}
 		return null;
 	}
@@ -28,8 +34,8 @@ public class Marshaller {
 			return KVMessageMarshaller.marshal((KVMessageItem) message);
 		} else if (message instanceof ECSMessageItem) {
 			return ECSMessageMarshaller.marshal((ECSMessageItem) message);
-		} else if (message instanceof PingMessageItem) {
-			return PingMessageMarshaller.marshal((PingMessageItem) message);
+		} else if (message instanceof ServerToServerMessageItem) {
+			return ServerToServerMessageMarshaller.marshal((ServerToServerMessageItem) message);
 		}
 		return null;
 	}

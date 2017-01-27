@@ -2,9 +2,7 @@ package app_kvServer;
 
 /**
  * This class provides a tuple (<key>,<value>) structure. 
- *
  */
-
 public class KVTuple {
 
 	private String key;

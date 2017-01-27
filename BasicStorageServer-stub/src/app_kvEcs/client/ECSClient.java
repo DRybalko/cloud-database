@@ -6,6 +6,9 @@ import logger.LogSetup;
 
 import org.apache.log4j.Level;
 
+/*
+ * Main class for ECS. Execution of the ECS starts here.
+ */
 public class ECSClient {
 
 	private static final String LOG_DIRECTORY = "logs/ecs/ecs.log";

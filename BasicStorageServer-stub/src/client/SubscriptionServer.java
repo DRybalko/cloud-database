@@ -1,30 +1,38 @@
-package app_kvEcs.logic;
+package client;
 
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 
 /**
- * This class implements interface Runnable and therefore started in the separate thread. It open a socket
- * which is listening to incoming connection from nodes. Connections are set, when one of the servers 
- * detects faulty server, so it sends message to ECS with information about the faulty server.
+ * In order to get notification messages from server, when key was changed or deleted, 
+ * client has to listen to possible connection from the server.
  *
  */
-public class EcsServer implements Runnable {
-
-	private static final int PORT = 60000;
+public class SubscriptionServer implements Runnable {
 	
+	private final int MIN_PORT = 40000;
+	private final int MAX_PORT = 49999;
+	
+	private int port;
 	private boolean running;
 	private ServerSocket serverSocket;
 	private Logger logger;
-	private ECSLogic ecsLogic;
+	private KVStore kvStore;
 	
-	public EcsServer(ECSLogic ecsLogic) {
-		this.ecsLogic = ecsLogic;
-		logger = Logger.getRootLogger();
+	public SubscriptionServer(KVStore kvStore) {
+		this.port = randInt(MIN_PORT, MAX_PORT);
+		this.logger = Logger.getRootLogger();
+		this.kvStore = kvStore;
+	}
+	
+	public static int randInt(int min, int max) {
+	    Random r = new Random();
+	    return r.nextInt((max - min) + 1) + min;
 	}
 	
 	public void run() {
@@ -44,13 +52,13 @@ public class EcsServer implements Runnable {
 	private boolean initializeServer() {
 		logger.info("Initialize server ...");
 		try {
-			serverSocket = new ServerSocket(PORT);
+			serverSocket = new ServerSocket(port);
 			logger.info("Server listening on port: " + serverSocket.getLocalPort());    
 			return true;
 		} catch (IOException e) {
 			logger.error("Error! Cannot open server socket:");
 			if(e instanceof BindException){
-				logger.error("Port " + PORT + " is already bound!");
+				logger.error("Port " + port + " is already bound!");
 			}
 			return false;
 		}
@@ -58,12 +66,16 @@ public class EcsServer implements Runnable {
 
 	private void listen() throws IOException {
 		Socket client = serverSocket.accept();
-		FaultyServerProcessor connection = new FaultyServerProcessor(client, ecsLogic);
-		connection.processConnection();
+		NotificationMessageProcessor notificationMessageProcessor = new NotificationMessageProcessor(client, kvStore);
+		new Thread(notificationMessageProcessor).start();
 	}
 
 	public boolean isRunning() {
 		return this.running;
+	}
+	
+	public int getPort() {
+		return port;
 	}
 	
 }

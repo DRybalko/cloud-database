@@ -1,17 +1,23 @@
 package app_kvServer;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import common.logic.Communicator;
 import common.logic.KVServerItem;
-import common.messages.KVMessage;
-import common.messages.KVMessageItem;
-import common.messages.KVMessage.KvStatusType;
+import common.logic.Value;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessageItem;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 
+/**
+ * This class is responsible for communication with servers, on which data of the current server must
+ * be replicated. In our system these are two servers, that follow current server in meta data table.
+ *
+ */
 public class ReplicaCoordinator {
 	
 	private List<KVServerItem> replicas;
@@ -93,10 +99,16 @@ public class ReplicaCoordinator {
 		}
 	}
 	
+	public void deleteAllReplications() {
+		for (KVServerItem serverItem: replicas) {
+			deleteReplicationFromServer(serverItem);
+		}
+	}
+	
 	private void deleteReplicationFromServer(KVServerItem serverItem) {
 		if (communicator.checkStarted(serverItem)) {
 			for (String key: server.getServerStatusInformation().getKeys()) {
-				KVMessageItem deleteMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, "null");
+				KVMessageItem deleteMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, new Value(0, LocalDateTime.now(), "null"));
 				communicator.sendMessage(serverItem, deleteMessage);
 			}
 		}
@@ -104,15 +116,14 @@ public class ReplicaCoordinator {
 
 	private void sendServerDataToReplication(KVServerItem serverItem) {
 		for (String key: server.getServerStatusInformation().getKeys()) {
-			KVMessage getMessage = server.getPersistenceLogic().get(key);
-			KVMessageItem putMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, getMessage.getValue());
-			communicator.sendMessage(serverItem, putMessage);
+			int numberOfVersions = server.getVersionController().getMaxVersionForKey(key);
+			for (int i = 1; i <= numberOfVersions; i++) {
+				String keyForVersionI = server.getVersionController().getKeyForVersion(key, i);
+				KVMessage getMessage = server.getPersistenceLogic().get(keyForVersionI);
+				KVMessageItem putMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, getMessage.getValue());
+				communicator.sendMessage(serverItem, putMessage);
+			}		
 		}
 	}       
-	
-	public void deleteAllReplications() {
-		for (KVServerItem serverItem: replicas) {
-			deleteReplicationFromServer(serverItem);
-		}
-	}
+
 }

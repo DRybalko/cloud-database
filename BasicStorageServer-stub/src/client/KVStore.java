@@ -8,8 +8,10 @@ import common.logic.Communicator;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
 import common.logic.MetaDataTableController;
-import common.messages.*;
-import common.messages.KVMessage.KvStatusType;
+import common.logic.Value;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessageItem;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 
 /**
  * This class is responsible for the communication with the server.
@@ -29,12 +31,17 @@ public class KVStore implements KVCommInterface {
 	
 	private Communicator communicator;
 	private MetaDataTableController metaDataTableController;
+	private SubscriptionServer subscriptionServer;
+	private int permission;
 
 	public KVStore() {
 		List<KVServerItem> availableServers = new LinkedList<>();
 		availableServers.add(initialKVServerItem);
 		metaDataTableController = new MetaDataTableController(availableServers);
 		metaDataTableController.initializeTable(1);
+		subscriptionServer = new SubscriptionServer(this);
+		permission = 1;
+		new Thread(subscriptionServer).start();
 	}
 	
 	public void connect() throws IOException {
@@ -45,15 +52,27 @@ public class KVStore implements KVCommInterface {
 		communicator.disconnect();
 	}
 
-	public KVMessage put(String key, String value) throws Exception {
+	public KVMessage put(String key, Value value) throws Exception {
 		if (communicator == null) throw new Exception("No connection!");
+		if (value.getPermission() > permission) return new KVMessageItem(KvStatusType.NO_PERMISSION);
 		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.PUT, key, value);
 		return sendMessage(kvMessage);
 	}
-
-	public KVMessage get(String key) {
-		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.GET, key);
-		return sendMessage(kvMessage);
+	
+	public KVMessage getVersion(String key) {
+		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.GET_VERSION);
+		kvMessage.setKey(key);
+		KVMessage versionReply = sendMessage(kvMessage);
+		if (versionReply.getVersion() == 1) return this.get(key, 1);
+		else return versionReply;
+	}
+	
+	public KVMessage get(String key, int version) {
+		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.GET, key, version);
+		KVMessage response = sendMessage(kvMessage);
+		if (response != null && response.getValue() != null &&
+				response.getValue().getPermission() > permission) return new KVMessageItem(KvStatusType.NO_PERMISSION);
+		else return response;
 	}
 
 	private KVMessageItem sendMessage(KVMessageItem kvMessage) {
@@ -73,5 +92,24 @@ public class KVStore implements KVCommInterface {
 
 	private boolean isServerNotResponsible(KVMessage message) {
 		return message.getStatus().equals(KvStatusType.SERVER_NOT_RESPONSIBLE);
+	}
+	
+	public KVMessage sendSubscriptionStatusMessage(String key, KvStatusType status) {
+		KVMessageItem getMessage = new KVMessageItem(KvStatusType.GET, key, 1);
+		KVMessage response = sendMessage(getMessage);
+		if (response.getStatus().equals(KvStatusType.GET_SUCCESS) && response.getValue().getPermission() < this.permission) 
+			return new KVMessageItem(KvStatusType.NO_PERMISSION);
+		KVMessageItem message = new KVMessageItem(status);
+		message.setKey(key);
+		message.setPort("" + subscriptionServer.getPort());
+		return sendMessage(message);
+	}
+	
+	public int getPermission() {
+		return permission;
+	}
+	
+	public void setPermission(int permission) {
+		this.permission = permission;
 	}
 }

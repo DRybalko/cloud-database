@@ -6,18 +6,25 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import app_kvServer.ServerSetStatus;
 import common.logic.Communicator;
 import common.logic.KVServerItem;
 import common.logic.MetaDataTableController;
-import common.messages.ECSMessage.EcsStatusType;
-import common.messages.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
 
+/**
+ * This class is responsible for the whole logic concerning ECS. It initializes, starts, stops, shuts down
+ * servers etc. The initialization step is done via SSH. In order to use this mechanism SERVER_JAR_PATH to 
+ * the server exe must be set below.
+ *
+ */
 public class ECSLogic {
 	
 	private final int MAX_WAITING_TIME = 10000;
 	private final String ECS_IP = "localhost";
 	private final String ECS_PORT = "60000";
+	
+	//In order to start servers via SSH the full path must be set.
 	private final String SERVER_JAR_PATH = "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar";
 	
 	private Logger logger;
@@ -49,14 +56,13 @@ public class ECSLogic {
 	}
 	
 	private void initializeServer(int cacheSize, String displacementStrategy, KVServerItem server) {
-		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", SERVER_JAR_PATH,
+		/*String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", SERVER_JAR_PATH,
 				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy, server.getName())};		
 		try {
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			logger.error("Server with IP: " + server.getIp() + " and Port: " + server.getPort() + " could not be launched."+e.getMessage());
-		}
-		
+		}*/
 		if (hasReplied(server)) {
 			serverSetStatus.moveFromAvailableToInitialized(server);
 			sendIndices(server);
@@ -99,6 +105,9 @@ public class ECSLogic {
 		ECSMessageItem metaDataTableMessage = new ECSMessageItem(EcsStatusType.META_DATA_TABLE, metaDataTableController.getMetaDataTable());
 		logger.info("Try to send metaDataTable to server with name: "+server.getName());
 		ECSMessageItem reply = (ECSMessageItem) communicator.sendMessage(server, metaDataTableMessage);
+		while (reply == null || !reply.getStatus().equals(EcsStatusType.REQUEST_ACCEPTED)) {
+			reply = (ECSMessageItem) communicator.sendMessage(server, metaDataTableMessage);
+		}
 		logger.info("Server replied with: " + reply.getStatus().toString());
 	}
 	
@@ -195,11 +204,11 @@ public class ECSLogic {
 	private void removeServer(KVServerItem serverToRemove) {
 		metaDataTableController.removeServerFromMetaData(serverToRemove);
 		serverToRemove.setStartIndex(serverToRemove.getEndIndex());
-		ECSMessageItem shutDownMessage = new ECSMessageItem(EcsStatusType.SHUT_DOWN);
-		communicator.sendMessage(serverToRemove, shutDownMessage);
 		serverSetStatus.moveFromWorkingToInitialized(serverToRemove);
 		serverSetStatus.moveFromInitializedToAvailable(serverToRemove);
 		updateMetaDataTableOfWorkingServers();
+		ECSMessageItem shutDownMessage = new ECSMessageItem(EcsStatusType.SHUT_DOWN);
+		communicator.sendMessage(serverToRemove, shutDownMessage);
 	}
 	
 	public void removeFaultyServer(KVServerItem serverToRemove) {
@@ -210,7 +219,6 @@ public class ECSLogic {
 			break;
 		}
 	}
-	
 	
 	private void updateMetaDataTableOfWorkingServers() {
 		for (KVServerItem server: serverSetStatus.getWorkingServers()) {

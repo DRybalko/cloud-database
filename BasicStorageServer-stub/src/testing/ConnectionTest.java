@@ -25,6 +25,7 @@ public class ConnectionTest extends TestCase {
 	}
 	
 	
+	/* Tests are not relevant any more
 	public void testUnknownHost() {
 		Exception ex = null;
 		KVStore kvClient = new KVStore();
@@ -51,6 +52,6 @@ public class ConnectionTest extends TestCase {
 		
 		assertTrue(ex instanceof IllegalArgumentException);
 	}
-		
+	*/	
 }
 

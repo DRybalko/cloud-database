@@ -5,6 +5,10 @@ import java.util.Set;
 
 import common.logic.KVServerItem;
 
+/**
+ * This class contains all the technical information about the server. It has no logic, but only getters and setters
+ * for different attributes of the server.
+ */
 public class ServerStatusInformation {
 
 	private int port;
@@ -15,6 +19,7 @@ public class ServerStatusInformation {
 	private byte[] endIndex;
 	private String serverName;
 	private Set<String> keys;
+	private Set<String> replicationKeys;
 	private KVServerItem thisKvServerItem;
 	
 	public ServerStatusInformation(int port, String name) {
@@ -23,6 +28,7 @@ public class ServerStatusInformation {
 		this.keys = new HashSet<>();
 		this.port = port;
 		this.serverName = name;
+		this.replicationKeys = new HashSet<>();
 	}
 	
 	public void setRunning(boolean running) {
@@ -63,6 +69,8 @@ public class ServerStatusInformation {
 	
 	public void setThisKvServerItem(KVServerItem serverItem) {
 		this.thisKvServerItem = serverItem;
+		this.startIndex = serverItem.getStartIndex();
+		this.endIndex = serverItem.getEndIndex();
 	}
 	
 	public boolean isAcceptingClientRequests() {
@@ -86,11 +94,22 @@ public class ServerStatusInformation {
 	}
 	
 	public void addKey(String key) {
-		keys.add(key);
+		if (!keys.contains(key)) keys.add(key);
 	}
 	
 	public void removeKey(String key) {
 		keys.remove(key);
 	}
 	
+	public void addReplicationKey(String replicationKey) {
+		replicationKeys.add(replicationKey);
+	}
+	
+	public void removeReplicationKey(String replicationKey) {
+		replicationKeys.remove(replicationKey);
+	}
+	
+	public Set<String> getReplicationKeys() {
+		return replicationKeys;
+	}
 }

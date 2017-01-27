@@ -7,12 +7,12 @@ import org.apache.log4j.Level;
 import logger.LogSetup;
 
 /**
- * Main class for the client. 
+ * Main class for the client. Starts the execution of the key value storage client.
  */
 public class KVClient {
 
 	private static final String LOG_DIRECTORY = "logs/client/client.log";
-	private static final Level INITIALIZE_LOG_LEVEL = Level.ALL;
+	private static final Level INITIALIZE_LOG_LEVEL = Level.ERROR;
 	
 	public static void main(String[] args) {
 		initializeLogging();

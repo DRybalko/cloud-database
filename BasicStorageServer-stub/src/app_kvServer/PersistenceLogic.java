@@ -2,14 +2,21 @@ package app_kvServer;
 
 import org.apache.log4j.Logger;
 
-import common.messages.KVMessage;
-import common.messages.KVMessage.KvStatusType;
-import common.messages.KVMessageItem;
+import common.logic.Value;
+import common.logic.ValueMarshaler;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessageItem;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 import app_kvServer.cache.CacheStrategy;
 import app_kvServer.cache.FifoCacheStrategy;
 import app_kvServer.cache.LfuCacheStrategy;
 import app_kvServer.cache.LruCacheStrategy;
 
+/**
+ * This class is used to identify, whether key must be saved, updated or deleted. Depending on cache
+ * strategy and cache size defined, when server was initialized it then persists key value pair in cache 
+ * or on disk.
+ */
 public class PersistenceLogic {
 
 	private CacheStrategy cache;
@@ -35,15 +42,15 @@ public class PersistenceLogic {
 		} else return null;
 	}
 	
-	public synchronized KVMessage put(String key, String value) {
+	public synchronized KVMessage put(String key, Value value) {
 		if (cache.contains(key)) { 
-			if (value.trim().equals("null")) {
+			if (value.getValue().trim().equals("null")) {
 				return deleteKvPairFromCache(key);
 			}
-			return updateKvPairInCache(key, value);
+			return new KVMessageItem(KvStatusType.PUT_SUCCESS);
 		}
 		else {
-			return checkKvPairInStorage(key, value);
+			return checkKvPairInStorage(key, ValueMarshaler.marshal(value));
 		}
 	}
 
@@ -74,15 +81,6 @@ public class PersistenceLogic {
 		return responseMessage;
 	}
 
-	private KVMessage updateKvPairInCache(String key, String value) {
-		logger.debug(CLASS_NAME + " Update key "+key+" with value "+value);
-		cache.updateElement(key, value); 
-		if (storageCommunicator.readValueFor(key) != null) {
-			storageCommunicator.put(key, value);
-		}
-		return new KVMessageItem(KvStatusType.PUT_UPDATE, value);
-	}
-
 	private KVMessage deleteKvPairFromCache(String key) {
 		logger.debug(CLASS_NAME + " Delete value from cache with key: "+key);
 		cache.deleteValueFor(key);
@@ -105,7 +103,9 @@ public class PersistenceLogic {
 	public synchronized KVMessage get(String key) {
 		if (cache.contains(key)) {
 			logger.debug(Thread.currentThread() + "Cache contains key "+key);
-			return new KVMessageItem(KvStatusType.GET_SUCCESS, cache.getValueFor(key));
+			KVMessageItem message = new KVMessageItem(KvStatusType.GET_SUCCESS);
+			message.setValue(ValueMarshaler.unmarshal(cache.getValueFor(key)));
+			return message;
 		} else {
 			KVTuple tuple = lookUpElementOnDisk(key);
 			if (tuple.getValue() != null) {
@@ -113,7 +113,9 @@ public class PersistenceLogic {
 						+ " Value is not equal to null. Should write to cache. "
 						+ "Key: "+key+", value: "+tuple.getValue());
 				putElementToCache(tuple.getKey(), tuple.getValue());
-				return new KVMessageItem(KvStatusType.GET_SUCCESS, tuple.getValue());
+				KVMessageItem message = new KVMessageItem(KvStatusType.GET_SUCCESS);
+				message.setValue(ValueMarshaler.unmarshal(tuple.getValue()));
+				return message;
 			} else {
 				return new KVMessageItem(KvStatusType.GET_ERROR);
 			}

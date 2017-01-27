@@ -8,10 +8,15 @@ import org.apache.log4j.Logger;
 
 import common.logic.KVServerItem;
 import common.logic.ServerCommunicator;
-import common.messages.ECSMessage.EcsStatusType;
-import common.messages.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
 import common.messages.Message;
 
+/**
+ * This class is responsible for the recovery mechanism, when faulty server is detected. In this case it 
+ * updates meta data table (delete faulty server) and adds new node to the system. Replication data of the faulty
+ * server is then send to the servers left in the meta data table.
+ */
 public class FaultyServerProcessor {
 
 	private static final int CACHE_SIZE = 30;

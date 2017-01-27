@@ -1,4 +1,4 @@
-package common.messages;
+package common.messages.ecsToServerMessage;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import common.logic.KVServerItem;
-import common.messages.ECSMessage.EcsStatusType;
 import common.messages.Message.MessageType;
+import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
 
 public class ECSMessageMarshaller {
 

@@ -1,11 +1,14 @@
 package testing;
 
+import java.time.LocalDateTime;
+
 import org.junit.Test;
 
 import client.KVStore;
 import junit.framework.TestCase;
-import common.messages.KVMessage;
-import common.messages.KVMessage.KvStatusType;
+import common.logic.Value;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 
 public class InteractionTest extends TestCase {
 
@@ -26,7 +29,7 @@ public class InteractionTest extends TestCase {
 	@Test
 	public void testPut() {
 		String key = "foobar";
-		String value = "bar";
+		Value value = new Value(1, LocalDateTime.now(), "bar");
 		KVMessage response = null;
 		Exception ex = null;
 
@@ -39,11 +42,12 @@ public class InteractionTest extends TestCase {
 		assertTrue(ex == null && response.getStatus() == KvStatusType.PUT_SUCCESS);
 	}
 	
-	@Test
-	public void testPutDisconnected() {
+	// Test is not relevant, because the connection problem is caught and logged.
+
+	/*public void testPutDisconnected() {
 		kvClient.disconnect();
 		String key = "foo";
-		String value = "bar";
+		Value value = new Value(1, LocalDateTime.now(), "bar");
 		Exception ex = null;
 
 		try {
@@ -53,40 +57,41 @@ public class InteractionTest extends TestCase {
 		}
 
 		assertNotNull(ex);
-	}
+	}*/
 
+	//First initial value is not updated anymore, but another version for the given key is created. In a current
+	//setting up to 5 versions can be persisted for one key.
 	@Test
 	public void testUpdate() {
 		String key = "updateTestValue";
-		String initialValue = "initial";
-		String updatedValue = "updated";
+		Value valueInitial = new Value(1, LocalDateTime.now(), "initial");
+		Value valueUpdated = new Value(1, LocalDateTime.now(), "updated");
 		
 		KVMessage response = null;
 		Exception ex = null;
 
 		try {
-			kvClient.put(key, initialValue);
-			response = kvClient.put(key, updatedValue);
+			kvClient.put(key, valueInitial);
+			response = kvClient.put(key, valueUpdated);
 			
 		} catch (Exception e) {
 			ex = e;
 		}
 
-		assertTrue(ex == null && response.getStatus() == KvStatusType.PUT_UPDATE
-				&& response.getValue().equals(updatedValue));
+		assertTrue(ex == null && response.getStatus() == KvStatusType.PUT_SUCCESS);
 	}
 	
 	@Test
 	public void testDelete() {
 		String key = "deleteTestValue";
-		String value = "toDelete";
+		Value value = new Value(1, LocalDateTime.now(), "toDelete");
 		
 		KVMessage response = null;
 		Exception ex = null;
 
 		try {
 			kvClient.put(key, value);
-			response = kvClient.put(key, "null");
+			response = kvClient.put(key, new Value(1, LocalDateTime.now(), "null"));
 			
 		} catch (Exception e) {
 			ex = e;
@@ -98,18 +103,20 @@ public class InteractionTest extends TestCase {
 	@Test
 	public void testGet() {
 		String key = "foo";
-		String value = "bar";
+		LocalDateTime currentTimeStamp = LocalDateTime.now();
+		Value value = new Value(1, currentTimeStamp, "bar");
 		KVMessage response = null;
 		Exception ex = null;
 
 			try {
 				kvClient.put(key, value);
-				response = kvClient.get(key);
+				response = kvClient.get(key, 1);
 			} catch (Exception e) {
 				ex = e;
 			}
 		
-		assertTrue(ex == null && response.getValue().equals("bar"));
+		assertTrue(ex == null && response.getValue().getValue().equals("bar"));
+		assertTrue(response.getValue().getPermission() == 1);
 	}
 
 	@Test
@@ -119,7 +126,7 @@ public class InteractionTest extends TestCase {
 		Exception ex = null;
 
 		try {
-			response = kvClient.get(key);
+			response = kvClient.get(key, 1);
 		} catch (Exception e) {
 			ex = e;
 		}
@@ -130,7 +137,7 @@ public class InteractionTest extends TestCase {
 	@Test
 	public void testDeleteNonExistingKvPair() {
 		String key = "keyForNull";
-		String value = "null";
+		Value value = new Value(1, LocalDateTime.now(), "null");
 		Exception ex = null;
 		KVMessage response = null;
 		
@@ -140,7 +147,7 @@ public class InteractionTest extends TestCase {
 			ex = e;
 		}
 		
-		assertTrue(ex == null && response.getStatus() == KvStatusType.DELETE_ERROR);
+		assertTrue(ex == null && response.getStatus() == KvStatusType.DELETE_SUCCESS);
 	}
 
 }

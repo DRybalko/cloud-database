@@ -3,17 +3,26 @@ package app_kvServer;
 import java.util.ArrayList;
 import java.util.List;
 
+import app_kvServer.subscription.ClientSubscription;
+import app_kvServer.subscription.SubscriptionMessageType;
+import app_kvServer.subscription.SubscriptionReplicationController;
 import common.logic.ByteArrayMath;
 import common.logic.Communicator;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
-import common.messages.ECSMessage.EcsStatusType;
-import common.messages.ECSMessageItem;
-import common.messages.KVMessageItem;
-import common.messages.KVMessage.KvStatusType;
-import common.messages.PingMessage.PingStatusType;
-import common.messages.PingMessageItem;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessageItem;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
+import common.messages.ecsToServerMessage.ECSMessageItem;
+import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
+import common.messages.serverToServerMessage.ServerToServerMessageItem;
+import common.messages.serverToServerMessage.ServerToServerMessage.ServerToServerStatusType;
 
+/**
+ * This class is responsible for detection of the faulty servers. It sends ping messages to the servers, that follow current 
+ * server in meta data table. If server does not respond, than message is sent to ECS with information about the faulty server.
+ *
+ */
 public class FailureDetectorService implements Runnable {
 
 	private static final int TIME_TO_NEXT_PING_MESSAGE = 10000;
@@ -38,7 +47,6 @@ public class FailureDetectorService implements Runnable {
 	private void calculateServersForInspection() {
 		this.serversForInspection = findNextServersInMetaDataTable(server.getMetaDataTable(),
 				server.getServerStatusInformation().getThisKvServerItem(), 2);
-		
 	}
 	
 	/**
@@ -63,9 +71,9 @@ public class FailureDetectorService implements Runnable {
 	
 	private void inspectServers() {
 		while (this.running && server.getServerStatusInformation().isRunning()) {
-			PingMessageItem pingMessage = new PingMessageItem(PingStatusType.GET_STATUS);
+			ServerToServerMessageItem pingMessage = new ServerToServerMessageItem(ServerToServerStatusType.GET_STATUS);
 			for (KVServerItem serverToInspect: this.serversForInspection) {
-				PingMessageItem pingResponse = (PingMessageItem) communicator.sendMessage(serverToInspect, pingMessage);
+				ServerToServerMessageItem pingResponse = (ServerToServerMessageItem) communicator.sendMessage(serverToInspect, pingMessage);
 				if (pingResponse == null) sendServerFailureToECS(serverToInspect);
 			}
 			try {
@@ -80,11 +88,11 @@ public class FailureDetectorService implements Runnable {
 		running = false;
 		ECSMessageItem serverFailureMessage = new ECSMessageItem(EcsStatusType.FAULTY_SERVER, faultyServer);
 		ECSMessageItem responseMessage = (ECSMessageItem) communicator.sendMessage(server.getEcsMetaData(), serverFailureMessage);
-		if (responseMessage.getStatus().equals(EcsStatusType.REALLOCATE_DATA)) {
+		if (responseMessage !=null && responseMessage.getStatus().equals(EcsStatusType.REALLOCATE_DATA)) {
 			running = true;
 			reallocateDataFromServer(faultyServer);
 			onMetaDataTableChange();
-		} else if (responseMessage.getStatus().equals(EcsStatusType.SERVER_STOPPED)) {
+		} else if (responseMessage != null && responseMessage.getStatus().equals(EcsStatusType.SERVER_STOPPED)) {
 			onMetaDataTableChange();
 		}
 	}
@@ -96,9 +104,10 @@ public class FailureDetectorService implements Runnable {
 	}
 	
 	private void reallocateDataFromServer(KVServerItem faultyServer) {
-		for (String key: server.getServerStatusInformation().getKeys()) {
+		for (String key: server.getServerStatusInformation().getReplicationKeys()) {
 			if (isKeyOfFaultyServer(key, faultyServer)) {
-				sendKvPairToServerFromMetaDataTable((KVMessageItem) server.getPersistenceLogic().get(key));
+				sendKvPairToServerFromMetaDataTable(key);
+				sendSubscriptionInformationForKey(key, faultyServer);
 			}
 		}
 	}
@@ -108,13 +117,33 @@ public class FailureDetectorService implements Runnable {
 				faultyServer.getStartIndex(), faultyServer.getEndIndex());
 	}
 	
-	private void sendKvPairToServerFromMetaDataTable(KVMessageItem kvMessage) {
-		KVServerItem responsibleServer = findResponsibleServer(HashGenerator.generateHashFor(kvMessage.getKey()));
-		kvMessage.setStatus(KvStatusType.PUT);
-		KVMessageItem replyMessage = (KVMessageItem) communicator.sendMessage(responsibleServer, kvMessage);
-		while (!replyMessage.getStatus().equals(KvStatusType.PUT_SUCCESS.toString())) {
-			replyMessage = (KVMessageItem) communicator.sendMessage(responsibleServer, kvMessage);
+	private void sendKvPairToServerFromMetaDataTable(String key) {
+		KVServerItem responsibleServer = findResponsibleServer(HashGenerator.generateHashFor(key));
+		int numberOfVersions = server.getVersionController().getMaxVersionForKey(key);
+		for (int i = 1; i <= numberOfVersions; i++) {
+			responsibleServer = putKeyForVersion(key, responsibleServer, i);
+		}
+	}
+
+	private KVServerItem putKeyForVersion(String key,KVServerItem responsibleServer, int version) {
+		String keyForVersionI = server.getVersionController().getKeyForVersion(key, version);
+		KVMessage getMessage = server.getPersistenceLogic().get(keyForVersionI);
+		KVMessageItem putMessage = new KVMessageItem(KvStatusType.PUT, key, getMessage.getValue());
+		KVMessageItem replyMessage = (KVMessageItem) communicator.sendMessage(responsibleServer, putMessage);
+		while (!replyMessage.getStatus().equals(KvStatusType.PUT_SUCCESS)) {
+			replyMessage = (KVMessageItem) communicator.sendMessage(responsibleServer, putMessage);
 			if (replyMessage.getStatus().equals(KvStatusType.SERVER_NOT_RESPONSIBLE.toString())) responsibleServer = replyMessage.getServer();
+		}
+		return responsibleServer;
+	}
+	
+	private void sendSubscriptionInformationForKey(String key, KVServerItem serverForNewData) {
+		List<ClientSubscription> subscriptionList = server.getSubscriptionController().getSubscriptionListForKey(key);
+		if (subscriptionList != null) {
+			for (ClientSubscription subscription: subscriptionList) {
+				SubscriptionReplicationController subscriptionReplicationController = new SubscriptionReplicationController(key, SubscriptionMessageType.ADD_SUBSCRIPTION, subscription, server);
+				subscriptionReplicationController.sendSubscriptionToServer(serverForNewData);
+			}
 		}
 	}
 	

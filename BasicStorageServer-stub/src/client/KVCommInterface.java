@@ -1,6 +1,8 @@
 package client;
 
-import common.messages.KVMessage;
+import common.logic.Value;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 
 public interface KVCommInterface {
 
@@ -29,7 +31,7 @@ public interface KVCommInterface {
 	 *             if put command cannot be executed (e.g. not connected to any
 	 *             KV server).
 	 */
-	public KVMessage put(String key, String value) throws Exception;
+	public KVMessage put(String key, Value value) throws Exception;
 
 	/**
 	 * Retrieves the value for a given key from the KVServer.
@@ -41,5 +43,13 @@ public interface KVCommInterface {
 	 *             if put command cannot be executed (e.g. not connected to any
 	 *             KV server).
 	 */
-	public KVMessage get(String key) throws Exception;
+	public KVMessage get(String key, int version) throws Exception;
+	
+	public KVMessage getVersion(String key) throws Exception;
+	
+	public KVMessage sendSubscriptionStatusMessage(String key, KvStatusType status) throws Exception;
+	
+	public void setPermission(int permission);
+	
+	public int getPermission();
 }

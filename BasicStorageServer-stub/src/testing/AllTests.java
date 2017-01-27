@@ -1,7 +1,6 @@
 package testing;
 
 import java.io.IOException;
-import java.net.InetAddress;
 
 import org.apache.log4j.Level;
 

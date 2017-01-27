@@ -1,13 +1,14 @@
-package common.messages;
+package common.messages.clientToServerMessage;
 
 import java.nio.charset.Charset;
 
 import common.logic.KVServerItem;
-import common.messages.KVMessage.KvStatusType;
+import common.logic.ValueMarshaler;
 import common.messages.Message.MessageType;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 
 /**
- * The class Marshaller provides the functions needed to convert from
+ * The class Marshaler provides the functions needed to convert from
  * byte Array to KVMessage and vice versa. 
  */
 public class KVMessageMarshaller {
@@ -28,8 +29,14 @@ public class KVMessageMarshaller {
 			stringBuilder.append(message.getKey());
 			stringBuilder.append(UNIT_SEPARATOR);
 		}
-		if(message.getValue() != null){
-			stringBuilder.append(message.getValue());
+		if (message.getValue() != null) {
+			stringBuilder.append(ValueMarshaler.marshal(message.getValue()));
+		}
+		if (message.getVersion() != 0) {
+			stringBuilder.append(message.getVersion());
+		}
+		if (message.getPort() != null) {
+			stringBuilder.append(message.getPort());
 		}
 		if(message.getStatus().equals(KvStatusType.SERVER_NOT_RESPONSIBLE)) {
 			stringBuilder.append(convertKVServerItemToString(message.getServer()));
@@ -47,16 +54,24 @@ public class KVMessageMarshaller {
 		KVMessageItem message = new KVMessageItem(type);
 		message.setMessageType(MessageType.CLIENT_TO_SERVER);
 		if (type.equals(KvStatusType.GET_SUCCESS)) {
-			message.setValue(messageTokens[1]);
+			message.setValue(ValueMarshaler.unmarshal(messageTokens[1]));
 		} else if (type.equals(KvStatusType.GET)) {
 			message.setKey(messageTokens[1]);
-		} else if(type.equals(KvStatusType.PUT) || type.equals(KvStatusType.PUT_REPLICATION)) {
+			message.setVersion(Integer.parseInt(messageTokens[2]));
+		} else if (type.equals(KvStatusType.GET_VERSION)) {
 			message.setKey(messageTokens[1]);
-			message.setValue(messageTokens[2]);
+		} else if (type.equals(KvStatusType.VERSION)) {
+			message.setVersion(Integer.parseInt(messageTokens[1]));
+		} else if (type.equals(KvStatusType.PUT) || type.equals(KvStatusType.PUT_REPLICATION)) {
+			message.setKey(messageTokens[1]);
+			message.setValue(ValueMarshaler.unmarshal(messageTokens[2]));
 		} else if (type.equals(KvStatusType.PUT_UPDATE)) {
-			message.setValue(messageTokens[1]);
+			message.setValue(ValueMarshaler.unmarshal(messageTokens[1]));
 		} else if (type.equals(KvStatusType.SERVER_NOT_RESPONSIBLE)){
 			message.setServer(convertStringToMetaDataTableServer(messageTokens[1]));
+		} else if (type.equals(KvStatusType.SUBSCRIBE) || type.equals(KvStatusType.UNSUBSCRIBE)) {
+			message.setKey(messageTokens[1]);
+			message.setPort(messageTokens[2]);
 		}
 		return message;
 	}

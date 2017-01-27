@@ -3,10 +3,13 @@ package app_kvClient;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 
 import org.apache.log4j.*;
 
-import common.messages.KVMessage;
+import common.logic.Value;
+import common.messages.clientToServerMessage.KVMessage;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 import client.KVCommInterface;
 import client.KVStore;
 
@@ -21,13 +24,14 @@ import client.KVStore;
  * 
  * @see KVCommInterface
  */
-
 public class CommandLineProcessor {
 
 	private static String[] input;
 	private static KVCommInterface kvStore;
 	private static Logger logger = Logger.getRootLogger();
 	private static boolean quit;
+	private static boolean loggedIn;
+	private static PermissionController permissionController;
 
 	private static final String LINE_START = "EchoClient> ";
 	private static final String HELP_MESSAGE = "Welcome to EchoClient!\r\n\r\n"
@@ -75,12 +79,22 @@ public class CommandLineProcessor {
 						break;
 		case "quit": quit();
 						break;
+		case "subscribe": subscribe();
+						break;
+		case "unsubscribe": unsubscribe();
+						break;
+		case "logout":  logOut();
+						break;
+		case "login":  	logIn();
+						break;
 		default: errorMessage();
 		}
 	}
 
 	private static void connect() {
 		kvStore = new KVStore();
+		permissionController = new PermissionController();
+		logIn();
 		try {
 			kvStore.connect();
 			System.out.println("Connection was established successfuly");
@@ -89,7 +103,31 @@ public class CommandLineProcessor {
 			logger.info(e.getMessage());
 		}
 	}
-
+	
+	private static void logIn() {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			String role = "";
+			int permission = -1;
+			while (permission < 0) {
+				System.out.print(LINE_START + "sign in as: ");
+				role = br.readLine();
+				permission = permissionController.getPermissionLevel(role); 
+				if (permission < 0) System.out.println("Please sign in with valid user name");
+			}
+			kvStore.setPermission(permission);
+			loggedIn = true;
+			System.out.println("You signed in as: " + role);
+		} catch (IOException e1) {
+			logger.error("Error caused by wrong console input");
+		}
+	}
+	
+	private static void logOut() {
+		System.out.println(LINE_START + "Logged out.");
+		loggedIn = false;
+	}
+	
 	private static void disconnect() {
 		kvStore.disconnect();
 			System.out.println(LINE_START + "Connection terminated.");
@@ -107,40 +145,142 @@ public class CommandLineProcessor {
 	};
 
 	private static void put() {
+		if (!loggedIn) {
+			System.out.println(LINE_START + "Please sign in");
+			return;
+		}
 		if (input.length >= 3) {
 			try {
-				StringBuilder stringBuilder = new StringBuilder();
-				for (int i = 2; i < input.length; i++) {
-					stringBuilder.append(input[i]);
-					stringBuilder.append(" ");
-				}
-				KVMessage message = kvStore.put(input[1], stringBuilder.toString());
+				String putInput = readPutInput();
+				int putMessagePermission = getPermissionForPut(input[1]);
+				LocalDateTime timestamp = LocalDateTime.now();
+				Value value  = new Value(putMessagePermission, timestamp, putInput);			
+				KVMessage message = kvStore.put(input[1], value);
 				System.out.println(message.toString());
 			} catch (Exception e) {
 				logger.info("Put failed. "+e.getMessage());
 			}
-		} else {
-			errorMessage();
+		} else errorMessage();
+	}
+	
+	private static String readPutInput() {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (int i = 2; i < input.length; i++) {
+			stringBuilder.append(input[i]);
+			stringBuilder.append(" ");
 		}
+		return stringBuilder.toString();
+	}
+
+	private static int getPermissionForPut(String key) {
+		KVMessage message;
+		try {
+			message = kvStore.getVersion(key);
+			if (message.getStatus().equals(KvStatusType.GET_SUCCESS)) return message.getValue().getPermission();
+			else if (message.getStatus().equals(KvStatusType.VERSION)
+					&& message.getVersion() > 0) return kvStore.get(key, 1).getValue().getPermission();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String role = "";
+		int permission = -1;
+		while (permission < 0) {
+			try {
+				System.out.println(LINE_START + "Please specify permission level: ");
+				System.out.print(LINE_START);
+				role = br.readLine();
+				permission = permissionController.getPermissionLevel(role); 
+				if (permission > kvStore.getPermission()) {
+					System.out.println(LINE_START + "Permission level can not be higher than yours");
+					permission = -1;
+				}
+			} catch (IOException e) {
+				logger.error(e);
+			}
+		}
+		return permission;
 	}
 	
 	private static void get() {
+		if (!loggedIn) {
+			System.out.println(LINE_START + "Please sign in");
+			return;
+		}
+		if (input.length == 2) {
+			try {
+				getKeyVersions();
+			} catch (Exception e) {
+				logger.info("Get failed.");
+				System.out.println("Get failed.");
+			}
+		} else if (input.length == 3) {
+			try {
+				getValueForKeyAndVersion();
+			} catch (Exception e) {
+				logger.info("Get failed.");			
+				System.out.println("Get failed.");
+			}
+		} else errorMessage();
+	}
+	
+	private static void subscribe() {
+		if (!loggedIn) {
+			System.out.println(LINE_START + "Please sign in");
+			return;
+		}
 		if (input.length >= 2) {
 			try {
-				KVMessage message = kvStore.get(input[1]);
-				System.out.println(message.toString());
+				KVMessage reply = kvStore.sendSubscriptionStatusMessage(input[1], KvStatusType.SUBSCRIBE);
+				System.out.println(reply.toString());
 			} catch (Exception e) {
-				logger.info("Get failed. " + e.getMessage());
+				logger.info("Subscription failed");
 			}
-		} else {
-			errorMessage();
+		} else errorMessage();
+	}
+
+	private static void unsubscribe() {
+		if (!loggedIn) {
+			System.out.println(LINE_START + "Please sign in");
+			return;
 		}
+		if (input.length >= 2) {
+			try {
+				KVMessage reply = kvStore.sendSubscriptionStatusMessage(input[1], KvStatusType.UNSUBSCRIBE);
+				System.out.println(reply.toString());
+			} catch (Exception e) {
+				logger.info("It was not possible to end subscribtion. Error occured.");
+			}
+		} else errorMessage();
+	}
+	
+	private static void getValueForKeyAndVersion() throws Exception {
+		int version = Integer.valueOf(input[2]);
+		KVMessage message = kvStore.get(input[1], version);
+		if (!message.getStatus().equals(KvStatusType.NO_PERMISSION)) printGetResult(message);
+		else System.out.println("You have no permission to watch this data");
+	}
+
+	private static void getKeyVersions() throws Exception {
+		KVMessage message = kvStore.getVersion(input[1]);
+		if (message.getStatus().equals(KvStatusType.VERSION) && message.getVersion() > 0) {
+			System.out.println("For this key there are " + message.getVersion() +" versions. Please specify which version you"
+					+ " would like to get.");
+		} else {
+			printGetResult(message);
+		}
+	}
+
+	private static void printGetResult(KVMessage message) {
+		Value value = message.getValue();
+		System.out.println("Result of get operation is: "+value.getValue());
+		System.out.println("This document was created/updated on: "+value.getTimestamp().toString());
 	}
 
 	private static void help() {
 		System.out.println(LINE_START + HELP_MESSAGE);
 	};
-
+	
 	private static void quit() {
 		System.out.println(LINE_START + "Application exit. Bye ;)");
 		quit = true;

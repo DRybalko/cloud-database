@@ -9,6 +9,7 @@ import java.util.ListIterator;
 import app_kvServer.ClientConnection;
 import app_kvServer.KVServer;
 import app_kvServer.PersistenceLogic;
+import app_kvServer.subscription.SubscriptionController;
 import logger.LogSetup;
 
 import org.apache.log4j.Level;
@@ -18,8 +19,7 @@ import common.logic.KVServerItem;
 
 /**
  * Main class for the KVServer. Holds the variables needed for
- * the connection with the server (like the port number, the 
- * cache size and the cache strategy). It initializes and starts
+ * the connection with the server. It initializes and starts
  * the KVServer at given port and listens for clients until it is stopped.
  * 
  * @see PersistenceLogic
@@ -34,6 +34,8 @@ public class KVServer {
 	private FailureDetectorService failureDetector;
 	private KVServerItem ecsMetaData;
 	private ServerStatusInformation serverStatusInformation;
+	private VersionController versionController;
+	private SubscriptionController subscriptionController;
 
 	/**
 	 * Start KV Server at given port
@@ -57,7 +59,7 @@ public class KVServer {
 	}
 
 	private static void processArgs(String[] args) throws IOException {
-		new LogSetup("logs/server/server"+args[0]+".log", Level.ALL);
+		new LogSetup("/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/logs/server/server"+args[0]+".log", Level.ALL);
 		int port = Integer.parseInt(args[0]);
 		int cacheSize = Integer.parseInt(args[1]);
 		String cacheStrategy = args[2];
@@ -70,6 +72,8 @@ public class KVServer {
 		this.serverStatusInformation = new ServerStatusInformation(port, name);
 		this.persistenceLogic = new PersistenceLogic(cacheSize, strategy);
 		this.logger = Logger.getRootLogger();
+		this.versionController = new VersionController(this);
+		this.subscriptionController = new SubscriptionController();
 	}
 
 	/**
@@ -125,8 +129,9 @@ public class KVServer {
 
 	public void shutDown() {
 		logger.info("Stopping server, closing socket...");
-		moveData(serverStatusInformation.getStartIndex(), serverStatusInformation.getEndIndex(), findNextServer());
 		this.replicaCoordinator.deleteAllReplications();
+		DataTransferer dataTransferer = new DataTransferer(this, findNextServer());
+		dataTransferer.transferAllKeys();
 		try {		
 			serverStatusInformation.setRunning(false);
 			this.serverSocket.close();
@@ -158,7 +163,8 @@ public class KVServer {
 	}
 
 	public void updateStartIndex(byte[] newStartIndex) {
-		moveData(serverStatusInformation.getStartIndex(), newStartIndex, findPreviousServer());
+		DataTransferer dataTransferer = new DataTransferer(this, findPreviousServer());
+		dataTransferer.transfer( serverStatusInformation.getStartIndex(), newStartIndex);
 		serverStatusInformation.setStartIndex(newStartIndex);
 	}
 	
@@ -167,11 +173,6 @@ public class KVServer {
 		if (thisServerIndex == 0) return metaDataTable.get(metaDataTable.size() -1);
 		else return metaDataTable.get(thisServerIndex - 1);
 	} 
-	
-	public void moveData(byte[] startIndex, byte[] endIndex, KVServerItem serverToMoveDataTo) {
-		DataTransferer dataTransferer = new DataTransferer(this, startIndex, endIndex, serverToMoveDataTo);
-		new Thread(dataTransferer).start();
-	}
 	
 	public PersistenceLogic getPersistenceLogic() {
 		return persistenceLogic;
@@ -197,9 +198,7 @@ public class KVServer {
 		serverStatusInformation.setThisKvServerItem(findServerInMetaDataTable());
 		if (this.replicaCoordinator == null) this.replicaCoordinator = new ReplicaCoordinator(this);
 		else this.replicaCoordinator.updateReplicas();
-		if (this.failureDetector == null) {
-			this.failureDetector = new FailureDetectorService(this);
-		}
+		if (this.failureDetector == null) this.failureDetector = new FailureDetectorService(this);
 		else this.failureDetector.onMetaDataTableChange();
 	}
 	
@@ -214,17 +213,7 @@ public class KVServer {
 	public List<KVServerItem> getMetaDataTable() {
 		return this.metaDataTable;
 	}
-	
-	public void addKey(String key) {
-		serverStatusInformation.addKey(key);
-	}
-	
-	public void deleteKey(String key) {
-		for (String keyElement: serverStatusInformation.getKeys()) {
-			if (keyElement.equals(key)) serverStatusInformation.removeKey(keyElement);
-		}	
-	}
-	
+
 	public ReplicaCoordinator getReplicaCoordinator() {
 		return this.replicaCoordinator;
 	}
@@ -240,4 +229,13 @@ public class KVServer {
 	public void setEcsMetaData(KVServerItem ecsMetaData) {
 		this.ecsMetaData = ecsMetaData;
 	}
+	
+	public VersionController getVersionController() {
+		return versionController;
+	}
+	
+	public SubscriptionController getSubscriptionController() {
+		return this.subscriptionController;
+	}
+
 }

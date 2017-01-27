@@ -7,12 +7,12 @@ import java.net.Socket;
 import org.apache.log4j.*;
 
 import common.logic.ServerCommunicator;
-import common.messages.ECSMessageItem;
-import common.messages.KVMessage.KvStatusType;
-import common.messages.KVMessageItem;
 import common.messages.Message;
 import common.messages.Message.MessageType;
-import common.messages.PingMessageItem;
+import common.messages.clientToServerMessage.KVMessageItem;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
+import common.messages.ecsToServerMessage.ECSMessageItem;
+import common.messages.serverToServerMessage.ServerToServerMessageItem;
 
 /**
  * Represents a connection end point for a particular client that is 
@@ -86,14 +86,14 @@ public class ClientConnection implements Runnable {
 			if (!server.getServerStatusInformation().isAcceptingClientRequests()) {
 				return new KVMessageItem(KvStatusType.SERVER_STOPPED);
 			}
-			KVMessageProcessor kvMessageProcessor = new KVMessageProcessor(server);
+			KVMessageProcessor kvMessageProcessor = new KVMessageProcessor(clientSocket, server);
 			return kvMessageProcessor.processMessage((KVMessageItem) message);
 		} else if (message.getMessageType().equals(MessageType.ECS_TO_SERVER)) {
 			ECSMessageProcessor ecsMessageProcessor = new ECSMessageProcessor(server);
 			return ecsMessageProcessor.processMessage((ECSMessageItem) message);
 		} else if (message.getMessageType().equals(MessageType.SERVER_TO_SERVER)) {
 			ServerToServerMessageProcessor serverToServerMessageProcessor = new ServerToServerMessageProcessor(server);
-			return serverToServerMessageProcessor.processMessage((PingMessageItem) message);
+			return serverToServerMessageProcessor.processMessage((ServerToServerMessageItem) message);
 		} else {
 			logger.error("Unknown message type: " + message.getMessageType().toString());
 			return null;

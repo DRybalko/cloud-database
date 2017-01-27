@@ -11,6 +11,11 @@ import org.apache.log4j.Logger;
 
 import common.logic.KVServerItem;
 
+/**
+ * Repository class reads in all servers from ecs.config and creates KVServerItem object from them.
+ * These object are then used in meta data table. It provides public method getAvailableServers(), which
+ * returns all servers, that are ready to be initialized and started.
+ */
 public class Repository {
 	
 	private List<KVServerItem> availableServers;

@@ -1,9 +1,10 @@
-package common.messages;
+package common.messages.ecsToServerMessage;
 
 import java.util.List;
 import java.util.Map;
 
 import common.logic.KVServerItem;
+import common.messages.Message;
 
 public class ECSMessageItem extends Message implements ECSMessage{
 

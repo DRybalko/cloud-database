@@ -9,6 +9,10 @@ import org.apache.log4j.Logger;
 import app_kvEcs.logic.ECSLogic;
 import app_kvEcs.logic.Repository;
 
+/**
+ * This class is responsible for the user interface for ECS. It reads user inputs and 
+ * calls corresponding methods in ECSLogic.
+ */
 public class EcsCommandLineProcessor {
 
 	private static String[] input;

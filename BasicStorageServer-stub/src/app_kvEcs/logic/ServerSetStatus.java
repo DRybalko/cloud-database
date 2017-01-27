@@ -1,10 +1,15 @@
-package app_kvServer;
+package app_kvEcs.logic;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import common.logic.KVServerItem;
 
+/**
+ * Class that contains all the information about status of the servers currently existing in the system.
+ * There are three possible statuses defined: server is available, initialized, working.
+ * When ECSLogic starts or stops/shuts down servers, they are than moved to the appropriate list.
+ */
 public class ServerSetStatus {
 
 	private List<KVServerItem> availableServers;
