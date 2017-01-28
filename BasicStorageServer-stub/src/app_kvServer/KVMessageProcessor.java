@@ -102,8 +102,7 @@ public class KVMessageProcessor {
 	}
 	
 	private boolean isServerResponsibleForSubscription(String key) {
-		return server.getServerStatusInformation().getKeys().contains(key) 
-				&& ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key),
+		return ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(key),
 						server.getServerStatusInformation().getStartIndex(), server.getServerStatusInformation().getEndIndex());
 	}
 	
