@@ -33,8 +33,8 @@ public class CommandLineProcessor {
 	private static boolean loggedIn;
 	private static PermissionController permissionController;
 
-	private static final String LINE_START = "EchoClient> ";
-	private static final String HELP_MESSAGE = "Welcome to EchoClient!\r\n\r\n"
+	private static final String LINE_START = "Client> ";
+	private static final String HELP_MESSAGE = "Welcome to Key value storage client!\r\n\r\n"
 			+ "Commands:\r\nconnect <address> <port> - tries to establish a TCP"
 			+ "- connection to the server based on the given server address and "
 			+ "the port\r\ndisconnect - tries to disconnect from the connected "

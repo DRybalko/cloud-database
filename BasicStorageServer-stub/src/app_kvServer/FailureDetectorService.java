@@ -45,29 +45,37 @@ public class FailureDetectorService implements Runnable {
 	}
 	
 	private void calculateServersForInspection() {
-		this.serversForInspection = findNextServersInMetaDataTable(server.getMetaDataTable(),
-				server.getServerStatusInformation().getThisKvServerItem(), 2);
+		if (server.getMetaDataTable().size() > 2) {
+			calculateTwoServersForInspection();
+		} else if (server.getMetaDataTable().size() == 2) {
+			calculateOneServerForInspection();
+		} 
 	}
 	
-	/**
-	 * Method that finds servers, that follow given server in metaDataTable (have higher end index).
-	 * 
-	 * @param serverItem for which following servers must be found
-	 * @param numberOfServersToAdd number of servers to find
-	 * @return list of KVServerItems that follow the given server
-	 */
-	private List<KVServerItem> findNextServersInMetaDataTable(List<KVServerItem> metaDataTable, KVServerItem serverItem, int numberOfServersToAdd) {
-		List<KVServerItem> nextServers = new ArrayList<>();
-		int indexOfServerItem = metaDataTable.indexOf(serverItem);
-		if (numberOfServersToAdd > metaDataTable.size()) numberOfServersToAdd = metaDataTable.size();
-		for (int i = 1; i <= numberOfServersToAdd; i++) {
-			int indexOfNextServer = (indexOfServerItem + i) % metaDataTable.size();
-			KVServerItem nextServer = metaDataTable.get(indexOfNextServer);
-			if (nextServer.equals(serverItem)) break;
-			nextServers.add(nextServer);
+	private void calculateTwoServersForInspection() {
+		List<KVServerItem> metaDataTable = server.getMetaDataTable();
+		int indexOfThisKVServerItem = metaDataTable.indexOf(server.getServerStatusInformation().getThisKvServerItem());	
+		if (indexOfThisKVServerItem == 1) {
+			this.serversForInspection.add(metaDataTable.get(indexOfThisKVServerItem - 1));
+			this.serversForInspection.add(metaDataTable.get(metaDataTable.size() - 1));
+		} else if (indexOfThisKVServerItem == 0 ) {
+			this.serversForInspection.add(metaDataTable.get(metaDataTable.size() - 1));			
+			this.serversForInspection.add(metaDataTable.get(metaDataTable.size() - 2));
+		} else {
+			this.serversForInspection.add(metaDataTable.get(indexOfThisKVServerItem - 1));			
+			this.serversForInspection.add(metaDataTable.get(indexOfThisKVServerItem - 2));
 		}
-		return nextServers;
 	}
+	
+	private void calculateOneServerForInspection() {
+		this.serversForInspection = new ArrayList<>();
+		if (server.getMetaDataTable().indexOf(server.getServerStatusInformation().getThisKvServerItem()) == 0) {
+			this.serversForInspection.add(server.getMetaDataTable().get(1));
+		} else {
+			this.serversForInspection.add(server.getMetaDataTable().get(0));
+		}
+	}
+	
 	
 	private void inspectServers() {
 		while (this.running && server.getServerStatusInformation().isRunning()) {
