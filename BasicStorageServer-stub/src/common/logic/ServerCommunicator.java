@@ -37,13 +37,10 @@ public class ServerCommunicator{
 	 * @throws IOException some I/O error regarding the output stream 
 	 */
 	public void sendMessage(Message message) throws IOException {
-		logger.debug("Sending message ...");
 		byte[] msgBytes = marshaller.marshal(message);
 		output.write(msgBytes, 0, msgBytes.length);
 		output.flush();
-		logger.debug("SEND to \t<" 
-				+ socket.getInetAddress().getHostAddress() + ":" 
-				+ socket.getPort());
+		if (message.getMessageType() != null) logger.debug("Send message: "+ message.getMessageType().toString());
 	}
 	
 	public Message receiveMessage() throws IOException {
@@ -56,9 +53,7 @@ public class ServerCommunicator{
 		byte[] receivedMessage = convertToByteArray(readMessage);
 
 		Message msg = marshaller.unmarshal(receivedMessage);
-		logger.debug("RECEIVE from \t<" 
-				+ socket.getInetAddress().getHostAddress() + ":" 
-				+ socket.getPort());
+		if (msg.getMessageType() != null) logger.debug("Receive message: "+msg.getMessageType().toString());
 		return msg;
 	}	
 

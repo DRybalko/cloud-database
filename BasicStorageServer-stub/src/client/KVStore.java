@@ -27,7 +27,7 @@ import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 public class KVStore implements KVCommInterface {
 
 	//First server to send put or get message to
-	private final KVServerItem initialKVServerItem = new KVServerItem("node1", "localhost", "50000");
+	private final KVServerItem initialKVServerItem = new KVServerItem("node1", "131.159.215.36", "50000");
 	
 	private Communicator communicator;
 	private MetaDataTableController metaDataTableController;

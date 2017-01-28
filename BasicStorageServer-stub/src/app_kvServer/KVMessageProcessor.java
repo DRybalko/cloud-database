@@ -37,8 +37,13 @@ public class KVMessageProcessor {
 		if (message.getStatus().equals(KvStatusType.GET)) {
 			replyMessage = messageProcessor.get(message);
 		} else if (message.getStatus().equals(KvStatusType.GET_VERSION)){
-			replyMessage = new KVMessageItem(KvStatusType.VERSION, server.getVersionController()
-					.getMaxVersionForKey(message.getKey()));
+			if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(message.getKey()),
+				server.getServerStatusInformation().getStartIndex(), server.getServerStatusInformation().getEndIndex())) {
+				replyMessage = sendNotResponsibleMessage(message);
+			} else {
+				replyMessage = new KVMessageItem(KvStatusType.VERSION, server.getVersionController()
+						.getMaxVersionForKey(message.getKey()));
+			}		
 		} else if (message.getStatus().equals(KvStatusType.PUT)) {
 			replyMessage = processPutMessage(message);
 		} else if (message.getStatus().equals(KvStatusType.PUT_REPLICATION))  {

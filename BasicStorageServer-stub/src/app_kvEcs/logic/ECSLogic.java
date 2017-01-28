@@ -21,7 +21,7 @@ import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
 public class ECSLogic {
 	
 	private final int MAX_WAITING_TIME = 10000;
-	private final String ECS_IP = "localhost";
+	private final String ECS_IP = "131.159.215.36";
 	private final String ECS_PORT = "60000";
 	
 	//In order to start servers via SSH the full path must be set.

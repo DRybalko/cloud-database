@@ -32,6 +32,7 @@ public class Communicator {
 	}
 	
 	public Message sendMessage(KVServerItem server, Message message) {
+		if (message.getMessageType() != null) logger.info("Communicator sends: " + message.getMessageType().toString());
 		Socket socket;
 		if (serverSockets.containsKey(server.getName())) socket = serverSockets.get(server.getName());
 		else socket = createNewSocketFor(server);
@@ -43,6 +44,7 @@ public class Communicator {
 			output.flush();
 			InputStream input = socket.getInputStream();
 			reply = marshaller.unmarshal(readReply(input));
+			if (message.getMessageType() != null)  logger.info("Communicator reply: "+ reply.getMessageType().toString());
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}	
