@@ -51,6 +51,20 @@ public class Communicator {
 		return reply;
 	}
 	
+	public void sendMessageWithoutReply(KVServerItem server, Message message) {
+		if (message.getMessageType() != null) logger.info("Communicator sends: " + message.getMessageType().toString());
+		Socket socket;
+		if (serverSockets.containsKey(server.getName())) socket = serverSockets.get(server.getName());
+		else socket = createNewSocketFor(server);
+		try {
+			OutputStream output = socket.getOutputStream();
+			output.write(marshaller.marshal(message));
+			output.flush();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
 	private Socket createNewSocketFor(KVServerItem server) {
 		Socket socket = null;
 		try {

@@ -1,9 +1,8 @@
 package app_kvServer.subscription;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * In this class all subscription are controlled. The main element is a map, that maps each key to 
@@ -16,10 +15,10 @@ public class SubscriptionController {
 	/**
 	 * Map that connects maps a key to the list of all subscriptions to this key
 	 */
-	private Map<String, List<ClientSubscription>> keySubscription; 
+	private ConcurrentHashMap<String, List<ClientSubscription>> keySubscription; 
 	
 	public SubscriptionController() {
-		keySubscription = new HashMap<>();
+		keySubscription = new ConcurrentHashMap<>();
 	}
 	
 	public void addSubscription(String key, ClientSubscription client) {
@@ -29,7 +28,7 @@ public class SubscriptionController {
 
 	private void createNewListForKey(String key) {
 		if (!keySubscription.containsKey(key)) {
-			List<ClientSubscription> clientsForKey = new ArrayList<>();
+			List<ClientSubscription> clientsForKey = new CopyOnWriteArrayList<>();
 			keySubscription.put(key, clientsForKey);
 		}
 	}

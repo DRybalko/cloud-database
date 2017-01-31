@@ -2,6 +2,7 @@ package app_kvServer.subscription;
 
 import common.logic.Communicator;
 import common.logic.KVServerItem;
+import common.messages.clientToServerMessage.KVMessage;
 import common.messages.clientToServerMessage.KVMessageItem;
 import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 
@@ -23,7 +24,7 @@ public class SubscriptionInformer implements Runnable {
 	
 	public void run() {
 		for (ClientSubscription client: subscriptionController.getSubscriptionListForKey(message.getKey())) {
-			KVServerItem serverItem = new KVServerItem("client" + client.getPort(), client.getIp(), client.getPort());
+			KVServerItem serverItem = new KVServerItem("client" +client.getIp() + client.getPort(), client.getIp(), client.getPort());
 			KVMessageItem updateMessage = new KVMessageItem(KvStatusType.PUT, message.getKey(), message.getValue());
 			communicator.sendMessage(serverItem, updateMessage);
 		}

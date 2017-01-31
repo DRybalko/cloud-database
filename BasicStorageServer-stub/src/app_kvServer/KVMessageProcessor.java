@@ -9,6 +9,7 @@ import app_kvServer.subscription.SubscriptionInformer;
 import app_kvServer.subscription.SubscriptionMessageType;
 import app_kvServer.subscription.SubscriptionReplicationController;
 import common.logic.ByteArrayMath;
+import common.logic.Communicator;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
 import common.logic.Value;
@@ -144,9 +145,13 @@ public class KVMessageProcessor {
 	}
 	
 	private void informSubscribers(KVMessageItem message) {
+		Communicator communicator = new Communicator();
 		if (server.getSubscriptionController().isKeySubscribedByClient(message.getKey())) {
-			SubscriptionInformer subscriptionInformer = new SubscriptionInformer(message, server.getSubscriptionController());
-			new Thread(subscriptionInformer).start();
+			for (ClientSubscription client: server.getSubscriptionController().getSubscriptionListForKey(message.getKey())) {
+				KVServerItem serverItem = new KVServerItem("client" +client.getIp() + client.getPort(), client.getIp(), client.getPort());
+				KVMessageItem updateMessage = new KVMessageItem(KvStatusType.PUT, message.getKey(), message.getValue());
+				KVMessage reply = (KVMessage) communicator.sendMessage(serverItem, updateMessage);
+			}
 		}
 		if (message.getValue().getValue().trim().equals("null")) {
 			sendSubscriptionStatusToOtherServers(message, SubscriptionMessageType.DELETE_KEY, null);

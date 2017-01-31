@@ -22,7 +22,7 @@ public class ECSLogic {
 	
 	private final int MAX_WAITING_TIME = 10000;
 	private final String ECS_IP = "localhost";
-	private final String ECS_PORT = "60000";
+	private final String ECS_PORT = "131.159.199.76";
 	
 	//In order to start servers via SSH the full path must be set.
 	private final String SERVER_JAR_PATH = "/Users/dmitrij/git/cloud-database/BasicStorageServer-stub/ms3-server.jar";

@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import common.logic.ServerCommunicator;
 import common.messages.Message;
+import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 import common.messages.clientToServerMessage.KVMessageItem;
 
 public class NotificationMessageProcessor implements Runnable {
@@ -47,16 +48,20 @@ public class NotificationMessageProcessor implements Runnable {
 		try {
 			if (input.available() > 0) {
 				Message receivedMessage = communicator.receiveMessage();
-				processMessage((KVMessageItem) receivedMessage);
+				Message returnMessage = this.processMessage((KVMessageItem) receivedMessage);
+				communicator.sendMessage(returnMessage);
 			}
 		} catch (IOException ex) {
 			logger.error("Error! Connection lost!");
 		}				
 	}
 	
-	private void processMessage(KVMessageItem message) {
-		if (kvStore.getPermission() <= message.getValue().getPermission()) 
+	private Message processMessage(KVMessageItem message) {
+		if ((message.getValue().getPermission() < kvStore.getPermission()) || 
+				(message.getValue().getPermission() == kvStore.getPermission() && message.getValue().getUsername().equals(kvStore.getUsername()))) 
 			System.out.print("Key: " + message.getKey() + " was changed. New value for this key: " + message.getValue().getValue() + "\nClient> ");
+		else System.out.println("No permission");
+		return new KVMessageItem(KvStatusType.PUT_SUCCESS);
 	}
 
 }
