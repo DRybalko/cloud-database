@@ -31,6 +31,7 @@ public class KVMessageMarshaller {
 		}
 		if (message.getValue() != null) {
 			stringBuilder.append(ValueMarshaler.marshal(message.getValue()));
+			stringBuilder.append(UNIT_SEPARATOR);
 		}
 		if (message.getVersion() != 0) {
 			stringBuilder.append(message.getVersion());
@@ -61,7 +62,8 @@ public class KVMessageMarshaller {
 		} else if (type.equals(KvStatusType.GET_VERSION)) {
 			message.setKey(messageTokens[1]);
 		} else if (type.equals(KvStatusType.VERSION)) {
-			message.setVersion(Integer.parseInt(messageTokens[1]));
+			message.setValue(ValueMarshaler.unmarshal(messageTokens[1]));
+			message.setVersion(Integer.parseInt(messageTokens[2]));
 		} else if (type.equals(KvStatusType.PUT) || type.equals(KvStatusType.PUT_REPLICATION)) {
 			message.setKey(messageTokens[1]);
 			message.setValue(ValueMarshaler.unmarshal(messageTokens[2]));

@@ -56,7 +56,7 @@ public class NotificationMessageProcessor implements Runnable {
 	
 	private void processMessage(KVMessageItem message) {
 		if (kvStore.getPermission() <= message.getValue().getPermission()) 
-			System.out.print("Key: " + message.getKey() + " was changed. New value for this key: " + message.getValue().getValue() + "\nEchoClient> ");
+			System.out.print("Key: " + message.getKey() + " was changed. New value for this key: " + message.getValue().getValue() + "\nClient> ");
 	}
 
 }

@@ -11,11 +11,13 @@ import java.time.LocalDateTime;
 public class Value {
 
 	private int permission;
+	private String username;
 	private LocalDateTime timestamp;
 	private String value;
 	
-	public Value(int permission, LocalDateTime timestamp, String value) {
+	public Value(int permission, String username, LocalDateTime timestamp, String value) {
 		this.permission = permission;
+		this.username = username;
 		this.timestamp = timestamp;
 		this.value = value;
 	}
@@ -47,13 +49,20 @@ public class Value {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
 	@Override
-	public String toString(){
-		String s  = "";
-		s = this.permission + " " + this.timestamp + " " + this.value;
-		return s; 
-	 }
+	public String toString() {
+		return "Value [permission=" + permission + ", username=" + username
+				+ ", timestamp=" + timestamp + ", value=" + value + "]";
+	}
 
 	@Override
 	public int hashCode() {
@@ -62,6 +71,8 @@ public class Value {
 		result = prime * result + permission;
 		result = prime * result
 				+ ((timestamp == null) ? 0 : timestamp.hashCode());
+		result = prime * result
+				+ ((username == null) ? 0 : username.hashCode());
 		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
@@ -82,6 +93,11 @@ public class Value {
 				return false;
 		} else if (!timestamp.equals(other.timestamp))
 			return false;
+		if (username == null) {
+			if (other.username != null)
+				return false;
+		} else if (!username.equals(other.username))
+			return false;
 		if (value == null) {
 			if (other.value != null)
 				return false;
@@ -89,6 +105,5 @@ public class Value {
 			return false;
 		return true;
 	}
-	
 	
 }

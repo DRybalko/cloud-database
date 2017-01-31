@@ -21,7 +21,7 @@ import common.messages.ecsToServerMessage.ECSMessage.EcsStatusType;
 public class ECSLogic {
 	
 	private final int MAX_WAITING_TIME = 10000;
-	private final String ECS_IP = "131.159.215.36";
+	private final String ECS_IP = "localhost";
 	private final String ECS_PORT = "60000";
 	
 	//In order to start servers via SSH the full path must be set.
@@ -56,13 +56,13 @@ public class ECSLogic {
 	}
 	
 	private void initializeServer(int cacheSize, String displacementStrategy, KVServerItem server) {
-		/*String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", SERVER_JAR_PATH,
+		String[] cmd = {"ssh", "-n", "localhost", "java", "-jar", SERVER_JAR_PATH,
 				getServerConfiguration(server.getPort(), cacheSize, displacementStrategy, server.getName())};		
 		try {
 			Runtime.getRuntime().exec(cmd);
 		} catch (IOException e) {
 			logger.error("Server with IP: " + server.getIp() + " and Port: " + server.getPort() + " could not be launched."+e.getMessage());
-		}*/
+		}
 		if (hasReplied(server)) {
 			serverSetStatus.moveFromAvailableToInitialized(server);
 			sendIndices(server);

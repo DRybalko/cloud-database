@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
  * to store data. It also contains time-stamp, when key was created.
  *
  */
-public class KeyTimestampTuple {
+public class KeyTimestampTuple implements Comparable<KeyTimestampTuple> {
 
 	private String key;
 	private LocalDateTime timestamp;
@@ -31,6 +31,11 @@ public class KeyTimestampTuple {
 	
 	public void setTimestamp(LocalDateTime timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	@Override
+	public int compareTo(KeyTimestampTuple tuple) {
+		return this.getTimestamp().compareTo(tuple.getTimestamp());
 	}
 
 }

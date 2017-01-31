@@ -52,4 +52,8 @@ public interface KVCommInterface {
 	public void setPermission(int permission);
 	
 	public int getPermission();
+	
+	public void setUsername(String username);
+	
+	public String getUsername();
 }

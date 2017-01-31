@@ -3,10 +3,10 @@ package app_kvServer;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import common.logic.Value;
 
@@ -23,7 +23,7 @@ public class VersionController {
 	
 	//List for each key stores tuples of transformed key to store particular version of data
 	//and time-stamp. The latest version has the highest index.
-	private Map<String, List<KeyTimestampTuple>> keyVersionMap = new HashMap<>(); 
+	private Map<String, PriorityBlockingQueue<KeyTimestampTuple>> keyVersionMap = new HashMap<>(); 
 	
 	public VersionController(KVServer server) {
 		this.server = server;
@@ -47,20 +47,20 @@ public class VersionController {
 		if (keyVersionMap.containsKey(key)) {
 			return addNewVersionToExistingKey(key, timestamp);
 		} else {
-			keyVersionMap.put(key, new ArrayList<>());
+			keyVersionMap.put(key, new PriorityBlockingQueue<KeyTimestampTuple>());
 			return addNewKeyToKeyVersionList(key, timestamp);
 		}
 	}
 	
 	private String addNewVersionToExistingKey(String key, LocalDateTime timestamp) {
-		List<KeyTimestampTuple> versionsForKeyList = keyVersionMap.get(key);
+		PriorityBlockingQueue<KeyTimestampTuple> versionsForKeyList = keyVersionMap.get(key);
 		if (versionsForKeyList.size() == MAX_VERSION_SIZE) deleteOldestVersion(key);
 		return addNewKeyToKeyVersionList(key, timestamp);
 	}
 
 	private void deleteOldestVersion(String key) {
-		String oldestVersionKey = keyVersionMap.get(key).remove(0).getKey();
-		server.getPersistenceLogic().put(oldestVersionKey, new Value(0, null, "null"));
+		String oldestVersionKey = keyVersionMap.get(key).poll().getKey();
+		server.getPersistenceLogic().put(oldestVersionKey, new Value(0, "", null, "null"));
 	}
 	
 	private String addNewKeyToKeyVersionList(String key, LocalDateTime timestamp) {
@@ -73,14 +73,21 @@ public class VersionController {
 	
 	public String getKeyForVersion(String key, int version) {
 		if (!keyVersionMap.containsKey(key) || (version - 1) >= keyVersionMap.get(key).size()) return null;
-		return keyVersionMap.get(key).get(version - 1).getKey();
+		PriorityBlockingQueue<KeyTimestampTuple> keyQueue = keyVersionMap.get(key);
+		return getVersion(keyQueue, version - 1).getKey();
+	}
+	
+	private KeyTimestampTuple getVersion(PriorityBlockingQueue<KeyTimestampTuple> queue, int version) {
+		KeyTimestampTuple[] queueArray = queue.toArray(new KeyTimestampTuple[0]);
+		Arrays.sort(queueArray);
+		return queueArray[version];
 	}
 	
 	public void deleteKey(String key) {
-		List<KeyTimestampTuple> versionsForKey = keyVersionMap.remove(key);
+		PriorityBlockingQueue<KeyTimestampTuple> versionsForKey = keyVersionMap.remove(key);
 		if (versionsForKey == null) return;
 		for (KeyTimestampTuple keyVersion: versionsForKey) {
-			server.getPersistenceLogic().put(keyVersion.getKey(), new Value(0, null, "null"));
+			server.getPersistenceLogic().put(keyVersion.getKey(), new Value(0, "", null, "null"));
 		}
 	}
 	

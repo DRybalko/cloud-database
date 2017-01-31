@@ -27,12 +27,13 @@ import common.messages.clientToServerMessage.KVMessage.KvStatusType;
 public class KVStore implements KVCommInterface {
 
 	//First server to send put or get message to
-	private final KVServerItem initialKVServerItem = new KVServerItem("node1", "131.159.215.36", "50000");
+	private final KVServerItem initialKVServerItem = new KVServerItem("node1", "localhost", "50000");
 	
 	private Communicator communicator;
 	private MetaDataTableController metaDataTableController;
 	private SubscriptionServer subscriptionServer;
 	private int permission;
+	private String username;
 
 	public KVStore() {
 		List<KVServerItem> availableServers = new LinkedList<>();
@@ -54,7 +55,9 @@ public class KVStore implements KVCommInterface {
 
 	public KVMessage put(String key, Value value) throws Exception {
 		if (communicator == null) throw new Exception("No connection!");
-		if (value.getPermission() > permission) return new KVMessageItem(KvStatusType.NO_PERMISSION);
+		KVMessage getReply = this.get(key, 1);
+		if (getReply.getStatus().equals(KvStatusType.NO_PERMISSION) || (getReply.getStatus().equals(KvStatusType.GET_SUCCESS) && ((getReply.getValue() != null
+				&& !getReply.getValue().getUsername().equals(this.username))))) return new KVMessageItem(KvStatusType.NO_PERMISSION);
 		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.PUT, key, value);
 		return sendMessage(kvMessage);
 	}
@@ -63,6 +66,8 @@ public class KVStore implements KVCommInterface {
 		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.GET_VERSION);
 		kvMessage.setKey(key);
 		KVMessage versionReply = sendMessage(kvMessage);
+		if (versionReply != null && versionReply.getValue() != null && 
+				!hasPermission(versionReply)) return new KVMessageItem(KvStatusType.NO_PERMISSION);
 		if (versionReply.getVersion() == 1) return this.get(key, 1);
 		else return versionReply;
 	}
@@ -70,11 +75,16 @@ public class KVStore implements KVCommInterface {
 	public KVMessage get(String key, int version) {
 		KVMessageItem kvMessage = new KVMessageItem(KvStatusType.GET, key, version);
 		KVMessage response = sendMessage(kvMessage);
-		if (response != null && response.getValue() != null &&
-				response.getValue().getPermission() > permission) return new KVMessageItem(KvStatusType.NO_PERMISSION);
+		if (response != null && response.getValue() != null && 
+				!hasPermission(response)) return new KVMessageItem(KvStatusType.NO_PERMISSION);
 		else return response;
 	}
 
+	private boolean hasPermission(KVMessage message) {
+		return (message.getValue().getPermission() < this.permission) || 
+				(message.getValue().getPermission() == this.permission && message.getValue().getUsername().equals(this.username));
+	}
+	
 	private KVMessageItem sendMessage(KVMessageItem kvMessage) {
 		byte[] hashedTuple = HashGenerator.generateHashFor(kvMessage.getKey());
 		KVServerItem responsibleServer = metaDataTableController.findResponsibleServer(hashedTuple);
@@ -97,7 +107,7 @@ public class KVStore implements KVCommInterface {
 	public KVMessage sendSubscriptionStatusMessage(String key, KvStatusType status) {
 		KVMessageItem getMessage = new KVMessageItem(KvStatusType.GET, key, 1);
 		KVMessage response = sendMessage(getMessage);
-		if (response.getStatus().equals(KvStatusType.GET_SUCCESS) && response.getValue().getPermission() < this.permission) 
+		if (response.getStatus().equals(KvStatusType.GET_SUCCESS) && !hasPermission(response)) 
 			return new KVMessageItem(KvStatusType.NO_PERMISSION);
 		KVMessageItem message = new KVMessageItem(status);
 		message.setKey(key);
@@ -111,5 +121,13 @@ public class KVStore implements KVCommInterface {
 	
 	public void setPermission(int permission) {
 		this.permission = permission;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public String getUsername() {
+		return username;
 	}
 }

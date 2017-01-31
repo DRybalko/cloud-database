@@ -31,7 +31,7 @@ public class FailureDetectorService implements Runnable {
 	private KVServer server;
 	private boolean running;
 	private Communicator communicator;
-	private boolean sendKeys = false;
+	private boolean sendingKeys = false;
 	
 	public FailureDetectorService(KVServer server) {
 		this.server = server;
@@ -81,12 +81,12 @@ public class FailureDetectorService implements Runnable {
 	private void inspectServers() {
 		while (this.running && server.getServerStatusInformation().isRunning()) {
 			ServerToServerMessageItem pingMessage = new ServerToServerMessageItem(ServerToServerStatusType.GET_STATUS);
-			this.sendKeys = true;
+			this.sendingKeys = true;
 			for (KVServerItem serverToInspect: this.serversForInspection) {
 				ServerToServerMessageItem pingResponse = (ServerToServerMessageItem) communicator.sendMessage(serverToInspect, pingMessage);
 				if (pingResponse == null) sendServerFailureToECS(serverToInspect);
 			}
-			this.sendKeys = false;
+			this.sendingKeys = false;
 			try {
 				Thread.sleep(TIME_TO_NEXT_PING_MESSAGE);
 			} catch (InterruptedException e) {
@@ -109,7 +109,7 @@ public class FailureDetectorService implements Runnable {
 	}
 	
 	public void onMetaDataTableChange() {
-		while (!running && !sendKeys)
+		while (!running && !sendingKeys)
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {

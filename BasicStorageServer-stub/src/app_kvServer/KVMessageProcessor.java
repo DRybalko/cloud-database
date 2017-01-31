@@ -11,6 +11,7 @@ import app_kvServer.subscription.SubscriptionReplicationController;
 import common.logic.ByteArrayMath;
 import common.logic.HashGenerator;
 import common.logic.KVServerItem;
+import common.logic.Value;
 import common.messages.clientToServerMessage.KVMessage;
 import common.messages.clientToServerMessage.KVMessageItem;
 import common.messages.clientToServerMessage.KVMessage.KvStatusType;
@@ -37,13 +38,7 @@ public class KVMessageProcessor {
 		if (message.getStatus().equals(KvStatusType.GET)) {
 			replyMessage = messageProcessor.get(message);
 		} else if (message.getStatus().equals(KvStatusType.GET_VERSION)){
-			if (ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(message.getKey()),
-				server.getServerStatusInformation().getStartIndex(), server.getServerStatusInformation().getEndIndex())) {
-				replyMessage = sendNotResponsibleMessage(message);
-			} else {
-				replyMessage = new KVMessageItem(KvStatusType.VERSION, server.getVersionController()
-						.getMaxVersionForKey(message.getKey()));
-			}		
+			replyMessage = getVersion(message);
 		} else if (message.getStatus().equals(KvStatusType.PUT)) {
 			replyMessage = processPutMessage(message);
 		} else if (message.getStatus().equals(KvStatusType.PUT_REPLICATION))  {
@@ -59,6 +54,24 @@ public class KVMessageProcessor {
 			replyMessage = new KVMessageItem(KvStatusType.ERROR);
 		}
 		return replyMessage;
+	}
+	
+	private KVMessageItem getVersion(KVMessageItem message) {
+		if (!ByteArrayMath.isValueBetweenTwoOthers(HashGenerator.generateHashFor(message.getKey()),
+				server.getServerStatusInformation().getStartIndex(), server.getServerStatusInformation().getEndIndex())) {
+			return sendNotResponsibleMessage(message);
+		} else {
+			int version = server.getVersionController().getMaxVersionForKey(message.getKey());
+			KVMessage getMessageForVersionOne = null;
+			if (version > 0) {
+				getMessageForVersionOne = server.getPersistenceLogic().get(server.getVersionController().getKeyForVersion(message.getKey(), 1));
+				getMessageForVersionOne.getValue().setValue("null");
+			}
+			KVMessageItem replyMessage = new KVMessageItem(KvStatusType.VERSION, version);
+			if (getMessageForVersionOne != null) replyMessage.setValue(getMessageForVersionOne.getValue());
+			else replyMessage.setValue(new Value(-1, "", null, "null"));
+			return replyMessage;
+		}		
 	}
 
 	private KVMessageItem createSubscription(KVMessageItem message) {
@@ -81,7 +94,7 @@ public class KVMessageProcessor {
 	private void sendSubscriptionStatusToOtherServers(KVMessageItem message, SubscriptionMessageType subscriptionType, ClientSubscription subscription) {
 		SubscriptionReplicationController subscriptionReplicationController
 			= new SubscriptionReplicationController(message.getKey(), subscriptionType, subscription, server);
-		new Thread(subscriptionReplicationController).start();
+		subscriptionReplicationController.run();
 	}
 	
 	private KVMessageItem removeSubscriptionIfResponsible(KVMessageItem message) {

@@ -94,7 +94,7 @@ public class CommandLineProcessor {
 	private static void connect() {
 		kvStore = new KVStore();
 		permissionController = new PermissionController();
-		logIn();
+		if (!loggedIn) logIn();
 		try {
 			kvStore.connect();
 			System.out.println("Connection was established successfuly");
@@ -109,13 +109,17 @@ public class CommandLineProcessor {
 		try {
 			String role = "";
 			int permission = -1;
-			while (permission < 0) {
+			String username = "null";
+			while (permission < 0 || username.equals("null")) {
 				System.out.print(LINE_START + "sign in as: ");
 				role = br.readLine();
-				permission = permissionController.getPermissionLevel(role); 
-				if (permission < 0) System.out.println("Please sign in with valid user name");
+				String[] stringTokens = role.split(" ");
+				permission = permissionController.getPermissionLevel(stringTokens[0]); 
+				if (permission < 0 || stringTokens.length < 2) System.out.println("Please sign in with valid user name");
+				else username = stringTokens[1];
 			}
 			kvStore.setPermission(permission);
+			kvStore.setUsername(username);
 			loggedIn = true;
 			System.out.println("You signed in as: " + role);
 		} catch (IOException e1) {
@@ -152,9 +156,8 @@ public class CommandLineProcessor {
 		if (input.length >= 3) {
 			try {
 				String putInput = readPutInput();
-				int putMessagePermission = getPermissionForPut(input[1]);
 				LocalDateTime timestamp = LocalDateTime.now();
-				Value value  = new Value(putMessagePermission, timestamp, putInput);			
+				Value value  = new Value(kvStore.getPermission(), kvStore.getUsername(), timestamp, putInput);			
 				KVMessage message = kvStore.put(input[1], value);
 				System.out.println(message.toString());
 			} catch (Exception e) {
@@ -172,36 +175,6 @@ public class CommandLineProcessor {
 		return stringBuilder.toString();
 	}
 
-	private static int getPermissionForPut(String key) {
-		KVMessage message;
-		try {
-			message = kvStore.getVersion(key);
-			if (message.getStatus().equals(KvStatusType.GET_SUCCESS)) return message.getValue().getPermission();
-			else if (message.getStatus().equals(KvStatusType.VERSION)
-					&& message.getVersion() > 0) return kvStore.get(key, 1).getValue().getPermission();
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String role = "";
-		int permission = -1;
-		while (permission < 0) {
-			try {
-				System.out.println(LINE_START + "Please specify permission level: ");
-				System.out.print(LINE_START);
-				role = br.readLine();
-				permission = permissionController.getPermissionLevel(role); 
-				if (permission > kvStore.getPermission()) {
-					System.out.println(LINE_START + "Permission level can not be higher than yours");
-					permission = -1;
-				}
-			} catch (IOException e) {
-				logger.error(e);
-			}
-		}
-		return permission;
-	}
-	
 	private static void get() {
 		if (!loggedIn) {
 			System.out.println(LINE_START + "Please sign in");
@@ -266,9 +239,9 @@ public class CommandLineProcessor {
 		if (message.getStatus().equals(KvStatusType.VERSION) && message.getVersion() > 0) {
 			System.out.println("For this key there are " + message.getVersion() +" versions. Please specify which version you"
 					+ " would like to get.");
-		} else {
-			printGetResult(message);
-		}
+		} else if (message.getStatus().equals(KvStatusType.NO_PERMISSION)) {
+			System.out.println(message.toString());
+		} else 	printGetResult(message);
 	}
 
 	private static void printGetResult(KVMessage message) {

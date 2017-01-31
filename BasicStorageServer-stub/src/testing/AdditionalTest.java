@@ -34,7 +34,7 @@ public class AdditionalTest extends TestCase {
 	
 	@Test
 	public void testMarshalAndUnmarshalGetSuccessMessage() {
-		Value value = new Value(1, LocalDateTime.of(2017, 01, 01, 12, 13), "foundValue");
+		Value value = new Value(1, "A", LocalDateTime.of(2017, 01, 01, 12, 13), "foundValue");
 		KVMessageItem message = new KVMessageItem(KvStatusType.GET_SUCCESS);
 		message.setValue(value);;
 		byte[] marshaledMessage = marshaller.marshal(message);
@@ -48,7 +48,7 @@ public class AdditionalTest extends TestCase {
 	
 	@Test
 	public void testMarshalAndUnmarshalPutMessage() {
-		Value value = new Value(1, LocalDateTime.of(2017, 01, 01, 12, 13), "put value");
+		Value value = new Value(1, "A", LocalDateTime.of(2017, 01, 01, 12, 13), "put value");
 		KVMessageItem message = new KVMessageItem(KvStatusType.PUT, "123", value);
 		byte[] marshaledMessage = marshaller.marshal(message);
 		KVMessage unmarshaledMessage = (KVMessageItem) marshaller.unmarshal(marshaledMessage);

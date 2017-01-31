@@ -108,7 +108,7 @@ public class ReplicaCoordinator {
 	private void deleteReplicationFromServer(KVServerItem serverItem) {
 		if (communicator.checkStarted(serverItem)) {
 			for (String key: server.getServerStatusInformation().getKeys()) {
-				KVMessageItem deleteMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, new Value(0, LocalDateTime.now(), "null"));
+				KVMessageItem deleteMessage = new KVMessageItem(KvStatusType.PUT_REPLICATION, key, new Value(0, "", LocalDateTime.now(), "null"));
 				communicator.sendMessage(serverItem, deleteMessage);
 			}
 		}

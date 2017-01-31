@@ -46,9 +46,6 @@ public class SubscriptionReplicationController implements Runnable {
 		for (KVServerItem serverItem: server.getMetaDataTable()) {
 			if (!serverItem.equals(server.getServerStatusInformation().getThisKvServerItem())) {
 				ServerToServerMessageItem reply = (ServerToServerMessageItem) communicator.sendMessage(serverItem, subscriptionMessage);
-				while (reply == null || !reply.getStatus().equals(responseMessageType)) {
-					reply = (ServerToServerMessageItem) communicator.sendMessage(serverItem, subscriptionMessage);
-				}
 			}
 		}
 	}

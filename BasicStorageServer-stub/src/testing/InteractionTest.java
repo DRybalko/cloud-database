@@ -29,7 +29,7 @@ public class InteractionTest extends TestCase {
 	@Test
 	public void testPut() {
 		String key = "foobar";
-		Value value = new Value(1, LocalDateTime.now(), "bar");
+		Value value = new Value(1, "A", LocalDateTime.now(), "bar");
 		KVMessage response = null;
 		Exception ex = null;
 
@@ -64,8 +64,8 @@ public class InteractionTest extends TestCase {
 	@Test
 	public void testUpdate() {
 		String key = "updateTestValue";
-		Value valueInitial = new Value(1, LocalDateTime.now(), "initial");
-		Value valueUpdated = new Value(1, LocalDateTime.now(), "updated");
+		Value valueInitial = new Value(1,"A", LocalDateTime.now(), "initial");
+		Value valueUpdated = new Value(1, "A", LocalDateTime.now(), "updated");
 		
 		KVMessage response = null;
 		Exception ex = null;
@@ -84,14 +84,14 @@ public class InteractionTest extends TestCase {
 	@Test
 	public void testDelete() {
 		String key = "deleteTestValue";
-		Value value = new Value(1, LocalDateTime.now(), "toDelete");
+		Value value = new Value(1, "A", LocalDateTime.now(), "toDelete");
 		
 		KVMessage response = null;
 		Exception ex = null;
 
 		try {
 			kvClient.put(key, value);
-			response = kvClient.put(key, new Value(1, LocalDateTime.now(), "null"));
+			response = kvClient.put(key, new Value(1, "A", LocalDateTime.now(), "null"));
 			
 		} catch (Exception e) {
 			ex = e;
@@ -104,7 +104,7 @@ public class InteractionTest extends TestCase {
 	public void testGet() {
 		String key = "foo";
 		LocalDateTime currentTimeStamp = LocalDateTime.now();
-		Value value = new Value(1, currentTimeStamp, "bar");
+		Value value = new Value(1, "A", currentTimeStamp, "bar");
 		KVMessage response = null;
 		Exception ex = null;
 
@@ -137,7 +137,7 @@ public class InteractionTest extends TestCase {
 	@Test
 	public void testDeleteNonExistingKvPair() {
 		String key = "keyForNull";
-		Value value = new Value(1, LocalDateTime.now(), "null");
+		Value value = new Value(1, "A", LocalDateTime.now(), "null");
 		Exception ex = null;
 		KVMessage response = null;
 		
